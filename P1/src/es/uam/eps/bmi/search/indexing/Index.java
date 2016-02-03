@@ -6,6 +6,7 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
+import es.uam.eps.bmi.search.parsing.TextParser;
 import java.util.List;
 
 /**

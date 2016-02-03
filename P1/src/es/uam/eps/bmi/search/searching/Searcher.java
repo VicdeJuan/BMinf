@@ -5,10 +5,23 @@
  */
 package es.uam.eps.bmi.search.searching;
 
+import es.uam.eps.bmi.search.ScoredTextDocument;
+import es.uam.eps.bmi.search.indexing.Index;
+import java.util.List;
+
 /**
  *
  * @author e267044
  */
-public class Searcher {
-    
+public interface Searcher {
+    void build(Index index);
+/* que crea el buscador a partir del índice pasado como argumento de entrada.
+*/
+List<ScoredTextDocument> search (String query);
+ /*devolverá   un 
+ranki
+ng
+(ordenado   por   score 
+decreciente) de documentos, resultantes de ejecutar una consultada dada sobre el índice del buscado
+*/
 }
