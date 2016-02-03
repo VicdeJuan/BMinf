@@ -10,6 +10,7 @@ package es.uam.eps.bmi.search;
  * @author e267044
  */
 public class TextDocument {
+
      //Devolverá un identificador único de documento.
 public String getId(){
 	return null;
@@ -28,4 +29,5 @@ public boolean equals(Object object){
 public int hashCode(){
 	return 0;
 }
+
 }
