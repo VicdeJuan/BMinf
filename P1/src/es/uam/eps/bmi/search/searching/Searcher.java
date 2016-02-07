@@ -14,14 +14,21 @@ import java.util.List;
  * @author e267044
  */
 public interface Searcher {
+
+    /** crea el buscador a partir del índice pasado como argumento de entrada.
+     *
+     * @param index
+     */
     void build(Index index);
-/* que crea el buscador a partir del índice pasado como argumento de entrada.
-*/
+
+
+    /**evolverá   un ranking(ordenado   por   score decreciente) de documentos, resultantes 
+     de ejecutar una consultada dada sobre el índice del buscado
+     *
+     * @param query
+     * @return
+     */
+    
 List<ScoredTextDocument> search (String query);
- /*devolverá   un 
-ranki
-ng
-(ordenado   por   score 
-decreciente) de documentos, resultantes de ejecutar una consultada dada sobre el índice del buscado
-*/
+
 }

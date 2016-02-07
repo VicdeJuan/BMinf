@@ -10,7 +10,13 @@ package es.uam.eps.bmi.search.parsing;
  * @author e267044
  */
 public interface TextParser {
+
+    /** devolverá procesado un texto de entrada.
+     *
+     * @param text
+     * @return
+     */
     String parse(String text);
-/* que devolverá procesado un texto de entrada.*/
+
     
 }

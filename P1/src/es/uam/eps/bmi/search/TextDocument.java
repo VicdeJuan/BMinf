@@ -11,21 +11,31 @@ package es.uam.eps.bmi.search;
  */
 public class TextDocument {
 
-     //Devolverá un identificador único de documento.
-public String getId(){
+     
+
+    /** Devolverá un identificador único de documento.
+     *
+     * @return
+     */
+    public String getId(){
 	return null;
 }
-//Devolverá el nombre (path completo) del documento.
-public String getName(){
+
+
+    /** Devolverá el nombre (path completo) del documento.
+     *
+     * @return
+     */
+    public String getName(){
 	return null;
 }
-//Sobreescribirá el método equals de Object comparando identificadores de documentos.
+/*Sobreescribirá el método equals de Object comparando identificadores de documentos.*/
 public boolean equals(Object object){
 	return false;
 }
 
 
-//Sobreescribirá l método hashCode de Object devolviendo el código hash del identificador del documento.
+/*Sobreescribirá l método hashCode de Object devolviendo el código hash del identificador del documento.*/
 public int hashCode(){
 	return 0;
 }
