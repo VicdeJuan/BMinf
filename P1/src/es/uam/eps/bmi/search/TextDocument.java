@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package es.uam.eps.bmi.search;
 
 /**
@@ -12,14 +8,26 @@ package es.uam.eps.bmi.search;
 public class TextDocument {
 
      
-
+    String id;
+    String name;
+    
+    /**
+     * Crea un nuevo Textdocument.
+     * @param id    Id del documento a crear.
+     * @param name  Nombre (path completo) del documento a crear.
+     */
+    public TextDocument(String id, String name){
+        this.id = new String(id);
+        this.name = new String(name);
+    }
+    
     /** Devolverá un identificador único de documento.
      *
      * @return
      */
     public String getId(){
-	return null;
-}
+	return id;
+    }
 
 
     /** Devolverá el nombre (path completo) del documento.
@@ -27,17 +35,20 @@ public class TextDocument {
      * @return
      */
     public String getName(){
-	return null;
-}
-/*Sobreescribirá el método equals de Object comparando identificadores de documentos.*/
-public boolean equals(Object object){
-	return false;
-}
+	return name;
+    }
+    
+    /*Sobreescribirá el método equals de Object comparando identificadores de documentos.*/
+    @Override
+    public boolean equals(Object object){
+	return this.getId().equals(((TextDocument) object).getId());
+    }
 
 
-/*Sobreescribirá l método hashCode de Object devolviendo el código hash del identificador del documento.*/
-public int hashCode(){
-	return 0;
+    /*Sobreescribirá l método hashCode de Object devolviendo el código hash del identificador del documento.*/
+    @Override
+    public int hashCode(){
+	return this.getId().hashCode();
 }
 
 }
