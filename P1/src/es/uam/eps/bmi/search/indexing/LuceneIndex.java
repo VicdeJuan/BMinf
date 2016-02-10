@@ -27,8 +27,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.IndexSearcher;
 
 
 
@@ -54,6 +59,9 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
      
     }
     
+    //  docDir coincide con la ruta de los zips? hay que java.util.zip.ZipInputStream?
+    // writer es donde se genera el indice. En el path indicado por dir (indexpath), y con la configuracion
+    // indicada por iwc?
     @Override
     public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
         boolean create=true;
@@ -103,9 +111,30 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 
     @Override
     public List<String> getDocIds() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<String> ids =new ArrayList<String>();
+        IndexReader reader = null;
+        Document doc = null;
+        try {
+            reader = IndexReader.open(FSDirectory.open(new File(this.indexPath)));
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for(int i=1; i<reader.maxDoc();i++){
+            try {
+                doc= reader.document(i);
+            } catch (IOException ex) {
+                Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            ids.add(doc.getFieldable("id").stringValue());
+        }
+      
+        return ids;
+         
     }
 
+    // hay que coger todos los ids de los documentos del indice, como? busqueda de ids en 
+    //indice o recorriendo linea a linea?
     @Override
     public TextDocument getDocument(String docId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -113,7 +142,25 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 
     @Override
     public List<String> getTerms() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<String> terms =new ArrayList<String>();
+        IndexReader reader = null;
+        Document doc = null;
+        try {
+            reader = IndexReader.open(FSDirectory.open(new File(this.indexPath)));
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for(int i=1; i<reader.maxDoc();i++){
+            try {
+                doc= reader.document(i);
+            } catch (IOException ex) {
+                Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            terms.add(doc.getFieldable("name").stringValue());
+        }
+      
+        return terms;
     }
 
     @Override
@@ -165,6 +212,12 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
           // year/month/day/hour/minutes/seconds, down the resolution you require.
           // For example the long value 2011021714 would mean
           // February 17, 2011, 2-3 PM.
+          NumericField idField = new NumericField("id", Field.Store.YES, true);
+          idField.setLongValue(file.getPath().hashCode());
+          doc.add(idField);
+          
+          
+          
           NumericField modifiedField = new NumericField("modified");
           modifiedField.setLongValue(file.lastModified());
           doc.add(modifiedField);

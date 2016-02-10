@@ -10,7 +10,13 @@ package es.uam.eps.bmi.search;
  * @author e267044
  */
 public class TextDocument {
+private String id;
+private String name;
 
+    public TextDocument(String id, String name) {
+        this.id = id;
+        this.name = name;
+    }
      
 
     /** Devolverá un identificador único de documento.
@@ -18,7 +24,7 @@ public class TextDocument {
      * @return
      */
     public String getId(){
-	return null;
+	return this.id;
 }
 
 
@@ -27,17 +33,19 @@ public class TextDocument {
      * @return
      */
     public String getName(){
-	return null;
+	return this.name;
 }
 /*Sobreescribirá el método equals de Object comparando identificadores de documentos.*/
 public boolean equals(Object object){
-	return false;
+ if(object.equals(this.id))	{
+    return true;
+ } return false;
 }
 
 
 /*Sobreescribirá l método hashCode de Object devolviendo el código hash del identificador del documento.*/
 public int hashCode(){
-	return 0;
+	return this.id.hashCode();
 }
 
 }
