@@ -44,6 +44,8 @@ import org.apache.lucene.search.IndexSearcher;
  */
 public class LuceneIndex implements Index{
     String indexPath;
+    private IndexReader reader = null;
+    private static long num_id=0;
     
 /* 
     dos argumentos de entrada: la ruta de la carpeta que contiene la colección de documentos con
@@ -65,15 +67,20 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
     @Override
     public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
         boolean create=true;
+        
      
         try {
       System.out.println("Indexing to directory '" + inputCollectionPath + "'...");
-
+      this.indexPath=outputIndexPath;
       Directory dir = FSDirectory.open(new File(this.indexPath));
       Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
       IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_31, analyzer);
-      Date start = new Date();
+
       final File docDir = new File(inputCollectionPath);
+       if (!docDir.exists() || !docDir.canRead()) {
+      System.out.println("Document directory '" +docDir.getAbsolutePath()+ "' does not exist or is not readable, please check the path");
+      System.exit(1);
+    }
       
       if (create) {
         // Create a new index in the directory, removing any
@@ -87,8 +94,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
       indexDocs(writer, docDir);
       writer.close();
 
-      Date end = new Date();
-      System.out.println(end.getTime() - start.getTime() + " total milliseconds");
+
 
     } catch (IOException e) {
       System.out.println(" caught a " + e.getClass() +
@@ -101,6 +107,12 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
     @Override
     public void load(String indexPath) {
         this.indexPath=indexPath;
+        try {
+            reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+        } catch (IOException ex) {
+            System.out.println(" Loading error " + ex.getMessage());
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
@@ -213,7 +225,8 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
           // For example the long value 2011021714 would mean
           // February 17, 2011, 2-3 PM.
           NumericField idField = new NumericField("id", Field.Store.YES, true);
-          idField.setLongValue(file.getPath().hashCode());
+          num_id++;
+          idField.setLongValue(num_id);
           doc.add(idField);
           
           
