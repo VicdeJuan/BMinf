@@ -13,12 +13,12 @@ import java.util.List;
  */
 public class Posting {
     private String docId;
-    private int termFrequency;
+    private String term;
     private List<Long> termPositions;
 
-    public Posting(String docId, int termFrequency, List<Long> termPositions) {
+    public Posting(String docId, String term, List<Long> termPositions) {
         this.docId = docId;
-        this.termFrequency = termFrequency;
+        this.term = term;
         this.termPositions = termPositions;
     }
     
@@ -31,7 +31,7 @@ devolverá el identificador de un documento donde aparece el término asociado a
 posting
 */
 int getTermFrequency(){
- return this.termFrequency;
+ return this.termPositions.size();
 }
 /*
 que  devolverá  el  número  de 

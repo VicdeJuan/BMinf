@@ -57,7 +57,10 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
      * @param outputCollectionPath
      */
     
-    public static void main(String inputCollectionPath,String outputCollectionPath){
+    public void main(String inputCollectionPath,String outputCollectionPath){
+        
+        build(inputCollectionPath,outputCollectionPath,null);
+        
      
     }
     
@@ -149,19 +152,43 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
     //indice o recorriendo linea a linea?
     @Override
     public TextDocument getDocument(String docId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        if (reader == null) {
+            return null;
+        }
+        TextDocument textdoc = null;
+        Document doc = null;
+        String name=null;
+        String id=null;
+        
+        for(int i=1; i<reader.maxDoc();i++){
+            try {
+                doc= reader.document(i);
+            } catch (IOException ex) {
+                Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            //si coinciden los id contruimos el TextDocument
+            if(doc.getFieldable("id").stringValue().equals(docId)){
+                name = doc.getFieldable("name").stringValue();
+                id = doc.getFieldable("id").stringValue();
+                textdoc = new TextDocument(id,name);
+                return textdoc;
+            
+            }
+        }
+        return null;
+    
+    
     }
 
     @Override
     public List<String> getTerms() {
         List<String> terms =new ArrayList<String>();
-        IndexReader reader = null;
-        Document doc = null;
-        try {
-            reader = IndexReader.open(FSDirectory.open(new File(this.indexPath)));
-        } catch (IOException ex) {
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        if (reader == null) {
+            return null;
         }
+        Document doc = null;
+        
         for(int i=1; i<reader.maxDoc();i++){
             try {
                 doc= reader.document(i);
@@ -177,7 +204,28 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 
     @Override
     public List<Posting> getTermPostings(String term) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (reader == null) {
+            return null;
+        }
+        
+        List<Posting> posts=new ArrayList<Posting>();
+        Document doc = null;
+        
+        for(int i=1; i<reader.maxDoc();i++){
+            Posting post;
+            try {
+                doc= reader.document(i);
+            } catch (IOException ex) {
+                Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           /* 
+            post=new Posting(doc.getFieldable("name").stringValue(),
+                    term, List<Long> termPositions);
+            posts.add(post);
+                    );*/
+        }
+        
+        return posts;
     }
     
     
@@ -213,7 +261,8 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
           // field that is indexed (i.e. searchable), but don't tokenize 
           // the field into separate words and don't index term frequency
           // or positional information:
-          Field pathField = new Field("path", file.getPath(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+          //we use name as docId
+          Field pathField = new Field("name", file.getPath(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
           pathField.setIndexOptions(IndexOptions.DOCS_ONLY);
           doc.add(pathField);
 
@@ -250,7 +299,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
             // we use updateDocument instead to replace the old one matching the exact 
             // path, if present:
             System.out.println("updating " + file);
-            writer.updateDocument(new Term("path", file.getPath()), doc);
+            writer.updateDocument(new Term("name", file.getPath()), doc);
           }
           
         } finally {
