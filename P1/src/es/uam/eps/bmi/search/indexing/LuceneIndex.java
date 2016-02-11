@@ -207,7 +207,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
         if (reader == null) {
             return null;
         }
-        
+        List<Long> pos= new ArrayList<Long>();
         List<Posting> posts=new ArrayList<Posting>();
         Document doc = null;
         
@@ -215,17 +215,28 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
             Posting post;
             try {
                 doc= reader.document(i);
+                Term ter=new Term(term,term);
+                Integer aaux = reader.termPositions(ter).nextPosition();
+                Long aux = aaux.longValue();
+                pos.add(aux);
+                post=new Posting(doc.getFieldable("name").stringValue(),
+                    term, pos );
+                posts.add(post);
+                
+                
             } catch (IOException ex) {
                 Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
             }
-           /* 
-            post=new Posting(doc.getFieldable("name").stringValue(),
-                    term, List<Long> termPositions);
-            posts.add(post);
-                    );*/
+            
+                    
         }
         
         return posts;
+    }
+    
+    /*Así vemos si se ha hecho el load o no*/
+     public IndexReader getReader() {
+        return this.reader;
     }
     
     

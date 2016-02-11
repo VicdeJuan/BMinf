@@ -38,6 +38,7 @@ import org.apache.lucene.util.Version;
  */
 public class LuceneSearcher implements Searcher {
     String indexdir;
+    
 
     /** recibe como argumento de entrada la ruta de la carpeta que contenga
 un índice Lucene, y que de forma iterativa pida al usuario consultas a ejecutar por el buscador sobre el índice y
@@ -53,7 +54,7 @@ muestre por pantalla los top 5 documentos devueltos por el buscador para cada co
     }
     @Override
     public void build(Index index) {
-        
+        this.indexdir=index.getPath();
         
     }
 
@@ -87,30 +88,29 @@ muestre por pantalla los top 5 documentos devueltos por el buscador para cada co
         };
         TopDocs top=null;
         try {
-            top=searcher.search(q, null, 100);
+            //Finds the top n hits for query.
+            top=searcher.search(q, null, 1000);
         } catch (IOException ex) {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error en LuceneSearcher");
             return null;
         }
-        for(int j=0;j<100;j++){
-           ScoredTextDocument textdoc =     new ScoredTextDocument ("necesito el path",top.scoreDocs[j].score);
+        for(int j=0;j<1000;j++){
+            Document aux=null;
+            try {
+                 aux=reader.document(top.scoreDocs[j].doc);
+            } catch (IOException ex) {
+                Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            String docPath=aux.getFieldable("name").stringValue();
+           ScoredTextDocument textdoc =     new ScoredTextDocument (docPath,top.scoreDocs[j].score);
            scored.add(textdoc);
         }
         return scored;
     }
      
     
-    /**
-   * This demonstrates a typical paging search scenario, where the search engine presents 
-   * pages of size n to the user. The user can then go to the next page if interested in
-   * the next hits.
-   * 
-   * When the query is executed for the first time, then only enough results are collected
-   * to fill 5 result pages. If the user wants to page beyond this limit, then the query
-   * is executed another time and all hits are collected.
-   * 
-   */
+
     
     
   
