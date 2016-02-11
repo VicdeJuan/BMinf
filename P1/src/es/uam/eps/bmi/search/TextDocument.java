@@ -37,9 +37,8 @@ private String name;
 }
 /*Sobreescribirá el método equals de Object comparando identificadores de documentos.*/
 public boolean equals(Object object){
- if(object.equals(this.id))	{
-    return true;
- } return false;
+    return object.equals(this.id);
+
 }
 
 
