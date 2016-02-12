@@ -25,9 +25,10 @@ public static void main (String[] args){
 }
     @Override
     public String parse(String text) {
-	    Element doc;
-	    doc = parseDoc(text).body();
-	    return doc.text();
+	   // Element doc;
+	    //doc = parseDoc(text).body();
+	    //return doc.text();
+           return Jsoup.parse(text).text();
     }
     public org.jsoup.nodes.Document parseDoc(String text) {
         return Jsoup.parse(text) ;    

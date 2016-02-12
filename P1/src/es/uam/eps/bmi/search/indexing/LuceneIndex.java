@@ -77,6 +77,11 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 	    
         build(inputCollectionPath,outputIndexPath,textParser);
     }
+    public LuceneIndex (){
+	    
+	    
+       
+    }
     
     //  docDir coincide con la ruta de los zips? hay que java.util.zip.ZipInputStream?
     // writer es donde se genera el indice. En el path indicado por dir (indexpath), y con la configuracion

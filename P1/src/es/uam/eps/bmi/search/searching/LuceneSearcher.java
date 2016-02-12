@@ -7,6 +7,8 @@ package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
+import es.uam.eps.bmi.search.indexing.LuceneIndex;
+import es.uam.eps.bmi.search.parsing.HtmlParser;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,82 +40,87 @@ import org.apache.lucene.util.Version;
  * @author dani
  */
 public class LuceneSearcher implements Searcher {
-    String indexdir;
-    
 
-    /** recibe como argumento de entrada la ruta de la carpeta que contenga
-un índice Lucene, y que de forma iterativa pida al usuario consultas a ejecutar por el buscador sobre el índice y
-muestre por pantalla los top 5 documentos devueltos por el buscador para cada consulta
+    private String indexdir;
+    private IndexSearcher indexSearcher;
+    private final int TOP5 = 5;
+    private final int TOP10 = 10;
+
+    /**
+     * recibe como argumento de entrada la ruta de la carpeta que contenga un
+     * índice Lucene, y que de forma iterativa pida al usuario consultas a
+     * ejecutar por el buscador sobre el índice y muestre por pantalla los top 5
+     * documentos devueltos por el buscador para cada consulta
      *
      * @param inputCollectionPath
      */
-    
-    public static void main(String inputCollectionPath){
-    
+    public static void main(String[] args) {
+        if (args.length != 1) {
+            System.out.println("Error index_path\n");
+                return;    
+        }
         
-        
+        String indexPath=args[0];
+        String outputCollectionPath = "outputCollection";
+       	LuceneIndex LucIdx = new LuceneIndex(); 
+     
+        LucIdx.load(indexPath);
+        if(LucIdx.getReader() != null){
+            LuceneSearcher lucSearch = new LuceneSearcher();
+            lucSearch.build(LucIdx);
+            //ahora leemos de teclado las querys
+            
+        }
+
     }
+
     @Override
     public void build(Index index) {
-        this.indexdir=index.getPath();
-        
+        this.indexdir = index.getPath();
+        LuceneIndex luceneIndex = (LuceneIndex) index;
+        this.indexSearcher = new IndexSearcher(luceneIndex.getReader());
+
     }
 
     @Override
     public List<ScoredTextDocument> search(String query) {
-        List<ScoredTextDocument> scored=new ArrayList<ScoredTextDocument>();
+        List<ScoredTextDocument> scored = new ArrayList<ScoredTextDocument>();
         Directory dir = null;
-        IndexSearcher is=null;
-        StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
-        
 
-        IndexReader reader=null;
-        try {
-            reader = IndexReader.open(FSDirectory.open(new File(this.indexdir)));
-        } catch (IOException ex) {
-            Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
-                        System.out.println("Error en LuceneSearcher");
-            return null;
-        }
-        
-        IndexSearcher searcher = new IndexSearcher(reader);
-        
-        
-        Query q=null;
+        StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
+
+        Query q = null;
         try {
             q = new QueryParser(Version.LUCENE_35, "title", analyzer).parse(query);
         } catch (ParseException ex) {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
-                        System.out.println("Error en LuceneSearcher");
+            System.out.println("Error en LuceneSearcher");
             return null;
         };
-        TopDocs top=null;
+        TopDocs top = null;
         try {
             //Finds the top n hits for query.
-            top=searcher.search(q, null, 1000);
+            top = this.indexSearcher.search(q, null, TOP10);
         } catch (IOException ex) {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error en LuceneSearcher");
             return null;
         }
-        for(int j=0;j<1000;j++){
-            Document aux=null;
+        for (int j = 0; j < 1000; j++) {
+            Document aux = null;
             try {
-                 aux=reader.document(top.scoreDocs[j].doc);
+                //aux=reader.document(top.scoreDocs[j].doc);
+                aux = this.indexSearcher.doc(top.scoreDocs[j].doc);
             } catch (IOException ex) {
                 Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String docPath=aux.getFieldable("name").stringValue();
-           ScoredTextDocument textdoc =     new ScoredTextDocument (docPath,top.scoreDocs[j].score);
-           scored.add(textdoc);
+            String docPath = aux.getFieldable("name").stringValue();
+            ScoredTextDocument textdoc = new ScoredTextDocument(docPath, top.scoreDocs[j].score);
+            scored.add(textdoc);
         }
+        Collections.sort(scored);
+
         return scored;
     }
-     
-    
 
-    
-    
-  
-    
 }

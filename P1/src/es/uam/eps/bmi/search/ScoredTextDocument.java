@@ -41,6 +41,8 @@ public class ScoredTextDocument implements java.lang.Comparable {
 
     @Override
     public int compareTo(Object o) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int aux= (int)(this.score - ((ScoredTextDocument)o).getScore());
+        
+        return aux;
     }
 }
