@@ -26,12 +26,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.IndexSearcher;
 
@@ -53,15 +57,22 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 
     /**
      *
-     * @param inputCollectionPath
-     * @param outputCollectionPath
-     */
-    
-    public void main(String inputCollectionPath,String outputCollectionPath){
-        
-        build(inputCollectionPath,outputCollectionPath,null);
-        
+     * @param args
+     */  
+    public static void main(String[] args){
+	if (args.length != 3){
+		System.out.println("Error en número de argumentos");
+	}
+        String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
+	String outputCollectionPath = "outputCollection";
+       	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,null); 
      
+    }
+    
+    public LuceneIndex (String inputCollectionPath, String outputIndexPath, TextParser textParser){
+	    this.indexPath = inputCollectionPath;
+	    
+        build(inputCollectionPath,outputIndexPath,null);
     }
     
     //  docDir coincide con la ruta de los zips? hay que java.util.zip.ZipInputStream?
@@ -79,9 +90,9 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
       Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
       IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_31, analyzer);
 
-      final File docDir = new File(inputCollectionPath);
-       if (!docDir.exists() || !docDir.canRead()) {
-      System.out.println("Document directory '" +docDir.getAbsolutePath()+ "' does not exist or is not readable, please check the path");
+      final ZipFile docDir = new ZipFile(inputCollectionPath+"/docs.zip");
+       if (docDir.entries() == null ) {
+      System.out.println("Document directory '" +docDir + "' does not exist or is not readable, please check the path");
       System.exit(1);
     }
       
@@ -240,83 +251,54 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
     }
     
     
-    static void indexDocs(IndexWriter writer, File file)
+    static void indexDocs(IndexWriter writer, ZipFile file)
     throws IOException {
     // do not try to index files that cannot be read
-    if (file.canRead()) {
-      if (file.isDirectory()) {
-        String[] files = file.list();
-        // an IO error could occur
-        if (files != null) {
-          for (int i = 0; i < files.length; i++) {
-            indexDocs(writer, new File(file, files[i]));
-          }
-        }
-      } else {
-
-        FileInputStream fis;
-        try {
-          fis = new FileInputStream(file);
-        } catch (FileNotFoundException fnfe) {
-          // at least on windows, some temporary files raise this exception with an "access denied" message
-          // checking if the file can be read doesn't help
-          return;
-        }
-
-        try {
+       try {
 
           // make a new, empty document
-          Document doc = new Document();
 
-          // Add the path of the file as a field named "path".  Use a
-          // field that is indexed (i.e. searchable), but don't tokenize 
-          // the field into separate words and don't index term frequency
-          // or positional information:
-          //we use name as docId
-          Field pathField = new Field("name", file.getPath(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
-          pathField.setIndexOptions(IndexOptions.DOCS_ONLY);
-          doc.add(pathField);
+	  ZipFile zipFile = file ;
+	  Enumeration<? extends ZipEntry> entries = zipFile.entries();
+	  while(entries.hasMoreElements()){
+          	Document doc = new Document();
+		ZipEntry entry = entries.nextElement();
+		  
+          	Field pathField = new Field("name", entry.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+          	pathField.setIndexOptions(IndexOptions.DOCS_ONLY);
+          	doc.add(pathField);
 
-          // Add the last modified date of the file a field named "modified".
-          // Use a NumericField that is indexed (i.e. efficiently filterable with
-          // NumericRangeFilter).  This indexes to milli-second resolution, which
-          // is often too fine.  You could instead create a number based on
-          // year/month/day/hour/minutes/seconds, down the resolution you require.
-          // For example the long value 2011021714 would mean
-          // February 17, 2011, 2-3 PM.
-          NumericField idField = new NumericField("id", Field.Store.YES, true);
-          num_id++;
-          idField.setLongValue(num_id);
-          doc.add(idField);
+          	NumericField idField = new NumericField("id", Field.Store.YES, true);
+          	idField.setLongValue(num_id);
+          	num_id++;
+          	doc.add(idField);
           
-          
-          
-          NumericField modifiedField = new NumericField("modified");
-          modifiedField.setLongValue(file.lastModified());
-          doc.add(modifiedField);
+          	NumericField modifiedField = new NumericField("modified");
+          	modifiedField.setLongValue(entry.getTime());
+          	doc.add(modifiedField);
 
-          // Add the contents of the file to a field named "contents".  Specify a Reader,
-          // so that the text of the file is tokenized and indexed, but not stored.
-          // Note that FileReader expects the file to be in UTF-8 encoding.
-          // If that's not the case searching for special characters will fail.
-          doc.add(new Field("contents", new BufferedReader(new InputStreamReader(fis, "UTF-8"))));
+
+
+		InputStream stream = zipFile.getInputStream(entry);
+          
+		doc.add(new Field("contents", new BufferedReader(new InputStreamReader(stream, "UTF-8"))));
+		
 
           if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
             // New index, so we just add the document (no old document can be there):
-            System.out.println("adding " + file);
+            System.out.println("adding " + entry.getName());
             writer.addDocument(doc);
           } else {
             // Existing index (an old copy of this document may have been indexed) so 
             // we use updateDocument instead to replace the old one matching the exact 
             // path, if present:
-            System.out.println("updating " + file);
-            writer.updateDocument(new Term("name", file.getPath()), doc);
+            System.out.println("updating " + entry.getName());
+            writer.updateDocument(new Term("name", entry.getName()), doc);
           }
+	  }
           
         } finally {
-          fis.close();
+	   file.close();
         }
       }
     }
-  }
-}
