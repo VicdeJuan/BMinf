@@ -6,6 +6,7 @@
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
+import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
 import es.uam.eps.bmi.search.parsing.HtmlParser;
@@ -54,22 +55,39 @@ public class LuceneSearcher implements Searcher {
      *
      * @param inputCollectionPath
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length != 1) {
             System.out.println("Error index_path\n");
-                return;    
+            return;
         }
-        
-        String indexPath=args[0];
+
+        String indexPath = args[0];
         String outputCollectionPath = "outputCollection";
-       	LuceneIndex LucIdx = new LuceneIndex(); 
-     
+        LuceneIndex LucIdx = new LuceneIndex();
+
         LucIdx.load(indexPath);
-        if(LucIdx.getReader() != null){
+        if (LucIdx.getReader() != null) {
             LuceneSearcher lucSearch = new LuceneSearcher();
             lucSearch.build(LucIdx);
             //ahora leemos de teclado las querys
-            
+            System.out.println("Introducir las palabras de la búsqueda:");
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String query = br.readLine();
+
+            List<ScoredTextDocument> resul = lucSearch.search(query);
+            if (resul != null) {
+                for (int i = 0; i < resul.size(); i++) {
+                    ScoredTextDocument hit = resul.get(i);
+                    TextDocument dochit = LucIdx.getDocument(hit.getDocId());
+                    if (dochit != null) {
+                        System.out.println(dochit.getName());
+                    }
+                }
+
+            } else {
+                System.out.println("Consulta vacia");
+            }
+
         }
 
     }

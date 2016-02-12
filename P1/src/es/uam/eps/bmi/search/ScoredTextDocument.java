@@ -23,14 +23,14 @@ public class ScoredTextDocument implements java.lang.Comparable {
         return (int) (this.score - o.getScore());
     }
 
-    String getDocId() {
+    public String getDocId() {
         return this.docId;
     }
     /*que
      devolverá el identificador del documento asociado al resultado
      */
 
-    double getScore() {
+    public double getScore() {
         return this.score;
     }
     /* que
