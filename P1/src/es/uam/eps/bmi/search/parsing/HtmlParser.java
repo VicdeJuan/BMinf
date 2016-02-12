@@ -7,6 +7,7 @@ package es.uam.eps.bmi.search.parsing;
 
 import org.apache.lucene.document.Document;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 /**
  *
@@ -14,9 +15,19 @@ import org.jsoup.Jsoup;
  */
 public class HtmlParser implements TextParser {
 
+	
+public static void main (String[] args){
+	
+	String html = "<p>An <a href='http://example.com/'>\n\n<b>example</b></a> link.</p>";
+	org.jsoup.nodes.Document doc = Jsoup.parse(html);
+	HtmlParser p = new HtmlParser();
+	System.out.println(p.parse(html));
+}
     @Override
     public String parse(String text) {
- return null;
+	    Element doc;
+	    doc = parseDoc(text).body();
+	    return doc.text();
     }
     public org.jsoup.nodes.Document parseDoc(String text) {
         return Jsoup.parse(text) ;    

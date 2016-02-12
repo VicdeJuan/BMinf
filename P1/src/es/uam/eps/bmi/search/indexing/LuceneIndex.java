@@ -6,6 +6,7 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
+import es.uam.eps.bmi.search.parsing.HtmlParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -28,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import static java.lang.System.exit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -37,6 +39,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.FieldCache.Parser;
 import org.apache.lucene.search.IndexSearcher;
 
 
@@ -65,14 +68,14 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 	}
         String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
 	String outputCollectionPath = "outputCollection";
-       	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,null); 
+       	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HtmlParser()); 
      
     }
     
     public LuceneIndex (String inputCollectionPath, String outputIndexPath, TextParser textParser){
 	    this.indexPath = inputCollectionPath;
 	    
-        build(inputCollectionPath,outputIndexPath,null);
+        build(inputCollectionPath,outputIndexPath,textParser);
     }
     
     //  docDir coincide con la ruta de los zips? hay que java.util.zip.ZipInputStream?
@@ -105,7 +108,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
         iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
       }
       IndexWriter writer = new IndexWriter(dir, iwc);
-      indexDocs(writer, docDir);
+      indexDocs(writer, docDir,textParser);
       writer.close();
 
 
@@ -251,7 +254,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
     }
     
     
-    static void indexDocs(IndexWriter writer, ZipFile file)
+    static void indexDocs(IndexWriter writer, ZipFile file, TextParser textParser)
     throws IOException {
     // do not try to index files that cannot be read
        try {
@@ -276,12 +279,20 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
           	NumericField modifiedField = new NumericField("modified");
           	modifiedField.setLongValue(entry.getTime());
           	doc.add(modifiedField);
-
-
-
+	
+		
 		InputStream stream = zipFile.getInputStream(entry);
-          
-		doc.add(new Field("contents", new BufferedReader(new InputStreamReader(stream, "UTF-8"))));
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+		
+		String sCurrentLine;
+		String content = new String("");
+		
+		while ((sCurrentLine = br.readLine()) != null) {
+				content = content + sCurrentLine;
+			}
+
+		String toad = textParser.parse(content);
+		doc.add(new Field("contents", toad ,Field.Store.NO, Field.Index.ANALYZED_NO_NORMS));
 		
 
           if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
