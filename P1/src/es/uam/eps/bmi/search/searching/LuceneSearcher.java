@@ -6,6 +6,7 @@
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
+import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
 import java.util.List;
@@ -49,13 +50,8 @@ public class LuceneSearcher implements Searcher {
 	 * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
-        /*if (args.length != 1) {
-            System.out.println("Error index_path\n");
-            return;
-        }*/
 
-        String indexPath = "outputCollection";
-        String outputCollectionPath = "outputCollection";
+        String indexPath = args.length > 0 ? args[1] : "outputCollection";
         LuceneIndex LucIdx = new LuceneIndex(indexPath);
 
         if (LucIdx.getReader() != null) {
@@ -97,7 +93,7 @@ public class LuceneSearcher implements Searcher {
 
         Query q;
         try {
-            q = new QueryParser(Version.LUCENE_35, "contents", analyzer).parse(query);
+            q = new QueryParser(Version.LUCENE_35, Utils.STR_CONTENT, analyzer).parse(query);
         } catch (ParseException ex) {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error en LuceneSearcher");
@@ -106,7 +102,7 @@ public class LuceneSearcher implements Searcher {
         TopDocs top;
         try {
             //Finds the top n hits for query.
-            top = this.indexSearcher.search(q, null, TOP10);
+            top = this.indexSearcher.search(q, null, TOP5);
         } catch (IOException ex) {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error en LuceneSearcher");
@@ -122,7 +118,7 @@ public class LuceneSearcher implements Searcher {
                 Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             }
 	    if (aux == null) continue;
-            String docPath = aux.getFieldable("name").stringValue();
+            String docPath = aux.getFieldable(Utils.DOC_STR_NAME).stringValue();
             ScoredTextDocument textdoc = new ScoredTextDocument(docPath, d.score);
             scored.add(textdoc);
         }
