@@ -10,5 +10,6 @@ public class Utils {
 	public static final String STR_ID = "id";
 	public static final String STR_MODIFIED = "path";
 	public static final String STR_NAME = "name";
+	public static String DOC_STR_NAME = "name";
 	
 }
