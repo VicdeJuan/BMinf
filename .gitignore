@@ -1,0 +1,32 @@
+P1/nbproject/private/
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+.nb-gradle/
+
+# Class Files #
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Ficheros innecesarios
+clueweb-*
+
+# Lucene index files
+*.fdt
+*.fdx 
+*.fnm
+*.frq
+*.nrm
+*.prx
+*.tii
+*.tis
+segments.gen
+segments_*
