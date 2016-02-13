@@ -16,6 +16,8 @@ nb-configuration.xml
 *.war
 *.ear
 
+# Ficheros innecesarios
+clueweb-*
 
 # Lucene index files
 *.fdt
@@ -25,5 +27,6 @@ nb-configuration.xml
 *.nrm
 *.prx
 *.tii
+*.tis
 segments.gen
-segments_2
+segments_*
