@@ -15,3 +15,15 @@ nb-configuration.xml
 *.jar
 *.war
 *.ear
+
+
+# Lucene index files
+*.fdt
+*.fdx 
+*.fnm
+*.frq
+*.nrm
+*.prx
+*.tii
+segments.gen
+segments_2
