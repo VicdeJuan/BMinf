@@ -36,6 +36,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.index.TermPositions;
 
 /**
  *
@@ -201,7 +203,24 @@ public class LuceneIndex implements Index {
             return null;
         }
         Document doc = null;
-
+        TermEnum termenum= null;
+        try {
+            termenum=this.getReader().terms();
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            while(termenum.next()){
+                Term term=termenum.term();
+                if(term.field().equals("contents")){
+                    terms.add(term.text());
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+/*
         for (int i = 1; i < reader.maxDoc(); i++) {
             try {
                 doc = reader.document(i);
@@ -216,13 +235,14 @@ public class LuceneIndex implements Index {
                    
             terms.add(doc.getFieldable("contents").stringValue());
         }
+        */
 
         return terms;
     }
 
     @Override
     public List<Posting> getTermPostings(String term) {
-        if (reader == null) {
+        /*if (reader == null) {
             return null;
         }
         List<Long> pos = new ArrayList<>();
@@ -246,7 +266,39 @@ public class LuceneIndex implements Index {
             }
 
         }
-
+        */List<Posting> posts = new ArrayList<>();
+        TermEnum termenum= null;
+        try {
+            termenum=this.getReader().terms();
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            while(termenum.next()){
+                Term term=termenum.term();
+                if(term.field().equals("contents")){
+                    if(term.text().equals(term)){
+                    
+                    }
+                    //terms.add(term.text());
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //sacar docid,term,termpositions
+        
+            //si es el term
+          //  if(){
+            List<Long> pos = new ArrayList<>();
+           // TermPositions termposition= this.getReader().termPositions(new Term("contents",term));
+            
+            Posting post= new Posting("docid",term,pos);
+            posts.add(post);
+            
+        
+        //Posting(String docId, String term, List<Long> termPositions)
+        
         return posts;
     }
 

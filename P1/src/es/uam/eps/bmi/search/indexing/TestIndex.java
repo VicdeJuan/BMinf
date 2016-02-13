@@ -33,8 +33,10 @@ public class TestIndex {
             fichero = new FileWriter("src/es/uam/eps/bmi/frecuencias1K.txt");
             pw = new PrintWriter(fichero);
 
-            //for (int i = 0; i < 10; i++)
-            //    pw.println("Linea " + i);
+             //for (int i = 0; i < 10; i++)
+             //    pw.println("Linea " + i);
+             List<String> terms = LucIdx.getTerms();
+            
             for (String term : LucIdx.getTerms()) {
                 int freqs = 0;
                 int ndocs = 0;
