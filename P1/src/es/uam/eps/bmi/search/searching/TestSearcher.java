@@ -49,16 +49,18 @@ public class TestSearcher {
             querys.add("getting organized");
             querys.add("toilet");
             querys.add("mitchell college");
-            fichero = new FileWriter("src/es/uam/eps/bmi/frecuencias1K.txt");
+            fichero = new FileWriter("src/es/uam/eps/bmi/Querys1K.txt");
             pw = new PrintWriter(fichero);
-
+            int indice=1;
+            pw.println(" querys Top 10:");
             for (String query : querys) {
                 List<ScoredTextDocument> resul = lucSearch.search(query);
-                int indice=1;
+                
+                pw.println(indice+":");
                 if (resul != null && resul.size() > 0) {
                     
                     for (ScoredTextDocument score: resul){
-                        pw.println(indice+":");
+                        
                         pw.println(score.getDocId());
                     }
                     /*resul.stream().forEach((ScoredTextDocument hit) -> {
@@ -71,7 +73,9 @@ public class TestSearcher {
                 } else {
                     pw.println("Query vacia");
                 }
+                indice++;
             }
+            fichero.close();
         }
 
     }
