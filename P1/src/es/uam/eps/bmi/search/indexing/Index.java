@@ -14,6 +14,7 @@ import java.util.List;
  * @author e267044
  */
 public interface Index {
+	
     
     /**
      * construirá un índice a partir de una colección de documentos de texto. Recibirá como argumentos de entrada las ruta de 

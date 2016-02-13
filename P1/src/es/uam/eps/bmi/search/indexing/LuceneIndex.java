@@ -29,8 +29,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
@@ -39,6 +43,10 @@ import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.index.TermPositions;
+import org.apache.lucene.index.TermFreqVector;
+
+
+
 
 /**
  *
@@ -50,11 +58,10 @@ public class LuceneIndex implements Index {
     private IndexReader reader = null;
     private static long num_id = 0;
 
-    /* 
-     dos argumentos de entrada: la ruta de la carpeta que contiene la colección de documentos con
-     los que crear el índice, y la ruta de la carpeta en la que almacenar el índice creado.*/
-    /**
-     *
+    
+	/*    Método main: recibe la ruta de la carpeta que contiene la colección de documentos con
+*    los que crear el índice, y la ruta de la carpeta en la que almacenar el índice creado
+     * Por defecto, utilizar HtmlParser
      * @param args
      */  
     public static void main(String[] args){
@@ -203,103 +210,41 @@ public class LuceneIndex implements Index {
     @Override
     public List<String> getTerms() {
         List<String> terms = new ArrayList<>();
-        if (reader == null) {
-            return null;
-        }
-        Document doc = null;
-        TermEnum termenum= null;
-        try {
-            termenum=this.getReader().terms();
-        } catch (IOException ex) {
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            while(termenum.next()){
-                Term term=termenum.term();
-                if(term.field().equals("contents")){
-                    terms.add(term.text());
-                }
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-/*
-        for (int i = 1; i < reader.maxDoc(); i++) {
-            try {
-                doc = reader.document(i);
-            } catch (IOException ex) {
-                Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-           if (doc == null)
-		   continue;
-            terms.add(doc.getFieldable(Utils.STR_NAME).stringValue());
-        }
-        */
-
-        return terms;
+	// Eliminamos duplicados utilizando un set.
+        TreeSet<String> _terms = new TreeSet<>();
+	for (int doc = 0; doc < this.reader.maxDoc(); doc++)
+	    try {
+		    TermFreqVector[] vector = this.reader.getTermFreqVectors(doc);
+		    Arrays.asList(vector).stream().forEach((TermFreqVector tfv) -> _terms.addAll(Arrays.asList(tfv.getTerms())));
+	    } catch (IOException ex) {
+		    Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+	    }
+	   
+	terms.addAll(_terms);
+	return terms;
+		
     }
 
     @Override
     public List<Posting> getTermPostings(String term) {
-        /*if (reader == null) {
-            return null;
-        }
-        List<Long> pos = new ArrayList<>();
-        List<Posting> posts = new ArrayList<>();
-        Document doc;
-
-        for (int i = 1; i < reader.maxDoc(); i++) {
-            Posting post;
-            try {
-                doc = reader.document(i);
-                Term ter = new Term(term, term);
-                Integer aaux = reader.termPositions(ter).nextPosition();
-                Long aux = aaux.longValue();
-                pos.add(aux);
-                post=new Posting(doc.getFieldable(Utils.STR_NAME).stringValue(),
-                    term, pos );
-                posts.add(post);
-
-            } catch (IOException ex) {
-                Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-        */List<Posting> posts = new ArrayList<>();
+           List<Posting> posts = new ArrayList<>();
+	    
+	posts = new ArrayList<>();
         TermEnum termenum= null;
         try {
             termenum=this.getReader().terms();
-        } catch (IOException ex) {
+            TermPositions termposition= this.getReader().termPositions(new Term("contents",term));
+	    while(termposition.next()){
+            	List<Long> pos = new ArrayList<>();
+		for (int j = 0; j < termposition.freq(); ++j)
+			pos.add((long) termposition.nextPosition());
+		posts.add(new Posting("" + termposition.doc(), term, pos));
+		
+	    }
+       } catch (IOException ex) {
             Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
-        try {
-            while(termenum.next()){
-                Term _term=termenum.term();
-                if(_term.field().equals("contents")){
-                    if(_term.text().equals(_term)){
-                    
-                    }
-                    //terms.add(term.text());
-                }
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        //sacar docid,term,termpositions
-        
-            //si es el term
-          //  if(){
-            List<Long> pos = new ArrayList<>();
-           // TermPositions termposition= this.getReader().termPositions(new Term("contents",term));
-            
-            Posting post= new Posting("docid",term,pos);
-            posts.add(post);
-            
-        
-        //Posting(String docId, String term, List<Long> termPositions)
-        
+       
         return posts;
     }
 
@@ -344,14 +289,14 @@ public class LuceneIndex implements Index {
                 }
 
                 String toad = textParser.parse(content);
-                doc.add(new Field(Utils.STR_CONTENT, toad, Field.Store.YES, Field.Index.ANALYZED_NO_NORMS));
+                doc.add(new Field(Utils.STR_CONTENT, toad, Field.Store.YES, Field.Index.ANALYZED,Field.TermVector.WITH_POSITIONS_OFFSETS));
 
                 if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
                     // New index, so we just add the document (no old document can be there):
                     System.out.println("adding " + entry.getName());
                     writer.addDocument(doc);
                 } else {
-            // Existing index (an old copy of this document may have been indexed) so 
+           // Existing index (an old copy of this document may have been indexed) so 
                     // we use updateDocument instead to replace the old one matching the exact 
                     // path, if present:
                     System.out.println("updating " + entry.getName());

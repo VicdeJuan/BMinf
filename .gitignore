@@ -18,6 +18,8 @@ nb-configuration.xml
 
 # Ficheros innecesarios
 clueweb-*
+outputCollection
+*.txt
 
 # Lucene index files
 *.fdt

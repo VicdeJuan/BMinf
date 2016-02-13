@@ -15,13 +15,15 @@ public class Posting {
     private String docId;
     private String term;
     private List<Long> termPositions;
+    private int freq;
 
     public Posting(String docId, String term, List<Long> termPositions) {
         this.docId = docId;
         this.term = term;
         this.termPositions = termPositions;
+	this.freq = 0;
     }
-    
+
     
    String getDocId(){
    return this.docId;

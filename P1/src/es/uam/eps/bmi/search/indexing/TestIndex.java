@@ -25,9 +25,11 @@ public class TestIndex {
     public static void main (String[] args){
 	 String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
         String outputCollectionPath = "outputCollection";
-        LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath, outputCollectionPath, new HTMLSimpleParser());
-        LucIdx.load(outputCollectionPath);
-        FileWriter fichero = null;
+	boolean regen = false;
+	
+        LuceneIndex LucIdx = regen ?  new LuceneIndex(inputCollectionPath, outputCollectionPath, new HTMLSimpleParser()) : new LuceneIndex(outputCollectionPath) ;
+        
+	FileWriter fichero = null;
         PrintWriter pw = null;
         try {
             fichero = new FileWriter("src/es/uam/eps/bmi/frecuencias1K.txt");
@@ -35,11 +37,13 @@ public class TestIndex {
 
              //for (int i = 0; i < 10; i++)
              //    pw.println("Linea " + i);
-             List<String> terms = LucIdx.getTerms();
             
+	    
+	    	    	    
             for (String term : LucIdx.getTerms()) {
                 int freqs = 0;
                 int ndocs = 0;
+		
                 List<Posting> termPostings = LucIdx.getTermPostings(term);
                 for (Posting post : termPostings) {
                     freqs = freqs + post.getTermFrequency();
