@@ -6,26 +6,19 @@
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
-import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
-import es.uam.eps.bmi.search.parsing.HtmlParser;
 import java.util.List;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -33,7 +26,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 /**
@@ -53,7 +45,8 @@ public class LuceneSearcher implements Searcher {
      * ejecutar por el buscador sobre el índice y muestre por pantalla los top 5
      * documentos devueltos por el buscador para cada consulta
      *
-     * @param inputCollectionPath
+	 * @param args
+	 * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
         /*if (args.length != 1) {
@@ -63,9 +56,8 @@ public class LuceneSearcher implements Searcher {
 
         String indexPath = "outputCollection";
         String outputCollectionPath = "outputCollection";
-        LuceneIndex LucIdx = new LuceneIndex();
+        LuceneIndex LucIdx = new LuceneIndex(indexPath);
 
-        LucIdx.load(indexPath);
         if (LucIdx.getReader() != null) {
             LuceneSearcher lucSearch = new LuceneSearcher();
             lucSearch.build(LucIdx);
