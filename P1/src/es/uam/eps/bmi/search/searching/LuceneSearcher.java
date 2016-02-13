@@ -56,7 +56,8 @@ public class LuceneSearcher implements Searcher {
 
         String indexPath = "outputCollection";
         String outputCollectionPath = "outputCollection";
-        LuceneIndex LucIdx = new LuceneIndex(indexPath);
+        LuceneIndex LucIdx = new LuceneIndex();
+        LucIdx.load(indexPath);
 
         if (LucIdx.getReader() != null) {
             LuceneSearcher lucSearch = new LuceneSearcher();

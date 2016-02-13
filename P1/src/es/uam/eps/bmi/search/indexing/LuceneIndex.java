@@ -6,7 +6,7 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
-import es.uam.eps.bmi.search.parsing.HtmlParser;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -62,7 +62,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 	}
         String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
 	String outputCollectionPath = "outputCollection";
-       	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HtmlParser()); 
+       	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HTMLSimpleParser()); 
      
     }
     

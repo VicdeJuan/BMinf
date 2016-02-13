@@ -13,14 +13,16 @@ import org.jsoup.nodes.Element;
  *
  * @author dani
  */
-public class HtmlParser implements TextParser {
+public class HTMLSimpleParser implements TextParser {
 
 	
 public static void main (String[] args){
 	
 	String html = "<p>An <a href='http://example.com/'>\n\n<b>example</b></a> link.</p>";
-	org.jsoup.nodes.Document doc = Jsoup.parse(html);
-	HtmlParser p = new HtmlParser();
+	
+        System.out.println(Jsoup.parse(html).text());
+        org.jsoup.nodes.Document doc = Jsoup.parse(html);
+	HTMLSimpleParser p = new HTMLSimpleParser();
 	System.out.println(p.parse(html));
 }
     @Override
