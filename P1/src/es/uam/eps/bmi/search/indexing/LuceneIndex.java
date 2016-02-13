@@ -6,6 +6,7 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
+import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.parsing.HtmlParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import org.apache.lucene.analysis.Analyzer;
@@ -58,12 +59,16 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
      */  
     public static void main(String[] args){
 	if (args.length != 3){
-		System.out.println("Error en número de argumentos");
+		System.out.println("Error en número de argumentos\nUso: java LuceneIndex inputCollectionPath outputCollectionPath");
 	}
-        String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
-	String outputCollectionPath = "outputCollection";
+        String inputCollectionPath = args[1]; 
+	String outputCollectionPath = args[2];
        	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HtmlParser()); 
      
+    }
+
+    public LuceneIndex(String indexPath){
+	    load(indexPath);
     }
     
     public LuceneIndex (String inputCollectionPath, String outputIndexPath, TextParser textParser){
@@ -71,17 +76,12 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 	    
         build(inputCollectionPath,outputIndexPath,textParser);
     }
-    public LuceneIndex (){
-	    
-	    
-       
-    }
     
     //  docDir coincide con la ruta de los zips? hay que java.util.zip.ZipInputStream?
     // writer es donde se genera el indice. En el path indicado por dir (indexpath), y con la configuracion
     // indicada por iwc?
     @Override
-    public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
+    public final void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
         boolean create=true;
         
      
@@ -106,12 +106,9 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
         // Add new documents to an existing index:
         iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
       }
-      IndexWriter writer = new IndexWriter(dir, iwc);
-      indexDocs(writer, docDir,textParser);
-      writer.close();
-
-
-
+      try (IndexWriter writer = new IndexWriter(dir, iwc)) {
+		indexDocs(writer, docDir,textParser);
+	}
     } catch (IOException e) {
       System.out.println(" caught a " + e.getClass() +
        "\n with message: " + e.getMessage());
@@ -157,7 +154,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
             }
            if (doc == null)
 		   continue;
-            ids.add(doc.getFieldable("id").stringValue());
+            ids.add(doc.getFieldable(Utils.STR_ID).stringValue());
         }
       
         return ids;
@@ -186,9 +183,9 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
            if (doc == null)
 		   continue;
             //si coinciden los id contruimos el TextDocument
-            if(doc.getFieldable("id").stringValue().equals(docId)){
-                name = doc.getFieldable("name").stringValue();
-                id = doc.getFieldable("id").stringValue();
+            if(doc.getFieldable(Utils.STR_ID).stringValue().equals(docId)){
+                name = doc.getFieldable(Utils.STR_NAME).stringValue();
+                id = doc.getFieldable(Utils.STR_ID).stringValue();
                 textdoc = new TextDocument(id,name);
                 return textdoc;
             
@@ -216,7 +213,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
             
            if (doc == null)
 		   continue;
-            terms.add(doc.getFieldable("name").stringValue());
+            terms.add(doc.getFieldable(Utils.STR_NAME).stringValue());
         }
       
         return terms;
@@ -239,7 +236,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
                 Integer aaux = reader.termPositions(ter).nextPosition();
                 Long aux = aaux.longValue();
                 pos.add(aux);
-                post=new Posting(doc.getFieldable("name").stringValue(),
+                post=new Posting(doc.getFieldable(Utils.STR_NAME).stringValue(),
                     term, pos );
                 posts.add(post);
                 
@@ -273,16 +270,16 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
           	Document doc = new Document();
 		ZipEntry entry = entries.nextElement();
 		  
-          	Field pathField = new Field("name", entry.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+          	Field pathField = new Field(Utils.STR_NAME, entry.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
           	pathField.setIndexOptions(IndexOptions.DOCS_ONLY);
           	doc.add(pathField);
 
-          	NumericField idField = new NumericField("id", Field.Store.YES, true);
+          	NumericField idField = new NumericField(Utils.STR_ID, Field.Store.YES, true);
           	idField.setLongValue(num_id);
           	num_id++;
           	doc.add(idField);
           
-          	NumericField modifiedField = new NumericField("modified");
+          	NumericField modifiedField = new NumericField(Utils.STR_MODIFIED);
           	modifiedField.setLongValue(entry.getTime());
           	doc.add(modifiedField);
 	
@@ -298,7 +295,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 			}
 
 		String toad = textParser.parse(content);
-		doc.add(new Field("contents", toad ,Field.Store.NO, Field.Index.ANALYZED_NO_NORMS));
+		doc.add(new Field(Utils.STR_MODIFIED, toad ,Field.Store.NO, Field.Index.ANALYZED_NO_NORMS));
 		
 
           if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
@@ -310,7 +307,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
             // we use updateDocument instead to replace the old one matching the exact 
             // path, if present:
             System.out.println("updating " + entry.getName());
-            writer.updateDocument(new Term("name", entry.getName()), doc);
+            writer.updateDocument(new Term(Utils.DOC_STR_NAME, entry.getName()), doc);
           }
 	  }
           

@@ -37,16 +37,17 @@ public class LuceneSearcher implements Searcher {
 
     private String indexdir;
     private IndexSearcher indexSearcher;
-    private final int TOP5 = 5;
-    private final int TOP10 = 10;
+    private static final int TOP5 = 5;
+    private static final int TOP10 = 10;
 
     /**
-     * recibe como argumento de entrada la ruta de la carpeta que contenga un
-     * índice Lucene, y que de forma iterativa pida al usuario consultas a
-     * ejecutar por el buscador sobre el índice y muestre por pantalla los top 5
-     * documentos devueltos por el buscador para cada consulta
+     * Recibe como argumento de entrada la ruta de la carpeta que contenga un
+     * índice Lucene.
+     * De forma iterativa pide al usuario consultas a
+     * ejecutar por el buscador sobre el índice y muestre por pantalla el top 5
+     * de documentos devueltos por el buscador para cada consulta.
      *
-	 * @param args
+	 * @param args 
 	 * @throws java.io.IOException
      */
     public static void main(String[] args) throws IOException {
@@ -64,9 +65,8 @@ public class LuceneSearcher implements Searcher {
 
             List<ScoredTextDocument> resul = lucSearch.search(query);
             if (resul != null && resul.size() >0) {
-		    resul.stream().forEach((hit) -> {
-			    System.out.println(hit.getDocId());
-		    });
+		    for (int i = 0; i<TOP5; i++)
+			    System.out.println(resul.get(i).getDocId());
 
             } else {
                 System.out.println("Consulta vacia");
@@ -102,7 +102,7 @@ public class LuceneSearcher implements Searcher {
         TopDocs top;
         try {
             //Finds the top n hits for query.
-            top = this.indexSearcher.search(q, null, TOP5);
+            top = this.indexSearcher.search(q, null, this.indexSearcher.maxDoc());
         } catch (IOException ex) {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error en LuceneSearcher");
