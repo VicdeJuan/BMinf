@@ -56,12 +56,12 @@ public class LuceneSearcher implements Searcher {
      * @param inputCollectionPath
      */
     public static void main(String[] args) throws IOException {
-        if (args.length != 1) {
+        /*if (args.length != 1) {
             System.out.println("Error index_path\n");
             return;
-        }
+        }*/
 
-        String indexPath = args[0];
+        String indexPath = "outputCollection";
         String outputCollectionPath = "outputCollection";
         LuceneIndex LucIdx = new LuceneIndex();
 
@@ -75,14 +75,10 @@ public class LuceneSearcher implements Searcher {
             String query = br.readLine();
 
             List<ScoredTextDocument> resul = lucSearch.search(query);
-            if (resul != null) {
-                for (int i = 0; i < resul.size(); i++) {
-                    ScoredTextDocument hit = resul.get(i);
-                    TextDocument dochit = LucIdx.getDocument(hit.getDocId());
-                    if (dochit != null) {
-                        System.out.println(dochit.getName());
-                    }
-                }
+            if (resul != null && resul.size() >0) {
+		    resul.stream().forEach((hit) -> {
+			    System.out.println(hit.getDocId());
+		    });
 
             } else {
                 System.out.println("Consulta vacia");
@@ -102,20 +98,20 @@ public class LuceneSearcher implements Searcher {
 
     @Override
     public List<ScoredTextDocument> search(String query) {
-        List<ScoredTextDocument> scored = new ArrayList<ScoredTextDocument>();
+        List<ScoredTextDocument> scored = new ArrayList<>();
         Directory dir = null;
 
         StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
 
-        Query q = null;
+        Query q;
         try {
-            q = new QueryParser(Version.LUCENE_35, "title", analyzer).parse(query);
+            q = new QueryParser(Version.LUCENE_35, "contents", analyzer).parse(query);
         } catch (ParseException ex) {
             Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error en LuceneSearcher");
             return null;
-        };
-        TopDocs top = null;
+        }
+        TopDocs top;
         try {
             //Finds the top n hits for query.
             top = this.indexSearcher.search(q, null, TOP10);
@@ -124,16 +120,18 @@ public class LuceneSearcher implements Searcher {
             System.out.println("Error en LuceneSearcher");
             return null;
         }
-        for (int j = 0; j < 1000; j++) {
+	
+	for(ScoreDoc d : top.scoreDocs){
             Document aux = null;
             try {
                 //aux=reader.document(top.scoreDocs[j].doc);
-                aux = this.indexSearcher.doc(top.scoreDocs[j].doc);
+                aux = this.indexSearcher.doc(d.doc);
             } catch (IOException ex) {
                 Logger.getLogger(LuceneSearcher.class.getName()).log(Level.SEVERE, null, ex);
             }
+	    if (aux == null) continue;
             String docPath = aux.getFieldable("name").stringValue();
-            ScoredTextDocument textdoc = new ScoredTextDocument(docPath, top.scoreDocs[j].score);
+            ScoredTextDocument textdoc = new ScoredTextDocument(docPath, d.score);
             scored.add(textdoc);
         }
         Collections.sort(scored);

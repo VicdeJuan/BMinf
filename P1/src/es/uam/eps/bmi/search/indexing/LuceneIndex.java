@@ -24,14 +24,10 @@ import org.apache.lucene.util.Version;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import static java.lang.System.exit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Level;
@@ -39,8 +35,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.FieldCache.Parser;
-import org.apache.lucene.search.IndexSearcher;
 
 
 
@@ -145,21 +139,24 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 
     @Override
     public List<String> getDocIds() {
-        List<String> ids =new ArrayList<String>();
-        IndexReader reader = null;
+        List<String> ids =new ArrayList<>();
+        IndexReader _reader = null;
         Document doc = null;
         try {
-            reader = IndexReader.open(FSDirectory.open(new File(this.indexPath)));
+            _reader = IndexReader.open(FSDirectory.open(new File(this.indexPath)));
         } catch (IOException ex) {
             Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for(int i=1; i<reader.maxDoc();i++){
+	if (_reader == null)
+		return null;
+        for(int i=1; i<_reader.maxDoc();i++){
             try {
-                doc= reader.document(i);
+                doc= _reader.document(i);
             } catch (IOException ex) {
                 Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+           if (doc == null)
+		   continue;
             ids.add(doc.getFieldable("id").stringValue());
         }
       
@@ -175,10 +172,10 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
         if (reader == null) {
             return null;
         }
-        TextDocument textdoc = null;
+        TextDocument textdoc ;
         Document doc = null;
-        String name=null;
-        String id=null;
+        String name;
+        String id;
         
         for(int i=1; i<reader.maxDoc();i++){
             try {
@@ -186,6 +183,8 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
             } catch (IOException ex) {
                 Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
             }
+           if (doc == null)
+		   continue;
             //si coinciden los id contruimos el TextDocument
             if(doc.getFieldable("id").stringValue().equals(docId)){
                 name = doc.getFieldable("name").stringValue();
@@ -202,7 +201,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 
     @Override
     public List<String> getTerms() {
-        List<String> terms =new ArrayList<String>();
+        List<String> terms =new ArrayList<>();
         if (reader == null) {
             return null;
         }
@@ -215,6 +214,8 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
                 Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
             }
             
+           if (doc == null)
+		   continue;
             terms.add(doc.getFieldable("name").stringValue());
         }
       
@@ -226,9 +227,9 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
         if (reader == null) {
             return null;
         }
-        List<Long> pos= new ArrayList<Long>();
-        List<Posting> posts=new ArrayList<Posting>();
-        Document doc = null;
+        List<Long> pos= new ArrayList<>();
+        List<Posting> posts=new ArrayList<>();
+        Document doc;
         
         for(int i=1; i<reader.maxDoc();i++){
             Posting post;
@@ -290,7 +291,7 @@ los que crear el índice, y la ruta de la carpeta en la que almacenar el índice
 		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 		
 		String sCurrentLine;
-		String content = new String("");
+		String content = "";
 		
 		while ((sCurrentLine = br.readLine()) != null) {
 				content = content + sCurrentLine;
