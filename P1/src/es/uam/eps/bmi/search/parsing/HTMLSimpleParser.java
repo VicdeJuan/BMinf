@@ -5,6 +5,9 @@
  */
 package es.uam.eps.bmi.search.parsing;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.lucene.document.Document;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -21,7 +24,10 @@ public class HTMLSimpleParser implements TextParser {
 	   // Element doc;
 	    //doc = parseDoc(text).body();
 	    //return doc.text();
-           return Jsoup.parse(text).text();
+            String aux = text.split("DOCTYPE")[1];
+           String toret =  Jsoup.parse(aux).text();
+           toret = toret.replaceAll(",|\\.|'s", "");
+           return toret;
     }
     public org.jsoup.nodes.Document parseDoc(String text) {
         return Jsoup.parse(text) ;    

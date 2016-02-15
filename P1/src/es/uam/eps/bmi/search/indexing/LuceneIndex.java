@@ -32,15 +32,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.NavigableSet;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.index.FilterIndexReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.index.TermPositions;
@@ -69,10 +65,10 @@ public class LuceneIndex implements Index {
 	if (args.length != 3){
 		System.out.println("Error en número de argumentos\nUso: java LuceneIndex inputCollectionPath outputCollectionPath");
 	}
-        String inputCollectionPath = args[1];
-	String outputCollectionPath = args[2];
-        inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
-        outputCollectionPath = "outputCollection";
+//        String inputCollectionPath = args[1];
+//	String outputCollectionPath = args[2];
+        String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
+        String outputCollectionPath = "outputCollection";
        	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HTMLSimpleParser());
 
     }

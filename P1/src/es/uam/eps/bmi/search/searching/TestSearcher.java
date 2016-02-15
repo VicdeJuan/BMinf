@@ -7,11 +7,15 @@ package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,18 +44,65 @@ public class TestSearcher {
             
 	    int indice=1;
 	    int max = 5;
-            pw.println(" querys Top "+max);
+            pw.println(" querys Top " + max);
+            
+            ArrayList<ArrayList<String>> resultados = new ArrayList<>();
             for (String query : Files.readAllLines(Paths.get(queryFile))) {
                 List<ScoredTextDocument> resul = lucSearch.search(query.substring(2));
-                pw.println(query + " -- " + (indice++)+":");
+                pw.println(query + " -- " + (indice++) + ":");
+
                 if (resul != null && resul.size() > 0) {
-                    resul.stream().limit(5).forEach((hit) -> pw.println(hit.getDocId()));
+                    ArrayList<String> aux = new ArrayList<>();
+                    String toadd;
+                    for (int i = 0; i < max; i++) {
+                        toadd = resul.get(i).getDocId().substring(0,resul.get(i).getDocId().lastIndexOf("."));
+                        aux.add(toadd);
+                        pw.write(toadd);
+                    }
+                    resultados.add(aux);
                 } else {
                     pw.println("Query vacia");
                 }
             }
+
+            fichero.close();
+        
+        
+            FileReader f = new FileReader("src/es/uam/eps/bmi/clueweb-1K/relevance.txt");
+            BufferedReader b = new BufferedReader(f);
+            FileWriter out = new FileWriter("src/es/uam/eps/bmi/Comparacion5-1k.txt");
+            final PrintWriter pwout = new PrintWriter(out);
+
+            Integer[] encontrados = new Integer[max];
+            for (int x = 0; x < encontrados.length; x++) {
+                encontrados[x] = 0;
+            }
+            int j = 0;
+            String cadena;
+            while ((cadena = b.readLine()) != null) {
+
+                String[] split = cadena.split("\t");
+                List<String> keys = new ArrayList<>(Arrays.asList(split));
+                for (int k = 0; k < max; k++) {
+
+                    //vemos si cada elemento de la query esta en relevance
+                   
+                    for (String key : keys)                     
+                        if (key.equals(resultados.get(j).get(k))) {
+                            encontrados[j]++;    
+                            break;
+                        }
+                    
+                    
+                }
+                pwout.println("Query: " + (j + 1) + "\t" + encontrados[j]*1.0/max);
+
+                j++;
+            }
+            out.close();
             fichero.close();
         }
-
     }
-}
+
+ }
+
