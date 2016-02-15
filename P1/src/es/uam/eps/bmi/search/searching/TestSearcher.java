@@ -7,15 +7,12 @@ package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -31,7 +28,6 @@ public class TestSearcher {
          }*/
 
         String indexPath = "outputCollection";
-        String outputCollectionPath = "outputCollection";
         LuceneIndex LucIdx = new LuceneIndex(indexPath);
         FileWriter fichero = new FileWriter("src/es/uam/eps/bmi/Querys1K.txt");
 	String queryFile = "src/es/uam/eps/bmi/clueweb-1K/queries.txt";
@@ -40,23 +36,16 @@ public class TestSearcher {
         if (LucIdx.getReader() != null) {
             LuceneSearcher lucSearch = new LuceneSearcher();
             lucSearch.build(LucIdx);
-            /*
-             //ahora leemos de teclado las querys
-             System.out.println("Introducir las palabras de la búsqueda:");
-             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-             String query = br.readLine();
-             */
-	    
+            
             
 	    int indice=1;
 	    int max = 5;
             pw.println(" querys Top "+max);
             for (String query : Files.readAllLines(Paths.get(queryFile))) {
                 List<ScoredTextDocument> resul = lucSearch.search(query.substring(2));
-		
-                pw.println((indice++)+":");
+                pw.println(query + " -- " + (indice++)+":");
                 if (resul != null && resul.size() > 0) {
-                   resul.stream().limit(5).forEach((hit) -> pw.println(hit.getDocId()));
+                    resul.stream().limit(5).forEach((hit) -> pw.println(hit.getDocId()));
                 } else {
                     pw.println("Query vacia");
                 }

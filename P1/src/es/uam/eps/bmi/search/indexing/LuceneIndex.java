@@ -40,6 +40,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.index.FilterIndexReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.index.TermPositions;
@@ -58,34 +59,34 @@ public class LuceneIndex implements Index {
     private IndexReader reader = null;
     private static long num_id = 0;
 
-    
+
 	/*    Método main: recibe la ruta de la carpeta que contiene la colección de documentos con
 *    los que crear el índice, y la ruta de la carpeta en la que almacenar el índice creado
      * Por defecto, utilizar HtmlParser
      * @param args
-     */  
+     */
     public static void main(String[] args){
 	if (args.length != 3){
 		System.out.println("Error en número de argumentos\nUso: java LuceneIndex inputCollectionPath outputCollectionPath");
 	}
-        String inputCollectionPath = args[1]; 
+        String inputCollectionPath = args[1];
 	String outputCollectionPath = args[2];
         inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
         outputCollectionPath = "outputCollection";
-       	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HTMLSimpleParser()); 
-     
+       	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HTMLSimpleParser());
+
     }
 
     public LuceneIndex(String indexPath){
 	    load(indexPath);
     }
-    
+
     public LuceneIndex (String inputCollectionPath, String outputIndexPath, TextParser textParser){
 	    this.indexPath = inputCollectionPath;
-	    
+
         build(inputCollectionPath,outputIndexPath,textParser);
     }
-    
+
 
 
     //  docDir coincide con la ruta de los zips? hay que java.util.zip.ZipInputStream?
@@ -124,7 +125,7 @@ public class LuceneIndex implements Index {
             System.out.println(" caught a " + e.getClass()
                     + "\n with message: " + e.getMessage());
         }
-
+        load(indexPath);
     }
 
     @Override
@@ -172,7 +173,7 @@ public class LuceneIndex implements Index {
 
     }
 
-    // hay que coger todos los ids de los documentos del indice, como? busqueda de ids en 
+    // hay que coger todos los ids de los documentos del indice, como? busqueda de ids en
     //indice o recorriendo linea a linea?
     @Override
     public TextDocument getDocument(String docId) {
@@ -219,18 +220,16 @@ public class LuceneIndex implements Index {
 	    } catch (IOException ex) {
 		    Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
 	    }
-	   
+
 	terms.addAll(_terms);
 	return terms;
-		
+
     }
 
     @Override
     public List<Posting> getTermPostings(String term) {
            List<Posting> posts = new ArrayList<>();
-	    
-	posts = new ArrayList<>();
-        TermEnum termenum= null;
+        TermEnum termenum = null;
         try {
             termenum=this.getReader().terms();
             TermPositions termposition= this.getReader().termPositions(new Term("contents",term));
@@ -239,12 +238,12 @@ public class LuceneIndex implements Index {
 		for (int j = 0; j < termposition.freq(); ++j)
 			pos.add((long) termposition.nextPosition());
 		posts.add(new Posting("" + termposition.doc(), term, pos));
-		
+
 	    }
        } catch (IOException ex) {
             Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
-       
+
         return posts;
     }
 
@@ -296,8 +295,8 @@ public class LuceneIndex implements Index {
                     System.out.println("adding " + entry.getName());
                     writer.addDocument(doc);
                 } else {
-           // Existing index (an old copy of this document may have been indexed) so 
-                    // we use updateDocument instead to replace the old one matching the exact 
+           // Existing index (an old copy of this document may have been indexed) so
+                    // we use updateDocument instead to replace the old one matching the exact
                     // path, if present:
                     System.out.println("updating " + entry.getName());
                     writer.updateDocument(new Term("name", entry.getName()), doc);
@@ -307,5 +306,9 @@ public class LuceneIndex implements Index {
         } finally {
             file.close();
         }
+    }
+
+    int getNumDoc() {
+        return this.reader.maxDoc();
     }
 }

@@ -15,16 +15,7 @@ import org.jsoup.nodes.Element;
  */
 public class HTMLSimpleParser implements TextParser {
 
-	
-public static void main (String[] args){
-	
-	String html = "<p>An <a href='http://example.com/'>\n\n<b>example</b></a> link.</p>";
-	
-        System.out.println(Jsoup.parse(html).text());
-        org.jsoup.nodes.Document doc = Jsoup.parse(html);
-	HTMLSimpleParser p = new HTMLSimpleParser();
-	System.out.println(p.parse(html));
-}
+
     @Override
     public String parse(String text) {
 	   // Element doc;
