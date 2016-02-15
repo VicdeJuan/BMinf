@@ -1,2 +1,0 @@
-# BMinf
-Cazakas es tolai
