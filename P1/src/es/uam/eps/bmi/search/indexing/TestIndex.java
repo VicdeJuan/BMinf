@@ -32,7 +32,9 @@ public class TestIndex {
     }
     
     public static void _test_create(String input, String collectionPath, TextParser parser,String outputFile){
-        _test(outputFile,new LuceneIndex(input, collectionPath, parser));
+	LuceneIndex  LucIdx = new LuceneIndex(input, collectionPath, parser);
+	LucIdx.load(collectionPath);
+        _test(outputFile,LucIdx);
     }
     
     
@@ -64,7 +66,7 @@ public class TestIndex {
                     val[0] += post.getTermFrequency();
                     val[1]++;
                     val[2] += post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency())/Math.log(2);
-                });
+             });
                 // val 2 = tf
                 val[2] = val[2]/LucIdx.getNumDoc();
                 // val 3 = idf
@@ -100,7 +102,7 @@ public class TestIndex {
         String outputCollectionPath = "outputCollection_"+file;
         String outputFile ="src/es/uam/eps/bmi/frecuencias"+file+"K.txt";
         	
-        boolean regen = false;
+        boolean regen = true;
 	
         if (regen) 
             _test_create(inputCollectionPath, outputCollectionPath, new HTMLSimpleParser(), outputFile);

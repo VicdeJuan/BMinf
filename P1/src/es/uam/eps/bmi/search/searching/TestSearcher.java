@@ -30,7 +30,7 @@ public class TestSearcher {
         
             final PrintWriter pwout = new PrintWriter(new FileWriter(outputFile));
             BufferedReader expected_file = new BufferedReader(new FileReader(compareToFile));
-            Integer[] encontrados = new Integer[resultados.size()];
+            Integer[] encontrados = new Integer[resultados.size()+1];
             for (int x = 0; x < encontrados.length; x++) {
                 encontrados[x] = 0;
             }
@@ -81,18 +81,19 @@ public class TestSearcher {
                 if (resul != null && resul.size() > 0) {
                     ArrayList<String> aux = new ArrayList<>();
                     String toadd;
-                    for (int i = 0; i < max; i++) {
+                    for (int i = 0; i < Math.min(max,resul.size()) ; i++) {
                         toadd = resul.get(i).getDocId().substring(0,resul.get(i).getDocId().lastIndexOf("."));
                         aux.add(toadd);
-                        pw.write(toadd);
+                        pw.write(toadd+"\t");
                     }
                     resultados.add(aux);
                 } else {
                     ArrayList<String> aux = new ArrayList<>();
                     aux.add("Query Vacia");
                     resultados.add(aux);
-                    pw.write("Query vacia");
+                    pw.write("Query vacia\t");
                 }
+		pw.write("\n");
             }
 
             pw.close();            
@@ -104,21 +105,34 @@ public class TestSearcher {
         
         
         //Definicion de variables a utiliar
-        String indexPath = "outputCollection";
+        ArrayList<String> ks = new ArrayList<>();
+	ks.add("1");
+	ks.add("10");
+	ks.add("100");
+	
+	ArrayList<Integer> maxs = new ArrayList<>();
+	maxs.add(5);
+	maxs.add(10);
+	maxs.add(100);
+	
+	for (String k : ks){
+	System.out.print(k + "::");
+        String indexPath = "outputCollection_"+k;
         LuceneIndex LucIdx = new LuceneIndex(indexPath);
-        String k = "10K";
-        int max = 10;
-        String outputFile_build = "src/es/uam/eps/bmi/Querys"+k+".txt";
-        String outputFile_evaluate = "src/es/uam/eps/bmi/Comparacion"+max+"-"+k+".txt";
-	String queryFile = "src/es/uam/eps/bmi/clueweb-"+k+"/queries.txt";
-        String compareToFile = "src/es/uam/eps/bmi/clueweb-"+k+"/relevance.txt";
-        
-        
-        
-        //Calculamos resultados
-        ArrayList<ArrayList<String>> resultados = _build_results(outputFile_build, LucIdx, queryFile, max);
-        
-        _evaluate_results(outputFile_evaluate, resultados, max, compareToFile);
+	
+	for (int max : maxs) {
+		System.out.println("\t" + max);
+		String outputFile_build = "Querys"+k+"K_"+max+".txt";
+		String outputFile_evaluate = "Comparacion"+max+"-"+k+"K.txt";
+		String queryFile = "src/es/uam/eps/bmi/clueweb-"+k+"K/queries.txt";
+		String compareToFile = "src/es/uam/eps/bmi/clueweb-"+k+"K/relevance.txt";
+        	//Calculamos resultados
+        	ArrayList<ArrayList<String>> resultados = _build_results(outputFile_build, LucIdx, queryFile, max);
+		
+        	//evaluamos los resultados
+        	_evaluate_results(outputFile_evaluate, resultados, max, compareToFile);
+	}
+	}
     }
 
  }

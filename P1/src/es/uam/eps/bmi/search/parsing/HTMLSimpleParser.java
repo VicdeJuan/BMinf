@@ -21,32 +21,9 @@ import org.jsoup.nodes.Element;
 public class HTMLSimpleParser implements TextParser {
 
 
-	public String PorterStemming(String text){
-		HashMap<String,String> stem = new HashMap<>();
-		stem.put("sses","ss");
-		stem.put("as","a");
-		stem.put("es","e");
-		stem.put("is","i");
-		stem.put("os","o");
-		stem.put("us","u");
-		stem.put("ied","i");
-		stem.put("ies","ie");
-
-                String toret = text;
-		for(Map.Entry<String, String> k : stem.entrySet())
-                    toret = toret.replaceAll(k.getKey(), k.getValue());
-
-                return toret;
-	}
-
     @Override
     public String parse(String text) {
-	   // Element doc;
-	    //doc = parseDoc(text).body();
-	    //return doc.text();
-           //String aux = text.split("DOCTYPE")[1];
            String toret =  Jsoup.parse(text).text();
-           //toret = toret.replaceAll(",|\\.|'s", "");
            return toret;
     }
     public org.jsoup.nodes.Document parseDoc(String text) {

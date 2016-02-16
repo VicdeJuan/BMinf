@@ -68,7 +68,7 @@ public class LuceneIndex implements Index {
 //        String inputCollectionPath = args[1];
 //	String outputCollectionPath = args[2];
         String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
-        String outputCollectionPath = "outputCollection";
+        String outputCollectionPath = "outputCollection_1";
        	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HTMLSimpleParser());
 
     }
@@ -96,8 +96,8 @@ public class LuceneIndex implements Index {
             System.out.println("Indexing to directory '" + inputCollectionPath + "'...");
             this.indexPath = outputIndexPath;
             Directory dir = FSDirectory.open(new File(this.indexPath));
-            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
-            IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_31, analyzer);
+            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
+            IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_36, analyzer);
 
             final ZipFile docDir = new ZipFile(inputCollectionPath + "/docs.zip");
             if (docDir.entries() == null) {
@@ -120,8 +120,8 @@ public class LuceneIndex implements Index {
         } catch (IOException e) {
             System.out.println(" caught a " + e.getClass()
                     + "\n with message: " + e.getMessage());
+                System.exit(1);
         }
-        load(indexPath);
     }
 
     @Override
@@ -211,8 +211,8 @@ public class LuceneIndex implements Index {
         TreeSet<String> _terms = new TreeSet<>();
 	for (int doc = 0; doc < this.reader.maxDoc(); doc++)
 	    try {
-		    TermFreqVector[] vector = this.reader.getTermFreqVectors(doc);
-		    Arrays.asList(vector).stream().forEach((TermFreqVector tfv) -> _terms.addAll(Arrays.asList(tfv.getTerms())));
+		    TermFreqVector vector = this.reader.getTermFreqVector(doc,"contents");
+		    _terms.addAll(Arrays.asList(vector.getTerms()));
 	    } catch (IOException ex) {
 		    Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
 	    }
@@ -233,7 +233,7 @@ public class LuceneIndex implements Index {
             	List<Long> pos = new ArrayList<>();
 		for (int j = 0; j < termposition.freq(); ++j)
 			pos.add((long) termposition.nextPosition());
-		posts.add(new Posting("" + termposition.doc(), term, pos));
+		posts.add(new Posting(reader.document(termposition.doc()).getFieldable(Utils.STR_ID).stringValue(), term, pos));
 
 	    }
        } catch (IOException ex) {
@@ -264,6 +264,7 @@ public class LuceneIndex implements Index {
                 pathField.setIndexOptions(IndexOptions.DOCS_ONLY);
                 doc.add(pathField);
 
+		
                 NumericField idField = new NumericField(Utils.STR_ID, Field.Store.YES, true);
                 idField.setLongValue(num_id);
                 num_id++;
@@ -272,7 +273,7 @@ public class LuceneIndex implements Index {
                 NumericField modifiedField = new NumericField(Utils.STR_MODIFIED);
                 modifiedField.setLongValue(entry.getTime());
                 doc.add(modifiedField);
-
+		
                 InputStream stream = zipFile.getInputStream(entry);
                 BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 
@@ -284,19 +285,9 @@ public class LuceneIndex implements Index {
                 }
 
                 String toad = textParser.parse(content);
-                doc.add(new Field(Utils.STR_CONTENT, toad, Field.Store.YES, Field.Index.ANALYZED,Field.TermVector.WITH_POSITIONS_OFFSETS));
-
-                if (writer.getConfig().getOpenMode() == OpenMode.CREATE) {
-                    // New index, so we just add the document (no old document can be there):
-                    System.out.println("adding " + entry.getName());
-                    writer.addDocument(doc);
-                } else {
-           // Existing index (an old copy of this document may have been indexed) so
-                    // we use updateDocument instead to replace the old one matching the exact
-                    // path, if present:
-                    System.out.println("updating " + entry.getName());
-                    writer.updateDocument(new Term("name", entry.getName()), doc);
-                }
+                doc.add(new Field(Utils.STR_CONTENT, toad, Field.Store.YES, Field.Index.ANALYZED,Field.TermVector.YES));
+		
+		writer.addDocument(doc);
             }
 
         } finally {
