@@ -25,24 +25,45 @@ import java.util.List;
  */
 public class TestSearcher {
 
-    public static void main(String[] args) throws IOException {
-        /*if (args.length != 1) {
-         System.out.println("Error index_path\n");
-         return;
-         }*/
-
-        String indexPath = "outputCollection";
-        LuceneIndex LucIdx = new LuceneIndex(indexPath);
-        String k = "10K";
-        int max = 5;
-        FileWriter fichero = new FileWriter("src/es/uam/eps/bmi/Querys"+k+".txt");
-	String queryFile = "src/es/uam/eps/bmi/clueweb-"+k+"/queries.txt";
-        FileReader f = new FileReader("src/es/uam/eps/bmi/clueweb-"+k+"/relevance.txt");
-        BufferedReader b = new BufferedReader(f);
-        FileWriter out = new FileWriter("src/es/uam/eps/bmi/Comparacion"+max+"-"+k+".txt");
+    
+    public static void _evaluate_results(String outputFile,ArrayList<ArrayList<String>> resultados,int max,String compareToFile) throws IOException{
         
-        final PrintWriter pw = new PrintWriter(fichero);
+            final PrintWriter pwout = new PrintWriter(new FileWriter(outputFile));
+            BufferedReader expected_file = new BufferedReader(new FileReader(compareToFile));
+            Integer[] encontrados = new Integer[resultados.size()];
+            for (int x = 0; x < encontrados.length; x++) {
+                encontrados[x] = 0;
+            }
+            int j = 0;
+            String cadena;
+            while ((cadena = expected_file.readLine()) != null) {
 
+                String[] split = cadena.split("\t");
+                List<String> keys = new ArrayList<>(Arrays.asList(split));
+                for (int l = 0; l < resultados.get(j).size(); l++) {
+
+                    //vemos si cada elemento de la query esta en relevance
+                   
+                    for (String key : keys)                     
+                        if (key.equals(resultados.get(j).get(l))) {
+                            encontrados[j]++;    
+                            break;
+                        }
+                    
+                    
+                }
+                pwout.println("Query: " + (j + 1) + "\t" + encontrados[j]*1.0/max);
+
+                j++;
+            }
+            pwout.close();
+        }
+    
+    
+    public static ArrayList<ArrayList<String>> _build_results(String outputFile,LuceneIndex LucIdx,String queryFile, int max) throws IOException{
+     
+        final PrintWriter pw = new PrintWriter(new FileWriter(outputFile));
+        ArrayList<ArrayList<String>> resultados = new ArrayList<>();
         if (LucIdx.getReader() != null) {
             LuceneSearcher lucSearch = new LuceneSearcher();
             lucSearch.build(LucIdx);
@@ -52,7 +73,7 @@ public class TestSearcher {
 	    
             pw.println(" querys Top " + max);
             
-            ArrayList<ArrayList<String>> resultados = new ArrayList<>();
+            
             for (String query : Files.readAllLines(Paths.get(queryFile))) {
                 List<ScoredTextDocument> resul = lucSearch.search(query.substring(query.indexOf(":")+1));
                 pw.println(query + " -- " + (indice++) + ":");
@@ -74,40 +95,30 @@ public class TestSearcher {
                 }
             }
 
-            fichero.close();
+            pw.close();            
+            }
+        return resultados;
+    }
+    
+    public static void main(String[] args) throws IOException {
         
         
-            final PrintWriter pwout = new PrintWriter(out);
-
-            Integer[] encontrados = new Integer[resultados.size()];
-            for (int x = 0; x < encontrados.length; x++) {
-                encontrados[x] = 0;
-            }
-            int j = 0;
-            String cadena;
-            while ((cadena = b.readLine()) != null) {
-
-                String[] split = cadena.split("\t");
-                List<String> keys = new ArrayList<>(Arrays.asList(split));
-                for (int l = 0; l < resultados.get(j).size(); l++) {
-
-                    //vemos si cada elemento de la query esta en relevance
-                   
-                    for (String key : keys)                     
-                        if (key.equals(resultados.get(j).get(l))) {
-                            encontrados[j]++;    
-                            break;
-                        }
-                    
-                    
-                }
-                pwout.println("Query: " + (j + 1) + "\t" + encontrados[j]*1.0/max);
-
-                j++;
-            }
-            out.close();
-            fichero.close();
-        }
+        //Definicion de variables a utiliar
+        String indexPath = "outputCollection";
+        LuceneIndex LucIdx = new LuceneIndex(indexPath);
+        String k = "10K";
+        int max = 10;
+        String outputFile_build = "src/es/uam/eps/bmi/Querys"+k+".txt";
+        String outputFile_evaluate = "src/es/uam/eps/bmi/Comparacion"+max+"-"+k+".txt";
+	String queryFile = "src/es/uam/eps/bmi/clueweb-"+k+"/queries.txt";
+        String compareToFile = "src/es/uam/eps/bmi/clueweb-"+k+"/relevance.txt";
+        
+        
+        
+        //Calculamos resultados
+        ArrayList<ArrayList<String>> resultados = _build_results(outputFile_build, LucIdx, queryFile, max);
+        
+        _evaluate_results(outputFile_evaluate, resultados, max, compareToFile);
     }
 
  }
