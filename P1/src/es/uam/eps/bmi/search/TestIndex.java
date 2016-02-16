@@ -83,7 +83,7 @@ public class TestIndex {
 				// val 2 = tf
 				val[2] = val[0] == 0 ? 1 : 1+Math.log(val[0])/Math.log(2);
 				// val 3 = idf
-				val[3] = Math.log(val[1] / LucIdx.getNumDoc() );
+				val[3] = Math.log(LucIdx.getNumDoc() / val[1]);
 				freqHash.put(term, val);
 			});
 
