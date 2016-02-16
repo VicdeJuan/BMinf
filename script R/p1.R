@@ -60,30 +60,3 @@ png('idf10k.png')
 plot(x,log(y), pch=".", col="blue", xlab="termino", ylab="idf", main="idf 10k")
 dev.off()
 
-#_____________ Frecuencias 100K ___________________
-datos = read.table("frecuencias10K.txt")
-x <- 1:length(datos$V1)
-
-#frecuencia
-y <- datos$V2
-png('frecuencias100k.png')
-plot(x,log(y), pch="*", col="blue", xlab="termino", ylab="frecuencia", main="frecuencias 100k")
-dev.off()
-
-#num docs
-y <- datos$V3
-png('numdocs100k.png')
-plot(x,log(y), pch=".", col="blue", xlab="termino", ylab="nº docs", main="nº docs 100k")
-dev.off()
-
-#tf
-y <- datos$V4
-png('tf100k.png')
-plot(x,log(y), pch=".", col="blue", xlab="termino", ylab="tf", main="tf 100k")
-dev.off()
-
-#idf
-y <- datos$V5
-png('idf100k.png')
-plot(x,log(y), pch=".", col="blue", xlab="termino", ylab="idf", main="idf 100k")
-dev.off()
