@@ -19,25 +19,23 @@ public class ScoredTextDocument implements java.lang.Comparable {
         this.score = score;
     }
 
-    public int compareTo(ScoredTextDocument o) {
-        return (int) (this.score - o.getScore());
-    }
 
+/**
+ * 
+ * @return el identificador del documento asociado al resultado
+ */
     public String getDocId() {
         return this.docId;
     }
-    /*que
-     devolverá el identificador del documento asociado al resultado
-     */
-
+    
+/**
+ * 
+ * @return el score asociado al resultado.
+ */
     public double getScore() {
         return this.score;
     }
-    /* que
-     devolverá el 
-     score
-     asociado al resultado
-     */
+
 
     @Override
     public int compareTo(Object o) {

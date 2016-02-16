@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
@@ -29,10 +24,6 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
 
-/**
- *
- * @author dani
- */
 public class LuceneSearcher implements Searcher {
 
     private String indexdir;
@@ -76,6 +67,10 @@ public class LuceneSearcher implements Searcher {
 
     }
 
+    /**
+     * Construye a partir de un indice.
+     * @param index 
+     */
     @Override
     public void build(Index index) {
         this.indexdir = index.getPath();
@@ -84,6 +79,12 @@ public class LuceneSearcher implements Searcher {
 
     }
 
+    /**
+     * Busca en la coleccion de documentos la query dada como argumento.
+     * @param query Query a buscar en los documentos.
+     * @return Lista de ScoredTextDocument's en los que se encuentra ordenados
+     *      segun su orden natural.
+     */
     @Override
     public List<ScoredTextDocument> search(String query) {
         List<ScoredTextDocument> scored = new ArrayList<>();
