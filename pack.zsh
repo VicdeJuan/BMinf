@@ -12,7 +12,7 @@ cd ..
 
 ## Generación de javadoc
 cd  $practica
-#ant javadoc
+ant javadoc
 cd ..
 
 jdoc=$practica"/dist/javadoc"

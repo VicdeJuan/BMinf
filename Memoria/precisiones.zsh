@@ -6,7 +6,7 @@ done
 
 pdflatex "bmi-p1-12-precisiones"
 
-#Rscript generarGraficas.R
+Rscript generarGraficas.R
 
 echo "" > tex/frecuencias.tex
 for f in $(ls img/*.png); do
