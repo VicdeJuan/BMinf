@@ -37,270 +37,266 @@ import org.apache.lucene.index.TermEnum;
 import org.apache.lucene.index.TermPositions;
 import org.apache.lucene.index.TermFreqVector;
 
-
-
-
 public class LuceneIndex implements Index {
 
-    String indexPath;
-    private IndexReader reader = null;
-    private static long num_id = 0;
+	String indexPath;
+	private IndexReader reader = null;
+	private static long num_id = 0;
 
 
-    /*    Método main: recibe la ruta de la carpeta que contiene la colección 
-     *  de documentos con los que crear el índice, y la ruta de la carpeta 
-     *  en la que almacenar el índice creado.
-     *    Por defecto, utilizar HtmlParser
-     * @param args Argumentos a recibir.
-     */
-    
-    
-    public static void main(String[] args){
-	if (args.length != 3){
-		System.out.println("Error en número de argumentos\nUso: java LuceneIndex inputCollectionPath outputCollectionPath");
+	/*    Método main: recibe la ruta de la carpeta que contiene la colección 
+	 *  de documentos con los que crear el índice, y la ruta de la carpeta 
+	 *  en la que almacenar el índice creado.
+	 *    Por defecto, utilizar HtmlParser
+	 * @param args Argumentos a recibir.
+	 */
+	public static void main(String[] args) {
+		if (args.length != 3) {
+			System.out.println("Error en número de argumentos\nUso: java LuceneIndex inputCollectionPath outputCollectionPath");
+		}
+		String inputCollectionPath = args[1];
+		String outputCollectionPath = args[2];
+		LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath, outputCollectionPath, new HTMLSimpleParser());
 	}
-        String inputCollectionPath = args[1];
-	String outputCollectionPath = args[2];
-       	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HTMLSimpleParser());
-    }
-    
-    
-/**
- * Constructor que crea y carga un indice a partir de un indice en disco.
- * @param indexPath     Path donde se encuentra el indice en disco.
- */
-    public LuceneIndex(String indexPath){
-	    load(indexPath);
-    }
 
-    public LuceneIndex (String inputCollectionPath, String outputIndexPath, TextParser textParser){
-	    this.indexPath = inputCollectionPath;
+	/**
+	 * Constructor que crea y carga un indice a partir de un indice en
+	 * disco.
+	 *
+	 * @param indexPath Path donde se encuentra el indice en disco.
+	 */
+	public LuceneIndex(String indexPath) {
+		load(indexPath);
+	}
 
-        build(inputCollectionPath,outputIndexPath,textParser);
-    }
+	public LuceneIndex(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
+		this.indexPath = inputCollectionPath;
 
+		build(inputCollectionPath, outputIndexPath, textParser);
+	}
 
+	/**
+	 * Construye un indice utilizando los argumentos dados.
+	 *
+	 * @param inputCollectionPath
+	 * @param outputIndexPath
+	 * @param textParser
+	 */
+	@Override
+	public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
 
-    
-    /**
-     * Construye un indice utilizando los argumentos dados.
-     * @param inputCollectionPath
-     * @param outputIndexPath
-     * @param textParser 
-     */
-    @Override
-    public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
+		try {
+			System.out.println("Indexing to directory '" + inputCollectionPath + "'...");
+			this.indexPath = outputIndexPath;
+			Directory dir = FSDirectory.open(new File(this.indexPath));
+			Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
+			IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_36, analyzer);
 
-        try {
-            System.out.println("Indexing to directory '" + inputCollectionPath + "'...");
-            this.indexPath = outputIndexPath;
-            Directory dir = FSDirectory.open(new File(this.indexPath));
-            Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_36);
-            IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+			final ZipFile docDir = new ZipFile(inputCollectionPath + "/docs.zip");
+			if (docDir.entries() == null) {
+				System.out.println("Document directory '" + docDir + "' does not exist or is not readable, please check the path");
+				System.exit(1);
+			}
 
-            final ZipFile docDir = new ZipFile(inputCollectionPath + "/docs.zip");
-            if (docDir.entries() == null) {
-                System.out.println("Document directory '" + docDir + "' does not exist or is not readable, please check the path");
-                System.exit(1);
-            }
+			iwc.setOpenMode(OpenMode.CREATE);
 
-            iwc.setOpenMode(OpenMode.CREATE);
-        
-            IndexWriter writer = new IndexWriter(dir, iwc);
-            indexDocs(writer, docDir, textParser);
-            writer.close();
+			IndexWriter writer = new IndexWriter(dir, iwc);
+			indexDocs(writer, docDir, textParser);
+			writer.close();
 
-        } catch (IOException e) {
-            System.out.println(" caught a " + e.getClass()
-                    + "\n with message: " + e.getMessage());
-                System.exit(1);
-        }
-    }
+		} catch (IOException e) {
+			System.out.println(" caught a " + e.getClass()
+				+ "\n with message: " + e.getMessage());
+			System.exit(1);
+		}
+	}
 
-    
-    @Override
-    public void load(String indexPath) {
-        this.indexPath = indexPath;
-        try {
-            reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
-        } catch (IOException ex) {
-            System.out.println(" Loading error " + ex.getMessage());
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	@Override
+	public void load(String indexPath) {
+		this.indexPath = indexPath;
+		try {
+			reader = IndexReader.open(FSDirectory.open(new File(indexPath)));
+		} catch (IOException ex) {
+			System.out.println(" Loading error " + ex.getMessage());
+			Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-    @Override
-    public String getPath() {
-        return this.indexPath;
+	@Override
+	public String getPath() {
+		return this.indexPath;
 
-    }
+	}
 
-    @Override
-    public List<String> getDocIds() {
-        List<String> ids = new ArrayList<>();
-        IndexReader _reader = null;
-        Document doc = null;
-        try {
-            _reader = IndexReader.open(FSDirectory.open(new File(this.indexPath)));
-        } catch (IOException ex) {
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        if (_reader == null) {
-            return null;
-        }
-        for (int i = 1; i < _reader.maxDoc(); i++) {
-            try {
-                doc = _reader.document(i);
-            } catch (IOException ex) {
-                Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-            }
-           if (doc == null)
-		   continue;
-            ids.add(doc.getFieldable(Utils.STR_ID).stringValue());
-        }
+	@Override
+	public List<String> getDocIds() {
+		List<String> ids = new ArrayList<>();
+		IndexReader _reader = null;
+		Document doc = null;
+		try {
+			_reader = IndexReader.open(FSDirectory.open(new File(this.indexPath)));
+		} catch (IOException ex) {
+			Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		if (_reader == null) {
+			return null;
+		}
+		for (int i = 1; i < _reader.maxDoc(); i++) {
+			try {
+				doc = _reader.document(i);
+			} catch (IOException ex) {
+				Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			if (doc == null) {
+				continue;
+			}
+			ids.add(doc.getFieldable(Utils.STR_ID).stringValue());
+		}
 
-        return ids;
+		return ids;
 
-    }
+	}
 
     // hay que coger todos los ids de los documentos del indice, como? busqueda de ids en
-    //indice o recorriendo linea a linea?
-    @Override
-    public TextDocument getDocument(String docId) {
+	//indice o recorriendo linea a linea?
+	@Override
+	public TextDocument getDocument(String docId) {
 
-        if (reader == null) {
-            return null;
-        }
-        TextDocument textdoc;
-        Document doc = null;
-        String name;
-        String id;
+		if (reader == null) {
+			return null;
+		}
+		TextDocument textdoc;
+		Document doc = null;
+		String name;
+		String id;
 
-        for (int i = 1; i < reader.maxDoc(); i++) {
-            try {
-                doc = reader.document(i);
-            } catch (IOException ex) {
-                Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (doc == null) {
-                continue;
-            }
-            //si coinciden los id contruimos el TextDocument
-            if(doc.getFieldable(Utils.STR_ID).stringValue().equals(docId)){
-                name = doc.getFieldable(Utils.STR_NAME).stringValue();
-                id = doc.getFieldable(Utils.STR_ID).stringValue();
-                textdoc = new TextDocument(id,name);
-                return textdoc;
+		for (int i = 1; i < reader.maxDoc(); i++) {
+			try {
+				doc = reader.document(i);
+			} catch (IOException ex) {
+				Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			if (doc == null) {
+				continue;
+			}
+			//si coinciden los id contruimos el TextDocument
+			if (doc.getFieldable(Utils.STR_ID).stringValue().equals(docId)) {
+				name = doc.getFieldable(Utils.STR_NAME).stringValue();
+				id = doc.getFieldable(Utils.STR_ID).stringValue();
+				textdoc = new TextDocument(id, name);
+				return textdoc;
 
-            }
-        }
-        return null;
+			}
+		}
+		return null;
 
-    }
+	}
 
-    @Override
-    public List<String> getTerms() {
-        List<String> terms = new ArrayList<>();
-	// Eliminamos duplicados utilizando un set.
-        TreeSet<String> _terms = new TreeSet<>();
-	for (int doc = 0; doc < this.reader.maxDoc(); doc++)
-	    try {
-		    TermFreqVector vector = this.reader.getTermFreqVector(doc,"contents");
-		    _terms.addAll(Arrays.asList(vector.getTerms()));
-	    } catch (IOException ex) {
-		    Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-	    }
+	@Override
+	public List<String> getTerms() {
+		List<String> terms = new ArrayList<>();
+		// Eliminamos duplicados utilizando un set.
+		TreeSet<String> _terms = new TreeSet<>();
+		for (int doc = 0; doc < this.reader.maxDoc(); doc++) {
+			try {
+				TermFreqVector vector = this.reader.getTermFreqVector(doc, "contents");
+				_terms.addAll(Arrays.asList(vector.getTerms()));
+			} catch (IOException ex) {
+				Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
 
-	terms.addAll(_terms);
-	return terms;
+		terms.addAll(_terms);
+		return terms;
 
-    }
+	}
 
-    @Override
-    public List<Posting> getTermPostings(String term) {
-           List<Posting> posts = new ArrayList<>();
-        TermEnum termenum = null;
-        try {
-            termenum=this.getReader().terms();
-            TermPositions termposition= this.getReader().termPositions(new Term("contents",term));
-	    while(termposition.next()){
-            	List<Long> pos = new ArrayList<>();
-		for (int j = 0; j < termposition.freq(); ++j)
-			pos.add((long) termposition.nextPosition());
-		posts.add(new Posting(reader.document(termposition.doc()).getFieldable(Utils.STR_ID).stringValue(), term, pos));
+	@Override
+	public List<Posting> getTermPostings(String term) {
+		List<Posting> posts = new ArrayList<>();
+		TermEnum termenum = null;
+		try {
+			termenum = this.getReader().terms();
+			TermPositions termposition = this.getReader().termPositions(new Term("contents", term));
+			while (termposition.next()) {
+				List<Long> pos = new ArrayList<>();
+				for (int j = 0; j < termposition.freq(); ++j) {
+					pos.add((long) termposition.nextPosition());
+				}
+				posts.add(new Posting(reader.document(termposition.doc()).getFieldable(Utils.STR_ID).stringValue(), term, pos));
 
-	    }
-       } catch (IOException ex) {
-            Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
+			}
+		} catch (IOException ex) {
+			Logger.getLogger(LuceneIndex.class.getName()).log(Level.SEVERE, null, ex);
+		}
 
-        return posts;
-    }
+		return posts;
+	}
 
-    /**
-     * 
-     * @return  El reader del indice. Null si no se ha cargado el indice.
-     */
-    public IndexReader getReader() {
-        return this.reader;
-    }
+	/**
+	 *
+	 * @return El reader del indice. Null si no se ha cargado el indice.
+	 */
+	public IndexReader getReader() {
+		return this.reader;
+	}
 
-    /**
-     * Indexa los documentos en el indice.
-     * @param writer        IndexWriter para poder escribir en el indice.
-     * @param file          Archivo Zip con los documentos (sin subcarpetas).
-     * @param textParser    EL parser para tratar el contenido de los documentos.
-     * @throws IOException 
-     */
-    static void indexDocs(IndexWriter writer, ZipFile file, TextParser textParser)
-            throws IOException {
-        // do not try to index files that cannot be read
-        try {
+	/**
+	 * Indexa los documentos en el indice.
+	 *
+	 * @param writer IndexWriter para poder escribir en el indice.
+	 * @param file Archivo Zip con los documentos (sin subcarpetas).
+	 * @param textParser EL parser para tratar el contenido de los
+	 * documentos.
+	 * @throws IOException
+	 */
+	static void indexDocs(IndexWriter writer, ZipFile file, TextParser textParser)
+		throws IOException {
+		// do not try to index files that cannot be read
+		try {
 
-          // make a new, empty document
-            ZipFile zipFile = file;
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements()) {
-                Document doc = new Document();
-                ZipEntry entry = entries.nextElement();
+			// make a new, empty document
+			ZipFile zipFile = file;
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			while (entries.hasMoreElements()) {
+				Document doc = new Document();
+				ZipEntry entry = entries.nextElement();
 
-                Field pathField = new Field(Utils.STR_NAME, entry.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
-                pathField.setIndexOptions(IndexOptions.DOCS_ONLY);
-                doc.add(pathField);
+				Field pathField = new Field(Utils.STR_NAME, entry.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+				pathField.setIndexOptions(IndexOptions.DOCS_ONLY);
+				doc.add(pathField);
 
-		
-                NumericField idField = new NumericField(Utils.STR_ID, Field.Store.YES, true);
-                idField.setLongValue(num_id);
-                num_id++;
-                doc.add(idField);
+				NumericField idField = new NumericField(Utils.STR_ID, Field.Store.YES, true);
+				idField.setLongValue(num_id);
+				num_id++;
+				doc.add(idField);
 
-                NumericField modifiedField = new NumericField(Utils.STR_MODIFIED);
-                modifiedField.setLongValue(entry.getTime());
-                doc.add(modifiedField);
-		
-                InputStream stream = zipFile.getInputStream(entry);
-                BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+				NumericField modifiedField = new NumericField(Utils.STR_MODIFIED);
+				modifiedField.setLongValue(entry.getTime());
+				doc.add(modifiedField);
 
-                String sCurrentLine;
-                String content = "";
+				InputStream stream = zipFile.getInputStream(entry);
+				BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 
-                
-                while ((sCurrentLine = br.readLine()) != null) {
-                    content = content + sCurrentLine;
-                }
+				String sCurrentLine;
+				String content = "";
 
-                String toad = textParser.parse(content);
-                doc.add(new Field(Utils.STR_CONTENT, toad, Field.Store.YES, Field.Index.ANALYZED,Field.TermVector.YES));
-		
-		writer.addDocument(doc);
-            }
+				while ((sCurrentLine = br.readLine()) != null) {
+					content = content + sCurrentLine;
+				}
 
-        } finally {
-            file.close();
-        }
-    }
+				String toad = textParser.parse(content);
+				doc.add(new Field(Utils.STR_CONTENT, toad, Field.Store.YES, Field.Index.ANALYZED, Field.TermVector.YES));
 
-    int getNumDoc() {
-        return this.reader.maxDoc();
-    }
+				writer.addDocument(doc);
+			}
+
+		} finally {
+			file.close();
+		}
+	}
+
+	int getNumDoc() {
+		return this.reader.maxDoc();
+	}
 }
