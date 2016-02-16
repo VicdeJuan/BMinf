@@ -17,7 +17,7 @@ nb-configuration.xml
 
 # Ficheros innecesarios
 clueweb-*
-outputCollection
+outputCollection*
 *.txt
 
 # Lucene index files

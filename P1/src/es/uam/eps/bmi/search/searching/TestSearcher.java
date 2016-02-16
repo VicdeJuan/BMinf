@@ -33,8 +33,14 @@ public class TestSearcher {
 
         String indexPath = "outputCollection";
         LuceneIndex LucIdx = new LuceneIndex(indexPath);
-        FileWriter fichero = new FileWriter("src/es/uam/eps/bmi/Querys1K.txt");
-	String queryFile = "src/es/uam/eps/bmi/clueweb-1K/queries.txt";
+        String k = "10K";
+        int max = 5;
+        FileWriter fichero = new FileWriter("src/es/uam/eps/bmi/Querys"+k+".txt");
+	String queryFile = "src/es/uam/eps/bmi/clueweb-"+k+"/queries.txt";
+        FileReader f = new FileReader("src/es/uam/eps/bmi/clueweb-"+k+"/relevance.txt");
+        BufferedReader b = new BufferedReader(f);
+        FileWriter out = new FileWriter("src/es/uam/eps/bmi/Comparacion"+max+"-"+k+".txt");
+        
         final PrintWriter pw = new PrintWriter(fichero);
 
         if (LucIdx.getReader() != null) {
@@ -43,12 +49,12 @@ public class TestSearcher {
             
             
 	    int indice=1;
-	    int max = 5;
+	    
             pw.println(" querys Top " + max);
             
             ArrayList<ArrayList<String>> resultados = new ArrayList<>();
             for (String query : Files.readAllLines(Paths.get(queryFile))) {
-                List<ScoredTextDocument> resul = lucSearch.search(query.substring(2));
+                List<ScoredTextDocument> resul = lucSearch.search(query.substring(query.indexOf(":")+1));
                 pw.println(query + " -- " + (indice++) + ":");
 
                 if (resul != null && resul.size() > 0) {
@@ -61,19 +67,19 @@ public class TestSearcher {
                     }
                     resultados.add(aux);
                 } else {
-                    pw.println("Query vacia");
+                    ArrayList<String> aux = new ArrayList<>();
+                    aux.add("Query Vacia");
+                    resultados.add(aux);
+                    pw.write("Query vacia");
                 }
             }
 
             fichero.close();
         
         
-            FileReader f = new FileReader("src/es/uam/eps/bmi/clueweb-1K/relevance.txt");
-            BufferedReader b = new BufferedReader(f);
-            FileWriter out = new FileWriter("src/es/uam/eps/bmi/Comparacion5-1k.txt");
             final PrintWriter pwout = new PrintWriter(out);
 
-            Integer[] encontrados = new Integer[max];
+            Integer[] encontrados = new Integer[resultados.size()];
             for (int x = 0; x < encontrados.length; x++) {
                 encontrados[x] = 0;
             }
@@ -83,12 +89,12 @@ public class TestSearcher {
 
                 String[] split = cadena.split("\t");
                 List<String> keys = new ArrayList<>(Arrays.asList(split));
-                for (int k = 0; k < max; k++) {
+                for (int l = 0; l < resultados.get(j).size(); l++) {
 
                     //vemos si cada elemento de la query esta en relevance
                    
                     for (String key : keys)                     
-                        if (key.equals(resultados.get(j).get(k))) {
+                        if (key.equals(resultados.get(j).get(l))) {
                             encontrados[j]++;    
                             break;
                         }
