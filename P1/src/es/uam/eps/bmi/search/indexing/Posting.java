@@ -29,7 +29,7 @@ public class Posting {
 	 *
 	 * @return
 	 */
-	String getDocId() {
+	public String getDocId() {
 		return this.docId;
 	}
 
@@ -38,7 +38,7 @@ public class Posting {
 	 * @return La frecuencia con la que el termino del posting aparece en el
 	 * documento.
 	 */
-	int getTermFrequency() {
+	public int getTermFrequency() {
 		return this.termPositions.size();
 	}
 
@@ -46,7 +46,7 @@ public class Posting {
 	 *
 	 * @return Las posiciones del término en el documento del posting.
 	 */
-	List<Long> getTermPositions() {
+	public List<Long> getTermPositions() {
 		return this.termPositions;
 	}
 

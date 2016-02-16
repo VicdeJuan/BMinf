@@ -1,7 +1,8 @@
-package es.uam.eps.bmi.search.searching;
+package es.uam.eps.bmi.search;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
+import es.uam.eps.bmi.search.searching.LuceneSearcher;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;

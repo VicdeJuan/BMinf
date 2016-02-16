@@ -1,5 +1,8 @@
-package es.uam.eps.bmi.search.indexing;
+package es.uam.eps.bmi.search;
 
+import es.uam.eps.bmi.search.indexing.Index;
+import es.uam.eps.bmi.search.indexing.LuceneIndex;
+import es.uam.eps.bmi.search.indexing.Posting;
 import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import java.io.FileWriter;
@@ -78,9 +81,9 @@ public class TestIndex {
 					val[2] += post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
 				});
 				// val 2 = tf
-				val[2] = val[2] / val[1];
+				val[2] = val[0] == 0 ? 1 : 1+Math.log(val[0])/Math.log(2);
 				// val 3 = idf
-				val[3] = Math.log(LucIdx.getNumDoc() / val[1]);
+				val[3] = Math.log(val[1] / LucIdx.getNumDoc() );
 				freqHash.put(term, val);
 			});
 

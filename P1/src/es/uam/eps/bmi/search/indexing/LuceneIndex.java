@@ -296,7 +296,11 @@ public class LuceneIndex implements Index {
 		}
 	}
 
-	int getNumDoc() {
+	/**
+	 * 
+	 * @return El número de documentos del índice.
+	 */
+	public int getNumDoc() {
 		return this.reader.maxDoc();
 	}
 }
