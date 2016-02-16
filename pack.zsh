@@ -23,4 +23,4 @@ cp -r $src $name
 zip -rv $name".zip" $name/*.pdf "$name/"javadoc
 zip -ur $name".zip" $name"/src/es/uam/eps/bmi/search"
 
-rm -r "javadoc" *.pdf "src" $name
+rm -r  $name
