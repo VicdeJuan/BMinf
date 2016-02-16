@@ -35,20 +35,21 @@ public class TestIndex {
         String outputCollectionPath_1 = "outputCollection_1";
         String outputCollectionPath_10 = "outputCollection_10";
 	
-        boolean regen = true;
+        boolean regen = false;
 	
         LuceneIndex LucIdx_1 = regen ?  new LuceneIndex(inputCollectionPath_1, outputCollectionPath_1, new HTMLSimpleParser()) : new LuceneIndex(outputCollectionPath_1) ;
         LuceneIndex LucIdx_10 = regen ?  new LuceneIndex(inputCollectionPath_10, outputCollectionPath_10, new HTMLSimpleParser()) : new LuceneIndex(outputCollectionPath_10) ;
         
-	FileWriter fichero = null;
+	FileWriter fichero_1 = null;
+        FileWriter fichero_10 = null;
         try {
-            fichero = new FileWriter("src/es/uam/eps/bmi/frecuencias1K.txt");
-            fichero = new FileWriter("src/es/uam/eps/bmi/frecuencias10K.txt");
+            fichero_1 = new FileWriter("src/es/uam/eps/bmi/frecuencias1K.txt");
+            fichero_10 = new FileWriter("src/es/uam/eps/bmi/frecuencias1K.txt");
         } catch (IOException ex) {
             Logger.getLogger(TestIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
-        final PrintWriter pw_1 = new PrintWriter(fichero);    
-        final PrintWriter pw_10 = new PrintWriter(fichero);
+        final PrintWriter pw_1 = new PrintWriter(fichero_1);    
+        final PrintWriter pw_10 = new PrintWriter(fichero_10);
         try {
             // term -> (freq, ndoc, tf,idf)
 	    final LinkedHashMap <String,double[]> freqHash = new LinkedHashMap<>();
@@ -110,8 +111,11 @@ public class TestIndex {
             try {
            // Nuevamente aprovechamos el finally para 
                 // asegurarnos que se cierra el fichero.
-                if (null != fichero) {
-                    fichero.close();
+                if (null != fichero_1) {
+                    fichero_1.close();
+                }
+                if (null != fichero_10) {
+                    fichero_10.close();
                 }
             } catch (Exception e2) {
                 e2.printStackTrace();
