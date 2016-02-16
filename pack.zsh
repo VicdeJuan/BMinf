@@ -5,14 +5,12 @@ name="bmi-p1-12"
 ## Generación de los pdfs
 cd $mem
 zsh *.zsh
-#cp "bmi-p1-12-frecuencias.pdf" .
-#cp "bmi-p1-12-precisiones.pdf" .
 cp *.pdf ..
 cd ..
 
 ## Generación de javadoc
 cd  $practica
-#ant javadoc
+ant javadoc
 cd ..
 
 jdoc=$practica"/dist/javadoc"

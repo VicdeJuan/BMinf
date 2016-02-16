@@ -1,6 +1,6 @@
 
 echo "" > tex/precisiones.tex
-for f in $(ls data/precisiones);do
+for f in $(ls -r data/precisiones);do
 	ruby precisiones.rb "data/precisiones/$f" $f >> tex/precisiones.tex
 done
 
