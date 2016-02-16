@@ -24,14 +24,14 @@ print("tf 1K...")
 #tf
 y <- datos$V4
 png('img/tf1k.png')
-plot(x,log(y), pch=".", col="blue", xlab="termino", ylab="tf", main="tf 1k")
+plot(x,y, pch=".", col="blue", xlab="termino", ylab="tf", main="tf 1k")
 dev.off()
 
 #idf
 print("idf 1K...")
 y <- datos$V5
 png('img/idf1k.png')
-plot(x,log(y), pch=".", col="blue", xlab="termino", ylab="idf", main="idf 1k")
+plot(x,y, pch=".", col="blue", xlab="termino", ylab="idf", main="idf 1k")
 dev.off()
 
 #_____________ Frecuencias 10K ___________________
@@ -56,13 +56,13 @@ dev.off()
 print("tf 10K...")
 y <- datos$V4
 png('img/tf10k.png')
-plot(x,log(y), pch=".", col="blue", xlab="termino", ylab="tf", main="tf 10k")
+plot(x,y, pch=".", col="blue", xlab="termino", ylab="tf", main="tf 10k")
 dev.off()
 
 #idf
 print("idf 10K...")
 y <- datos$V5
 png('img/idf10k.png')
-plot(x,log(y), pch=".", col="blue", xlab="termino", ylab="idf", main="idf 10k")
+plot(x,y, pch=".", col="blue", xlab="termino", ylab="idf", main="idf 10k")
 dev.off()
 

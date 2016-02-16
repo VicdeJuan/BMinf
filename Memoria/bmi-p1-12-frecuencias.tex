@@ -11,6 +11,16 @@
 \begin{document}
 \pagestyle{plain}
 \maketitle
+
+Las graficas corresponden a los datos de frecuencias, número de documentos en los que aparece el término, tf promedio e idf del término.
+Se ha empleado la escala logaritmica para la representación de los datos correspondientes a frecuencias y número de documentos para su mejor visualización.
+
+Tando el tf como el idf utilizados han sido los vistos en clase.
+
+\[ tf(t,d) = \left\{ \begin{array}{cc} 1+\log_2frec(t,d) & \text{ si } frec(t,d) > 0\\ 0 & \text{ en otro caso}\end{array}\right. \]
+
+\[ idf(t) = \log \frac{|D|}{|D_t|} \]
+
 A continuación, incluimos las gráficas obtenidas:
 
 \input{tex/frecuencias.tex}
