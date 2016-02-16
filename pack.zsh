@@ -2,23 +2,25 @@
 practica="P1"
 mem="Memoria"
 name="bmi-p1-12"
+mkdir $name
+
 ## Generación de los pdfs
 cd $mem
 zsh *.zsh
-cp *.pdf ..
+cp *.pdf ../$name
 cd ..
 
 ## Generación de javadoc
 cd  $practica
-ant javadoc
+#ant javadoc
 cd ..
 
 jdoc=$practica"/dist/javadoc"
-cp -r $jdoc .
+cp -r $jdoc $name
 src="P1/src"
-cp -r $src .
+cp -r $src $name
 
-zip -rv $name *.pdf javadoc
-zip -ur $name "src/es/uam/eps/bmi/search"
+zip -rv $name".zip" $name/*.pdf "$name/"javadoc
+zip -ur $name".zip" $name"/src/es/uam/eps/bmi/search"
 
-rm -r "javadoc" *.pdf "src"
+rm -r "javadoc" *.pdf "src" $name
