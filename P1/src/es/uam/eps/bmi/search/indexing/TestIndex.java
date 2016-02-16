@@ -5,6 +5,7 @@ import es.uam.eps.bmi.search.parsing.TextParser;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -114,18 +115,22 @@ public class TestIndex {
 	 */
 	public static void main(String[] args) {
 
-		String file = "1";
-		String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-" + file + "K";
-		String outputCollectionPath = "outputCollection_" + file;
-		String outputFile = "src/es/uam/eps/bmi/frecuencias" + file + "K.txt";
+		ArrayList<String> files = new ArrayList<>();
+		files.add("1");
+		files.add("10");
+		files.stream().forEach((file) -> {
+			String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-" + file + "K";
+			String outputCollectionPath = "outputCollection_" + file;
+			String outputFile = "src/es/uam/eps/bmi/frecuencias" + file + "K.txt";
 
-		boolean regen = true;
+			boolean regen = false;
 
-		if (regen) {
-			_test_create(inputCollectionPath, outputCollectionPath, new HTMLSimpleParser(), outputFile);
-		} else {
-			_test_load(outputCollectionPath, outputFile);
-		}
+			if (regen) {
+				_test_create(inputCollectionPath, outputCollectionPath, new HTMLSimpleParser(), outputFile);
+			} else {
+				_test_load(outputCollectionPath, outputFile);
+			}
+		});
 	}
 
 }
