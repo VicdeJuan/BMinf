@@ -6,11 +6,12 @@ done
 
 pdflatex "bmi-p1-12-precisiones"
 
-Rscript generarGraficas.R
+#Rscript generarGraficas.R
 
 echo "" > tex/frecuencias.tex
 for f in $(ls img/*.png); do
-	echo "\\easyimg{$f}{}{}{0.5}" >> tex/frecuencias.tex
+
+	echo "\\\begin{center}\\\includegraphics{$f}\n\\\end{center}" >> tex/frecuencias.tex
 done
 
 pdflatex "bmi-p1-12-frecuencias"

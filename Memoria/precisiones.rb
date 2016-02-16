@@ -2,7 +2,7 @@
 def convertToTex(file,msg)
 	clueweb = msg.split("-")[1].split("\.")[0]
 	queries = msg.split("-")[0]["Comparacion".length,msg.split("-")[0].length]
-	puts "\\begin{table}"
+	puts "\\begin{table}[hbtp]"
 	puts "\\centering"
 	puts "\\begin{tabular}{cc}"
 	File.foreach(file) {|x|
