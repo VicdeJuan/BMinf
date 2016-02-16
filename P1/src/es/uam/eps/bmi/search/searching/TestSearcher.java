@@ -29,7 +29,7 @@ public class TestSearcher {
 
 			String[] split = cadena.split("\t");
 			List<String> keys = new ArrayList<>(Arrays.asList(split));
-			for (int l = 0; l < resultados.get(j).size(); l++) {
+			for (int l = 0; l < Math.min(max,resultados.get(j).size()); l++) {
 
                     //vemos si cada elemento de la query esta en relevance
 				for (String key : keys) {
@@ -114,7 +114,6 @@ public class TestSearcher {
 		ArrayList<Integer> maxs = new ArrayList<>();
 		maxs.add(5);
 		maxs.add(10);
-		maxs.add(100);
 
 		for (String k : ks) {
 			System.out.print(k + "::");

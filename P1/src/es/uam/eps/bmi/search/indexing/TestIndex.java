@@ -78,7 +78,7 @@ public class TestIndex {
 					val[2] += post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
 				});
 				// val 2 = tf
-				val[2] = val[2] / LucIdx.getNumDoc();
+				val[2] = val[2] / val[1];
 				// val 3 = idf
 				val[3] = Math.log(LucIdx.getNumDoc() / val[1]);
 				freqHash.put(term, val);
