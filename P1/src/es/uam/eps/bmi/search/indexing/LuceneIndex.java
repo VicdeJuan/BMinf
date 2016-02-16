@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
@@ -45,10 +40,6 @@ import org.apache.lucene.index.TermFreqVector;
 
 
 
-/**
- *
- * @author dani
- */
 public class LuceneIndex implements Index {
 
     String indexPath;
@@ -56,23 +47,28 @@ public class LuceneIndex implements Index {
     private static long num_id = 0;
 
 
-	/*    Método main: recibe la ruta de la carpeta que contiene la colección de documentos con
-*    los que crear el índice, y la ruta de la carpeta en la que almacenar el índice creado
-     * Por defecto, utilizar HtmlParser
-     * @param args
+    /*    Método main: recibe la ruta de la carpeta que contiene la colección 
+     *  de documentos con los que crear el índice, y la ruta de la carpeta 
+     *  en la que almacenar el índice creado.
+     *    Por defecto, utilizar HtmlParser
+     * @param args Argumentos a recibir.
      */
+    
+    
     public static void main(String[] args){
 	if (args.length != 3){
 		System.out.println("Error en número de argumentos\nUso: java LuceneIndex inputCollectionPath outputCollectionPath");
 	}
-//        String inputCollectionPath = args[1];
-//	String outputCollectionPath = args[2];
-        String inputCollectionPath = "src/es/uam/eps/bmi/clueweb-1K";
-        String outputCollectionPath = "outputCollection_1";
+        String inputCollectionPath = args[1];
+	String outputCollectionPath = args[2];
        	LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath,outputCollectionPath,new HTMLSimpleParser());
-
     }
-
+    
+    
+/**
+ * Constructor que crea y carga un indice a partir de un indice en disco.
+ * @param indexPath     Path donde se encuentra el indice en disco.
+ */
     public LuceneIndex(String indexPath){
 	    load(indexPath);
     }
@@ -85,12 +81,15 @@ public class LuceneIndex implements Index {
 
 
 
-    //  docDir coincide con la ruta de los zips? hay que java.util.zip.ZipInputStream?
-    // writer es donde se genera el indice. En el path indicado por dir (indexpath), y con la configuracion
-    // indicada por iwc?
+    
+    /**
+     * Construye un indice utilizando los argumentos dados.
+     * @param inputCollectionPath
+     * @param outputIndexPath
+     * @param textParser 
+     */
     @Override
     public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
-        boolean create = true;
 
         try {
             System.out.println("Indexing to directory '" + inputCollectionPath + "'...");
@@ -105,14 +104,8 @@ public class LuceneIndex implements Index {
                 System.exit(1);
             }
 
-            if (create) {
-        // Create a new index in the directory, removing any
-                // previously indexed documents:
-                iwc.setOpenMode(OpenMode.CREATE);
-            } else {
-                // Add new documents to an existing index:
-                iwc.setOpenMode(OpenMode.CREATE_OR_APPEND);
-            }
+            iwc.setOpenMode(OpenMode.CREATE);
+        
             IndexWriter writer = new IndexWriter(dir, iwc);
             indexDocs(writer, docDir, textParser);
             writer.close();
@@ -124,6 +117,7 @@ public class LuceneIndex implements Index {
         }
     }
 
+    
     @Override
     public void load(String indexPath) {
         this.indexPath = indexPath;
@@ -243,11 +237,21 @@ public class LuceneIndex implements Index {
         return posts;
     }
 
-    /*Así vemos si se ha hecho el load o no*/
+    /**
+     * 
+     * @return  El reader del indice. Null si no se ha cargado el indice.
+     */
     public IndexReader getReader() {
         return this.reader;
     }
 
+    /**
+     * Indexa los documentos en el indice.
+     * @param writer        IndexWriter para poder escribir en el indice.
+     * @param file          Archivo Zip con los documentos (sin subcarpetas).
+     * @param textParser    EL parser para tratar el contenido de los documentos.
+     * @throws IOException 
+     */
     static void indexDocs(IndexWriter writer, ZipFile file, TextParser textParser)
             throws IOException {
         // do not try to index files that cannot be read
@@ -280,6 +284,7 @@ public class LuceneIndex implements Index {
                 String sCurrentLine;
                 String content = "";
 
+                
                 while ((sCurrentLine = br.readLine()) != null) {
                     content = content + sCurrentLine;
                 }

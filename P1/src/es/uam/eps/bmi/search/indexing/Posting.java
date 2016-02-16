@@ -1,54 +1,52 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package es.uam.eps.bmi.search.indexing;
 
 import java.util.List;
 
-/**
- *
- * @author e267044
- */
 public class Posting {
     private String docId;
     private String term;
     private List<Long> termPositions;
-    private int freq;
 
+    /**
+     * Crea un posting nuevo para un termino, en un documento con su lista de 
+     *  posiciones.
+     * @param docId     Id del documento en el que se encuentra el termino.
+     * @param term      Termino para el que queremos crear el posting.
+     * @param termPositions Lista de posiciones en las que se encuentra el 
+     *      termino dentro del documento.
+     */
     public Posting(String docId, String term, List<Long> termPositions) {
         this.docId = docId;
         this.term = term;
         this.termPositions = termPositions;
-	this.freq = 0;
+	
     }
 
-    
+    /**
+     * Getter del DocId.
+     * @return 
+     */
    String getDocId(){
    return this.docId;
    }
-/* que
-devolverá el identificador de un documento donde aparece el término asociado al 
-posting
-*/
-int getTermFrequency(){
- return this.termPositions.size();
-}
-/*
-que  devolverá  el  número  de 
-veces  que
-el  término 
-aparece 
-en  el  documento 
-asociado al 
-posting
-*/
-List<Long> getTermPositions(){
-return this.termPositions;
-}
-/*
-que devolverá las posiciones del término en el documento del 
-posting*/
+
+   /**
+    * 
+    * @return La frecuencia con la que el termino del posting aparece en 
+    *   el documento.
+    */
+    int getTermFrequency(){
+        return this.termPositions.size();
+    }
+
+    /**
+     * 
+     * @return Las posiciones del término en el documento del  posting.
+     */
+    List<Long> getTermPositions(){
+        return this.termPositions;
+    }
+
 
 }

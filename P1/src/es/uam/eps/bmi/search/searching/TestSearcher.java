@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
@@ -16,13 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-/**
- *
- * @author dani
- */
 public class TestSearcher {
 
     
@@ -59,8 +49,17 @@ public class TestSearcher {
             pwout.close();
         }
     
-    
-    public static ArrayList<ArrayList<String>> _build_results(String outputFile,LuceneIndex LucIdx,String queryFile, int max) throws IOException{
+    /**
+     * Construye el fichero oportuno a partir de las busquedas segun 
+     *      los argumentos aportados
+     * @param outputFile Fichero en el que almacenar la informacion
+     * @param LucIdx     Indice de Lucene.
+     * @param queryFile  Fichero con las consultas.
+     * @param max        Numero maximo de resultados.
+     * @return  La lista de los documentos que corresponden a la query.
+     * @throws IOException 
+     */
+    private static ArrayList<ArrayList<String>> _build_results(String outputFile,LuceneIndex LucIdx,String queryFile, int max) throws IOException{
      
         final PrintWriter pw = new PrintWriter(new FileWriter(outputFile));
         ArrayList<ArrayList<String>> resultados = new ArrayList<>();
@@ -101,6 +100,11 @@ public class TestSearcher {
         return resultados;
     }
     
+    /**
+     * Metodo main del test.
+     * @param args
+     * @throws IOException 
+     */
     public static void main(String[] args) throws IOException {
         
         
