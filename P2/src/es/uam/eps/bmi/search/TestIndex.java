@@ -3,6 +3,7 @@ package es.uam.eps.bmi.search;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.LuceneIndex;
 import es.uam.eps.bmi.search.indexing.Posting;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import java.io.FileWriter;
 import java.io.IOException;

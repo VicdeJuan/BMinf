@@ -2,8 +2,21 @@ package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.Utils;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
-
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.NumericField;
+import org.apache.lucene.index.FieldInfo.IndexOptions;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,11 +32,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.TermEnum;
+import org.apache.lucene.index.TermPositions;
+import org.apache.lucene.index.TermFreqVector;
 
 public class LuceneIndex implements Index {
 
 	String indexPath;
+	private IndexReader reader = null;
 	private static long num_id = 0;
 
 
@@ -39,6 +56,7 @@ public class LuceneIndex implements Index {
 		}
 		String inputCollectionPath = args[1];
 		String outputCollectionPath = args[2];
+		LuceneIndex LucIdx = new LuceneIndex(inputCollectionPath, outputCollectionPath, new HTMLSimpleParser());
 	}
 
 	/**
