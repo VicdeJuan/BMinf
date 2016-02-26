@@ -67,21 +67,23 @@ public class LiteralMatchingSearcher implements Searcher {
             for (Posting postprincipal : termsprincipal) {
                 for (Posting acomparar : termPostings) {
                     List<Long> posicionesLiteral = postprincipal.posicionesLiteral(acomparar);
+                    if (postprincipal.getDocId().equals(acomparar.getDocId())) {
 
-                    Posting sobrevive = new Posting(postprincipal.getDocId(),acomparar.getTerm(), posicionesLiteral);
-                    nuevaprincipal.add(sobrevive);
+                        Posting sobrevive = new Posting(postprincipal.getDocId(), posicionesLiteral);
+                        nuevaprincipal.add(sobrevive);
+                    }
                 }
             }
             termsprincipal = nuevaprincipal;
             for (Posting post : termsprincipal) {
-                double tf_idf = tf_idf(post.getTerm(), post.getDocId());
+                double tf_idf = tf_idf(qaux, post.getDocId());
                 if (!doctf_id.containsKey(querys[0])) {
 
                     doctf_id.put(post.getDocId(), tf_idf);
                 }
-                double old = doctf_id.get(post.getTerm());
+                double old = doctf_id.get(qaux);
                 old += tf_idf;
-                doctf_id.put(post.getTerm(), old);
+                doctf_id.put(qaux, old);
             }
         }
         for (String docid : doctf_id.keySet()) {
@@ -90,25 +92,16 @@ public class LiteralMatchingSearcher implements Searcher {
             doctf_id.put(docid, old);
         }
         int k = 1;
-/*
-        for (String doc : doctf_id.keySet()) {
-            if (k <= TOP) {
-                ScoredTextDocument aux = new ScoredTextDocument(doc, doctf_id.get(doc));
-                toret.add(aux);
-                k++;
-            } else {
-                break;
-            }
-        }*/
-        
-        for(int g=0;k<termsprincipal.size();g++){
-            String doc=termsprincipal.get(g).getDocId();
-            double score=doctf_id.get(doc);
-            ScoredTextDocument scoretext=new ScoredTextDocument(doc,score);
+
+
+        for (int g = 0; k < termsprincipal.size(); g++) {
+            String doc = termsprincipal.get(g).getDocId();
+            double score = doctf_id.get(doc);
+            ScoredTextDocument scoretext = new ScoredTextDocument(doc, score);
             toret.add(scoretext);
         }
         Collections.sort(toret);
-        
+
         return toret.subList(0, TOP);
     }
 
@@ -158,7 +151,7 @@ public class LiteralMatchingSearcher implements Searcher {
             ndoc++;
 
         }
-	// val 2 = tf
+        // val 2 = tf
         //tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
         // val 3 = idf = log(nº doc/nºdocs con ese termino)
         idf = Math.log(indice.getNumDoc() / ndoc) / Math.log(2);

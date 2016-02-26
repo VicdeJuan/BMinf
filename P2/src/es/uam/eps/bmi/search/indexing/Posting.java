@@ -18,18 +18,19 @@ public class Posting {
 	 * @param termPositions Lista de posiciones en las que se encuentra el
 	 * termino dentro del documento.
 	 */
-	public Posting(String docId, String term, List<Long> termPositions) {
-		this.docId = docId;
-		this.term = term;
-		this.termPositions = termPositions;
-
-	}/*
-        	public Posting(String docId, List<Long> termPositions) {
+	/*
+        public Posting(String docId, String term, List<Long> termPositions) {
 		this.docId = docId;
 		this.term = term;
 		this.termPositions = termPositions;
 
 	}*/
+        public Posting(String docId, List<Long> termPositions) {
+        this.docId = docId;
+        this.term = term;
+        this.termPositions = termPositions;
+
+	}
 
 	/**
 	 * Getter del DocId.
@@ -45,9 +46,10 @@ public class Posting {
 	 *
 	 * @return
 	 */
+        /*
 	public String getTerm() {
 		return this.term;
-	}
+	}*/
 
 	/**
 	 *

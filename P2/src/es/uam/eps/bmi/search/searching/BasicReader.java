@@ -119,6 +119,6 @@ public class BasicReader {
 		asList.remove(1);
 		asList.stream().forEach((hit) -> positions.add(Long.parseLong(hit)));
 		
-		return new Posting(docId, termino,positions);
+		return new Posting(docId,positions);
 	}
 }

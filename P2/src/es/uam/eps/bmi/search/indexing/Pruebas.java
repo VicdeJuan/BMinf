@@ -31,6 +31,7 @@ import sun.misc.IOUtils;
  *
  * @author parra
  */
+/*
 public class Pruebas {
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
@@ -114,7 +115,7 @@ public class Pruebas {
                             //Creamos un posting nuevo:
                             List<Long> termPositions = new ArrayList<Long>();
                             termPositions.add(posDoc);
-                            Posting posting = new Posting(String.valueOf(id_actual), termino, termPositions);
+                            Posting posting = new Posting(String.valueOf(id_actual), termPositions);
                             ArrayList<Posting> listaPostings = new ArrayList<Posting>();
                             listaPostings.add(posting);
                             
@@ -144,7 +145,7 @@ public class Pruebas {
                             if(noEncontrado){
                                 List<Long> termPositions = new ArrayList<Long>();
                                 termPositions.add(posDoc);
-                                Posting posting = new Posting(String.valueOf(id_actual), termino, termPositions);
+                                Posting posting = new Posting(String.valueOf(id_actual), termPositions);
                                 listaPostings.add(posting);
                             
                             //Si lo encontramos, lo editamos
@@ -263,3 +264,4 @@ public class Pruebas {
     }
 }
 
+*/

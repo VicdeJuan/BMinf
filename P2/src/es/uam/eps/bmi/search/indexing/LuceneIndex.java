@@ -223,7 +223,7 @@ public class LuceneIndex implements Index {
 				for (int j = 0; j < termposition.freq(); ++j) {
 					pos.add((long) termposition.nextPosition());
 				}
-				posts.add(new Posting(reader.document(termposition.doc()).getFieldable(Utils.STR_ID).stringValue(), term, pos));
+				posts.add(new Posting(reader.document(termposition.doc()).getFieldable(Utils.STR_ID).stringValue(), pos));
 
 			}
 		} catch (IOException ex) {
