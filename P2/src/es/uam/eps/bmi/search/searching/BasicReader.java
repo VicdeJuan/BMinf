@@ -5,49 +5,64 @@
  */
 package es.uam.eps.bmi.search.searching;
 
-import java.io.BufferedReader;
-import java.io.File;
+import es.uam.eps.bmi.search.Utils;
+import static es.uam.eps.bmi.search.Utils.*;
+import es.uam.eps.bmi.search.indexing.Posting;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author e267044
  */
 public class BasicReader {
-    File indice;
-    RandomAccessFile accesoIndice;
-    HashMap<String,Long> dicoffset;//diccionario de offset para cada termino
+    RandomAccessFile accesoIndice; // indice
+    HashMap<String,Long> dicOffset = null;//diccionario de offset para cada termino
+    double numDoc;
+
+
+    String dicFile = "cambiarlo";
     
-    //accedo al indice, con modo lectura
-    public BasicReader(File indice,String TermOffset) throws FileNotFoundException, IOException {
-        this.indice = indice;
+    
+    /**
+     * Constructor del Reader. 
+     * 		Abre el índice para ser leido.
+     * 		Carga el diccionario de (término -> offset)
+     * @param indice	Path donde se encuentra el índice.
+     * @throws FileNotFoundException En caso de no encontrar el fichero del índice.
+     * @throws IOException 	En caso de malformación del diccionario o de error de IO.
+     */
+    public BasicReader(String indice) throws FileNotFoundException, IOException {
+
         this.accesoIndice = new RandomAccessFile(indice,"r");
-        String cadena;
-        
-        FileReader f = new FileReader(TermOffset);
-        try (BufferedReader b = new BufferedReader(f)) {
-            while((cadena = b.readLine())!=null) {
-                
-                String[] aux= cadena.split(" ");
-                Long offset;
-                offset=Long.parseLong(aux[1]);
-                dicoffset.put(aux[0], offset);
-                System.out.println(cadena);
-            } 
-        }
+	dicOffset = new HashMap<>();
+	Utils.loadDic(dicFile,dicOffset,DIC_TYPE.LONG);
     }
-    
-    
-    public String leerlinea(String termino) throws FileNotFoundException, IOException{
+
+    /**
+     * Leemos la linea entera del índice en la que se encuentra el término.
+     * @param termino	Término del que leer la línea.
+     * @return	La linea del índice correspondiente a ese término. 
+     * 		En caso de error, se devuelve null
+     */
+    public String leerLineaDelTermino(String termino) {
         String linea;
-        Long offset= dicoffset.get(termino);
+        Long offset= dicOffset.get(termino);
         
-        accesoIndice.seek(offset);
-        linea = accesoIndice.readLine();
+	    try {
+		accesoIndice.seek(offset);
+        	linea = accesoIndice.readLine();
+	    } catch (IOException ex) {
+		Logger.getLogger(BasicReader.class.getName()).log(Level.SEVERE, null, ex);
+		linea = null;
+	    }
         /*        
         String[] cadena=linea.split(" ");
         //0 termino 1 modulo 2 lista de postings k estan separados por comas
@@ -55,5 +70,19 @@ public class BasicReader {
     return linea;
     }
     
-    
+    	/**
+	 * Getter del diccionario de Offset.
+	 * @return 
+	 */
+	public HashMap<String, Long> getDicOffset() {
+		return dicOffset;
+	}
+
+	List<Posting> getTermPostings(String termino) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	public double getNumDoc() {
+		return numDoc;
+	}
 }

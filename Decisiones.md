@@ -3,8 +3,10 @@
 
 
 1) Para escribir el Ã­ndice, utilizar:
+## Corrección 26/02 - de Dejuan.
+Los términos no tienen módulo, asique los quitamos que no tiene sentido.
 
-	linea: termino ESPACIO modulo_del_documento ESPACIO lista_de_postings
+	linea: termino ESPACIO lista_de_postings
 
 	lista_de_postings: posting
 					| posting ESPACIO lista_de_postings
@@ -16,8 +18,10 @@
 
 Por ejemplo:
 
-Parra 142.45 1,3,1,2,3 2,2,1,2
-termino modulo lista_de_postings_del_doc_1 lista_de_postings_del_doc_2
+Parra 1,3,1,2,3 2,2,1,2
+termino lista_de_postings_del_doc_1 lista_de_postings_del_doc_2
+
+
 
 Utilizar comas para separar las posiciones y espacios para separar lo demÃ¡s, hace que podamos leer del Ã­ndice se puede hacer:
 
