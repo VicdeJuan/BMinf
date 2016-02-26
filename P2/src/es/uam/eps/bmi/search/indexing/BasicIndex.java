@@ -7,6 +7,7 @@ package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.parsing.TextParser;
+import es.uam.eps.bmi.search.searching.BasicReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class BasicIndex implements Index {
     private ArrayList<ArrayList<Posting>> indice1;
     private HashMap diccionarioTerminos; //(termino, linea del txt del indice)
     private HashMap diccionarioDocs; //(nombre del documento, id guardado en indice)
-
+    private BasicReader reader;
     public BasicIndex(String path, ArrayList<ArrayList<Posting>> indice1, ArrayList<ArrayList<Posting>> indice2, HashMap diccionario) {
         this.path = path;
         this.indice1 = indice1;
@@ -66,6 +67,10 @@ public class BasicIndex implements Index {
     @Override
     public List<Posting> getTermPostings(String term) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public BasicReader getReader() {
+        return reader;
     }
     
 }

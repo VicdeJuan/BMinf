@@ -10,21 +10,16 @@ import es.uam.eps.bmi.search.indexing.BasicIndex;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import es.uam.eps.bmi.search.parsing.QueryParser;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.TreeSet;
-
-
-
-
 
 /**
  *
- * @author e267044
+ * @author dani
  */
-public class TFIDFSearcher implements Searcher{
-    
+public class LiteralMatchingSearcher implements Searcher{
+
+  
     BasicReader indice;
     private String indexdir;
     private int TOP=5;
@@ -37,6 +32,7 @@ public class TFIDFSearcher implements Searcher{
     }
 
     @Override
+    //Esta la normal, no literal
     public List<ScoredTextDocument> search(String query) {
          List<ScoredTextDocument> toret = null;
          BinaryHeap heap;
@@ -49,6 +45,8 @@ public class TFIDFSearcher implements Searcher{
         for(String qaux: querys){
              List<Posting> termPostings = indice.getTermPostings(qaux);
              for(Posting post:termPostings){
+                 
+                /* 
                 double tf_idf=tf_idf(qaux,post.getDocId());
                 if(!doctf_id.containsKey(qaux)){
                     doctf_id.put(post.getDocId(),tf_idf );
@@ -56,6 +54,7 @@ public class TFIDFSearcher implements Searcher{
                 double old=doctf_id.get(qaux);
                 old +=tf_idf;
                 doctf_id.put(qaux, old);
+                 */
                        
              }
         }
@@ -139,5 +138,6 @@ public class TFIDFSearcher implements Searcher{
         }
         
         
+    
     
 }
