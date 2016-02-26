@@ -61,7 +61,9 @@ public class TFIDFSearcher implements Searcher{
         }
         for(String docid:doctf_id.keySet()){
             double old=doctf_id.get(docid);
-            //Falta dividir old por el modulo del documento       
+            //Falta dividir old por el modulo del documento    
+            //FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAa
+            //FALTAAAAAAAAAAAAAAAAAAAA que no se olvide
             doctf_id.put(docid,old);
         }
         int k=1;
