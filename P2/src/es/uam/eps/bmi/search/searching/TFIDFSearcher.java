@@ -40,15 +40,6 @@ public class TFIDFSearcher implements Searcher{
     public double tf_idf(String termino ) {
         
 	// ESTA FUNCIÓN ESTÁ MAL HECHA.
-        String linea= indice.leerLineaDelTermino(termino);
-        
-        String[] cadena=linea.split(" ");
-        //0 termino 1 modulo 2 lista de postings k estan separados por comas
-	
-        // Al menos tiene que tener el término y la lista de postings.
-	if (cadena.length < 2)
-	       return Double.NaN;
-	
 	double freq = 0;
 	double ndoc = 0;
 	double tf = 0;

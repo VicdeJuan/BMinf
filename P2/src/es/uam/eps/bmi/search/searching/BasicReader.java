@@ -13,10 +13,13 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 /**
  *
@@ -79,10 +82,43 @@ public class BasicReader {
 	}
 
 	List<Posting> getTermPostings(String termino) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        	List<Posting> toret = new ArrayList();
+		String linea= leerLineaDelTermino(termino);
+        
+        	String[] cadena=linea.split(" ");
+        	//0 termino 2 lista de postings k estan separados por comas
+	
+        	// Al menos tiene que tener el término y la lista de postings.
+		// Devolvemos la lista vacía para evitar NULL pointer Exceptions.
+		if (cadena.length < 2)
+	       		return toret;
+
+		// Si esto no se da, el indice de offsets está mal construido.
+		if (!termino.equals(cadena[1])){
+			return null;
+		}
+
+		List<String> l = Arrays.asList(cadena);
+		//Eliminamos el término.
+		l.remove(0);
+		l.stream().forEach((hit) -> toret.add(getPost(Arrays.asList(hit.split(Utils.STR_POSTING_SEPARATOR)),termino)));
+	
+		return toret;
 	}
+	
 
 	public double getNumDoc() {
 		return numDoc;
+	}
+
+
+	private Posting getPost(List<String> asList,String termino) {
+		List<Long> positions = new ArrayList<>(asList.size()-2);
+		String docId = asList.get(0);
+		asList.remove(0);
+		asList.remove(1);
+		asList.stream().forEach((hit) -> positions.add(Long.parseLong(hit)));
+		
+		return new Posting(docId, termino,positions);
 	}
 }
