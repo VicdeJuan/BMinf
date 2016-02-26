@@ -1,5 +1,6 @@
 package es.uam.eps.bmi.search.indexing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Posting {
@@ -22,7 +23,13 @@ public class Posting {
 		this.term = term;
 		this.termPositions = termPositions;
 
-	}
+	}/*
+        	public Posting(String docId, List<Long> termPositions) {
+		this.docId = docId;
+		this.term = term;
+		this.termPositions = termPositions;
+
+	}*/
 
 	/**
 	 * Getter del DocId.
@@ -67,5 +74,19 @@ public class Posting {
 	public void addTermPosition(Long pos) {
 		this.termPositions.add(pos);
 	}
-
+        
+        //Devuelvo las posiciones del posterior
+        public List<Long> posicionesLiteral(Posting posterior){
+            List<Long> toret=new ArrayList();
+        for(long pos1:this.getTermPositions()){
+            for(long pos2:posterior.getTermPositions()){
+                if(pos2==pos1+1){
+                //hay match
+                toret.add(pos2);
+                break;
+                }
+            }
+        }
+        return toret;
+        }
 }
