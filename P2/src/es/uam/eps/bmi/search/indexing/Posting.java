@@ -6,7 +6,6 @@ import java.util.List;
 public class Posting {
 
 	private String docId;
-	private String term;
 	private List<Long> termPositions;
 
 	/**
@@ -18,17 +17,14 @@ public class Posting {
 	 * @param termPositions Lista de posiciones en las que se encuentra el
 	 * termino dentro del documento.
 	 */
-	/*
-        public Posting(String docId, String term, List<Long> termPositions) {
-		this.docId = docId;
-		this.term = term;
-		this.termPositions = termPositions;
-
-	}*/
-        public Posting(String docId, List<Long> termPositions) {
-        this.docId = docId;
-        this.term = term;
-        this.termPositions = termPositions;
+        
+        public Posting(){
+            this.termPositions = new ArrayList<Long>();
+        }
+        
+	public Posting(String docId, List<Long> termPositions) {
+            this.docId = docId;
+            this.termPositions = termPositions;
 
 	}
 
@@ -41,15 +37,7 @@ public class Posting {
 		return this.docId;
 	}
         
-        /**
-	 * Getter del term.
-	 *
-	 * @return
-	 */
-        /*
-	public String getTerm() {
-		return this.term;
-	}*/
+      
 
 	/**
 	 *
@@ -69,6 +57,24 @@ public class Posting {
 	}
         
         /**
+	 *
+	 * @return Las posiciones del término en el documento del posting.
+	 */
+	public Long getOneTermPosition_Int(int index) {
+		return this.termPositions.get(index);
+	}
+        
+        
+        /**
+	 *
+	 * @return Las posiciones del término en el documento del posting.
+	 */
+	public String getOneTermPosition_String(int index) {
+		return String.valueOf(this.termPositions.get(index));
+	}
+        
+        
+        /**
 	 * Añade una posición del término.
 	 *
 	 * @param pos posicion que añadir.
@@ -77,18 +83,64 @@ public class Posting {
 		this.termPositions.add(pos);
 	}
         
-        //Devuelvo las posiciones del posterior
-        public List<Long> posicionesLiteral(Posting posterior){
-            List<Long> toret=new ArrayList();
-        for(long pos1:this.getTermPositions()){
-            for(long pos2:posterior.getTermPositions()){
-                if(pos2==pos1+1){
-                //hay match
-                toret.add(pos2);
-                break;
+        /**
+	 * Añade una posición del término.
+	 *
+	 * @param pos posicion que añadir.
+	 */
+	public void deleteTermPosition(Long pos) {
+		this.termPositions.remove(pos);
+	}
+        
+        
+        
+        /**
+	 * Añade una posición del término.
+	 *
+	 * @param pos posicion que añadir.
+	 */
+	public int getNumTerms() {
+		return this.termPositions.size();
+	}
+        
+    public static Posting mezclarPostings(Posting p1, Posting p2){
+        String docId = p1.getDocId();
+        String numTerms = String.valueOf(p1.getNumTerms() + p2.getNumTerms());    
+        List<Long> l = new ArrayList<Long>();
+        
+        Posting p = new Posting(docId, l);
+        
+        for(Long l1 : p1.getTermPositions()){
+            for(Long l2 : p2.getTermPositions()){
+                if(l1 < l2 ){
+                    p.addTermPosition(l1);
+                    break;
+                }else if(l1 > l2){
+                    p.addTermPosition(l2);
+                    p2.deleteTermPosition(l2);
+                    break;
+                }else{
+                    System.out.println("BIG PROBLEM");
                 }
             }
         }
-        return toret;
+        
+        for(Long l2 : p2.getTermPositions()){
+            p.addTermPosition(l2);
+            p2.deleteTermPosition(l2);
         }
+               
+        return p; 
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
+    }
+
+    public void setTermPositions(List<Long> termPositions) {
+        this.termPositions = termPositions;
+    }
+
+        
+        
 }
