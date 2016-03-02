@@ -10,6 +10,9 @@ import es.uam.eps.bmi.search.indexing.BasicIndex;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
 import es.uam.eps.bmi.search.parsing.QueryParser;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
@@ -22,12 +25,45 @@ public class LiteralMatchingSearcher implements Searcher {
 
     BasicReader indice;
     private String indexdir;
-    private int TOP = 5;
+    private final static int TOP = 5;
+    
+    public static void main(String[] args) throws IOException {
+		
+		String inputCollectionPath = "indice.txt";
+		String outputCollectionPath = "querys.txt";
+                
+                BasicIndex basicIdx = new BasicIndex();
+
+		if (basicIdx.getReader() != null ) {
+			TFIDFSearcher tfSearch = new TFIDFSearcher();
+			tfSearch.build(basicIdx);
+			//ahora leemos de teclado las querys
+			System.out.println("Introducir las palabras de la búsqueda:");
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			String query = br.readLine();
+                        String prueba="a b";
+                    List<ScoredTextDocument> search = tfSearch.search(prueba);
+
+			List<ScoredTextDocument> resul = tfSearch.search(query);
+			if (resul != null && resul.size() > 0) {
+				for (int i = 0; i < TOP; i++) {
+					System.out.println(resul.get(i).getDocId());
+				}
+
+			} else {
+				System.out.println("Consulta vacia");
+			}
+
+		}
+                
+                
+	}
+    
 
     @Override
     public void build(Index index) {
         this.indexdir = index.getPath();
-        BasicIndex basicIndex = (BasicIndex) index;
+          this.indice= ((BasicIndex)index).getReader();
 
     }
 

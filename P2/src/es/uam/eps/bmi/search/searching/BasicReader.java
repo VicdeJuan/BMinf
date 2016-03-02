@@ -6,20 +6,18 @@
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.Utils;
-import static es.uam.eps.bmi.search.Utils.*;
 import es.uam.eps.bmi.search.indexing.Posting;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.RandomAccessFile;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  *
@@ -27,11 +25,9 @@ import java.util.stream.Stream;
  */
 public class BasicReader {
     RandomAccessFile accesoIndice; // indice
-    HashMap<String,Long> dicOffset = null;//diccionario de offset para cada termino
+    HashMap<String,Long> dicTermino_Offset = null;//diccionario de offset para cada termino
     double numDoc;
-
-
-    String dicFile = "cambiarlo";
+    HashMap<String,ModuloNombre> dicDocId_ModuloNombre = null;
     
     
     /**
@@ -41,12 +37,20 @@ public class BasicReader {
      * @param indice	Path donde se encuentra el índice.
      * @throws FileNotFoundException En caso de no encontrar el fichero del índice.
      * @throws IOException 	En caso de malformación del diccionario o de error de IO.
+     * @throws java.lang.ClassNotFoundException     Se ha intentado leer un fichero auxiliar mal formado.
      */
-    public BasicReader(String indice) throws FileNotFoundException, IOException {
+    public BasicReader(String indice) throws FileNotFoundException, IOException, ClassNotFoundException {
 
         this.accesoIndice = new RandomAccessFile(indice,"r");
-	dicOffset = new HashMap<>();
-	Utils.loadDic(dicFile,dicOffset,DIC_TYPE.LONG);
+        
+        ObjectInputStream objectInputStream;
+        
+        /*objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicDocId_ModuloNombre_FILE));
+	dicDocId_ModuloNombre = (HashMap <String,ModuloNombre>) objectInputStream.readObject();
+        
+        objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicTerminoOffset_FILE));
+        dicTermino_Offset = (HashMap <String,Long>) objectInputStream.readObject();
+	*/
     }
 
     /**
@@ -57,7 +61,7 @@ public class BasicReader {
      */
     public String leerLineaDelTermino(String termino) {
         String linea;
-        Long offset= dicOffset.get(termino);
+        Long offset= dicTermino_Offset.get(termino);
         
 	    try {
 		accesoIndice.seek(offset);
@@ -77,8 +81,8 @@ public class BasicReader {
 	 * Getter del diccionario de Offset.
 	 * @return 
 	 */
-	public HashMap<String, Long> getDicOffset() {
-		return dicOffset;
+	public HashMap<String, Long> getDicTermino_Offset() {
+		return dicTermino_Offset;
 	}
 
 	List<Posting> getTermPostings(String termino) {

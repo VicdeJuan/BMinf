@@ -1,6 +1,7 @@
 package es.uam.eps.bmi.search;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -18,6 +19,10 @@ public class Utils {
 	public static final String STR_INDEX_SEPARATOR = " ";
         public static final String ESPACIO = " ";
         public static final String COMA = ",";
+    
+        public static String dicDocId_ModuloNombre_FILE = ".dicDocId_MN";
+        public static String dicTerminoOffset_FILE = ".dicTermOff";
+    
 	
     static public enum DIC_TYPE {LONG,STR};
     /**
