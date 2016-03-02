@@ -159,7 +159,7 @@ public class Indexar {
                             /*
                                 Para escribir el índice, utilizar:
 
-                                linea: termino ESPACIO modulo_del_documento ESPACIO lista_de_postings
+                                linea: termino  ESPACIO lista_de_postings
 
                                 lista_de_postings: posting
                                                  | posting ESPACIO lista_de_postings
@@ -170,8 +170,8 @@ public class Indexar {
                                           | long COMA posiciones
 
                                 Por ejemplo:
-                                Parra 142.45 1,3,1,2,3 2,2,1,2
-                                termino modulo lista_de_postings_del_doc_1 lista_de_postings_del_doc_2
+                                Parra 1,3,1,2,3 2,2,1,2
+                                termino  lista_de_postings_del_doc_1 lista_de_postings_del_doc_2
                             */
                             for (Entrada e : indice.getListaEntradas()){
                                 String linea = e.getTermino()+Utils.ESPACIO+String.valueOf(e.getModulo());

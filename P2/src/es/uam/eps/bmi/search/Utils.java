@@ -16,6 +16,8 @@ public class Utils {
 	public static final String STR_DIC_OFFSET_SEPARATOR = " ";
 	public static final String STR_POSTING_SEPARATOR = ",";
 	public static final String STR_INDEX_SEPARATOR = " ";
+        public static final String ESPACIO = " ";
+        public static final String COMA = ",";
 	
     static public enum DIC_TYPE {LONG,STR};
     /**

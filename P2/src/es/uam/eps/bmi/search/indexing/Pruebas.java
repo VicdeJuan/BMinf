@@ -44,6 +44,7 @@ public class Pruebas {
         String value, texto = "";
         byte[] buffer = new byte[2048];
         
+
         InputStream theFile = new FileInputStream("/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docs.zip");
         ZipInputStream stream = new ZipInputStream(theFile);
         String outpath1 = "/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docIndice1";

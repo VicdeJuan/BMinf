@@ -28,13 +28,13 @@ public class Pruebas2 {
         String value, texto = "";
         byte[] buffer = new byte[2048];
         
-        InputStream theFile = new FileInputStream("/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docs1k.zip");
+        InputStream theFile = new FileInputStream("datos/clueweb-1K/docs.zip");
         ZipInputStream stream = new ZipInputStream(theFile);
-        String outpath1 = "/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docIndice1";
-        String outpath2 = "/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docIndice2";
+        String outpath1 = "datos/clueweb-1K/docIndice1";
+        String outpath2 = "datos/clueweb-1K/docIndice2";
         
         Indexar index = new Indexar();
-        index.build("/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docs1k.zip", outpath1, null);
+        index.build("datos/clueweb-1K/docs.zip", outpath1, null);
         
     }
 }

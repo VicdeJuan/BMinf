@@ -141,6 +141,20 @@ public class Posting {
         this.termPositions = termPositions;
     }
 
+            //Devuelvo las posiciones del posterior
+        public List<Long> posicionesLiteral(Posting posterior){
+            List<Long> toret=new ArrayList();
+        for(long pos1:this.getTermPositions()){
+            for(long pos2:posterior.getTermPositions()){
+                if(pos2==pos1+1){
+                //hay match
+                toret.add(pos2);
+                break;
+                }
+            }
+        }
+        return toret;
+        }
         
         
 }

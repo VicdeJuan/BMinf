@@ -93,7 +93,8 @@ public class LiteralMatchingSearcher implements Searcher {
             //FALTAAAAAAAAAAAAAAAAAAAA que no se olvide     
             doctf_id.put(docid, old);
         }
-        int k = 1;
+        int k = 0;
+        
 
 
         for (int g = 0; k < termsprincipal.size(); g++) {
@@ -108,51 +109,26 @@ public class LiteralMatchingSearcher implements Searcher {
     }
 
     /**
-     * Computa el producto de tf*id de un término.
+     * Computa el producto de tf*id de un término y un documento dado.
      *
-     * @param termino
+     * @param termino   Termino.
+     * @param docid     Id del documento.
      * @return
      */
-    public double tf_idf(String termino) {
-
-        // ESTA FUNCIÓN ESTÁ MAL HECHA.
-        double freq = 0;
-        double ndoc = 0;
-        double tf = 0;
-        double idf = 0;
-        List<Posting> termPostings = indice.getTermPostings(termino);
-        for (Posting post : termPostings) {
-            // Cada vuelta es en un documento distinto.
-            freq += post.getTermFrequency();
-            ndoc++;
-            tf += post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
-        }
-        // val 2 = tf
-        tf = freq == 0 ? 1 : 1 + Math.log(freq) / Math.log(2);
-        // val 3 = idf
-        idf = Math.log(indice.getNumDoc() / ndoc);
-
-        return tf * idf;
-    }
-
+  
     public double tf_idf(String termino, String docid) {
 
-        double freq = 0;
-        double ndoc = 0;
-        double tf = 0;
-        double idf = 0;
+        
+        double ndoc;
+        double tf;
+        double idf;
         List<Posting> termPostings = indice.getTermPostings(termino);
-        for (Posting post : termPostings) {
-            // Cada vuelta es en un documento distinto.
-            if (post.getDocId().equals(docid)) {
+        Posting post = termPostings.get(termPostings.indexOf(docid));
 
-                freq = post.getTermFrequency();
+        tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
+        ndoc = termPostings.size();
 
-                tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
-            }
-            ndoc++;
-
-        }
+        
         // val 2 = tf
         //tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
         // val 3 = idf = log(nº doc/nºdocs con ese termino)
