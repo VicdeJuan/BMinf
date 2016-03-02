@@ -22,10 +22,15 @@ public class BasicIndex implements Index {
     private HashMap diccionarioTerminos; //(termino, linea del txt del indice)
     private HashMap diccionarioDocs; //(nombre del documento, id guardado en indice)
     private BasicReader reader;
+    
     public BasicIndex(String path, ArrayList<ArrayList<Posting>> indice1, ArrayList<ArrayList<Posting>> indice2, HashMap diccionario) {
         this.path = path;
         this.indice1 = indice1;
         this.diccionarioTerminos = diccionario;
+    }
+
+    public BasicIndex() {
+        
     }
     
  

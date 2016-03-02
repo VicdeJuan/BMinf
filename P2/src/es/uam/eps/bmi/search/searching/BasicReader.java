@@ -45,12 +45,12 @@ public class BasicReader {
         
         ObjectInputStream objectInputStream;
         
-        objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicDocId_ModuloNombre_FILE));
+        /*objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicDocId_ModuloNombre_FILE));
 	dicDocId_ModuloNombre = (HashMap <String,ModuloNombre>) objectInputStream.readObject();
         
         objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicTerminoOffset_FILE));
         dicTermino_Offset = (HashMap <String,Long>) objectInputStream.readObject();
-	
+	*/
     }
 
     /**
