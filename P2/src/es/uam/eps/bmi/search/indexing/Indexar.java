@@ -6,6 +6,7 @@
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.Utils;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -52,7 +53,9 @@ public class Indexar {
 	public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) throws FileNotFoundException, IOException{
             //Documentos que vamos a analizar:
             HashMap diccionarioDocs = new HashMap(); //(nombre del documento, id del documento)
-            int idDoc = 0; //id
+            int idDoc = 1; //id
+            HTMLSimpleParser parser = new HTMLSimpleParser();
+            
 
             // create a buffer to improve copy performance later.
             byte[] buffer = new byte[2048];
@@ -108,6 +111,8 @@ public class Indexar {
                             String value, texto = "";
                             
                             System.out.println("Documento "+idDoc+"----"+entry.getName()+"----tamaño:"+entry.getSize());
+                            System.out.println("Memoria total: "+Runtime.getRuntime().totalMemory()+"-- Memoria libre: "+Runtime.getRuntime().freeMemory()+"-- Memoria máxima: "+Runtime.getRuntime().maxMemory());
+                            System.out.println("Diferencia: "+numBytes);
                                 
                             //Obtenemos el texto en bruto del fichero:
                             while ((len = stream.read(buffer)) > 0){
@@ -117,6 +122,15 @@ public class Indexar {
                                 //output.write(buffer, 0, len)
                                 numBytes = numBytes + len;                   
                             }
+                            //System.out.println("TEXTO SIN PARSEAR");
+                            //System.out.println("------------------------------------");
+                            //System.out.println(texto);
+                            texto = parser.parse(texto);
+                            //System.out.println("------------------------------------");
+                            //System.out.println(texto);
+                            //System.out.println("------------------------------------\n");
+                            
+                            //parsear
 
                             //Añadimos documento en hashmap de documentos:
                             String nombreDocumento = entry.getName();
@@ -130,7 +144,6 @@ public class Indexar {
 
                             //Tokenizamos el texto, y cogemos uno a uno los términos metiéndolos en el indice
                             StringTokenizer tokens=new StringTokenizer(texto, " ,;:\n\r\t"); //PREGUNTAR SI ESTAN BIEN ESTOS SEPARADORES
-                            System.out.println("Longiud token: "+tokens.countTokens());
                             while(tokens.hasMoreTokens()){
                                 String termino = tokens.nextToken();
 

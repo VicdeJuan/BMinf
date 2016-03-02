@@ -34,7 +34,7 @@ public class Pruebas2 {
         String outpath2 = "/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docIndice2";
         
         Indexar index = new Indexar();
-        index.build("/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docs10k.zip", outpath1, null);
+        index.build("/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docs1k.zip", outpath1, null);
         
     }
 }
