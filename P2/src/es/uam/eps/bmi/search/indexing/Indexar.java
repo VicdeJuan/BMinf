@@ -31,14 +31,14 @@ public class Indexar {
    private HashMap diccionarioDocs; //(docId, nombre del documento)
    private HashMap diccionarioTerminos_indice; //(termino, offset de bytes en el fichero de indice)
     
+        
     
-    
-    public Indexar(){
+        public Indexar(){
         this.diccionarioDocs = new HashMap();
         this.diccionarioTerminos_indice = new HashMap();
     }
     
-    
+        
     /**
 	 * Construye un índice a partir de una colección de documentos de texto.
 	 *
@@ -401,6 +401,8 @@ public class Indexar {
     }
 
     
+        
+        
     public static Posting stringToPosting(String str){
         String[] s = str.split(",");
         
