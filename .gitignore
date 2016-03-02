@@ -100,3 +100,4 @@ tikzgen/*
 *~
 *.sublime-project
 *.zip
+/P2/src/nbproject/private/
