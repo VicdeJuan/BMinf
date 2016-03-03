@@ -453,15 +453,20 @@ public class Indexar {
                post_list.remove(0);
                List<Posting> p_list = new ArrayList<>();
                
-               // Iteramos sobre la lista [termino, (docid,pos1,pos2) , (docid2,pos1,pos2) ]
-               post_list.stream().map((s) -> Arrays.asList(s.split(Utils.InternPostingSeparator))).forEach((posting) -> {
-                   String docId = posting.get(0);
-                   posting.remove(0);
-                   List<Long> positions = posting.stream().map(Long::parseLong).collect(Collectors.toList());
-                   p_list.add(new Posting(docId, positions));
-                   diccionarioDocs_NM.get(Integer.parseInt(docId)).updateModulo(Utils._tf_idf(docId, p_list, this.getNumDocs()));
-               });
-               
+               // Iteramos sobre la lista [["termino"],["docid,pos1,pos2"],["docid2,pos1,pos2"]]
+               //   convirtiendo cada termino de la lista en una lista de terminos, separando por
+               //   comas
+               post_list.stream().map((s) -> Arrays.asList(s.split(Utils.InternPostingSeparator))).
+                        forEach((posting) -> {
+                            String docId = posting.get(0);
+                            posting.remove(0);
+                            // Obtenemos la lista de posicioines a partir del texto que forma el posting.
+                            List<Long> positions = posting.stream().map(Long::parseLong).collect(Collectors.toList());
+                            p_list.add(new Posting(docId, positions));
+                            diccionarioDocs_NM.get(Integer.parseInt(docId)).updateModulo(Math.pow(Utils._tf_idf(docId, p_list, this.getNumDocs()),2));
+                        }
+                    );
+               diccionarioDocs_NM.forEach((k,v)-> v.setModulo(Math.sqrt(v.getModulo())));
            }
        } catch (FileNotFoundException ex) {
            Logger.getLogger(Indexar.class.getName()).log(Level.SEVERE, null, ex);
