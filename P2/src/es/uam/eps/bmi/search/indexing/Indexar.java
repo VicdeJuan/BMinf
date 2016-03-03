@@ -8,19 +8,28 @@ package es.uam.eps.bmi.search.indexing;
 import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
+import es.uam.eps.bmi.search.searching.ModuloNombre;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -29,16 +38,20 @@ import java.util.zip.ZipInputStream;
  * @author parra
  */
 public class Indexar {
-   private HashMap diccionarioDocs; //(docId, nombre del documento)
-   private HashMap diccionarioTerminos_indice; //(termino, offset de bytes en el fichero de indice)
+   private HashMap<Integer,ModuloNombre> diccionarioDocs_NM;          //(docId -> (nombre del documento, modulo))
+   private HashMap<String,Long> diccionarioTerminos_indice;  //(termino -> offset de bytes en el fichero de indice)
+    private String path;
     
-        
     
         public Indexar(){
-        this.diccionarioDocs = new HashMap();
+        this.diccionarioDocs_NM = new HashMap();
         this.diccionarioTerminos_indice = new HashMap();
+       
     }
-    
+       
+        public int getNumDocs(){
+            return diccionarioDocs_NM.size();
+        }
         
     /**
 	 * Construye un índice a partir de una colección de documentos de texto.
@@ -138,6 +151,9 @@ public class Indexar {
                             if (!diccionarioDocs.containsValue(nombreDocumento)){
                                 diccionarioDocs.put(docId_actual,nombreDocumento);
                             }
+                            // Para guardar tambien el modulo, 
+                            //      este es el HashMap que utilizamos
+                            diccionarioDocs_NM.putIfAbsent(docId_actual, new ModuloNombre(nombreDocumento,0));
 
                             //Creamos el índice para este documento:
                             //Indice indice = new Indice(new ArrayList<Entrada>());
@@ -366,7 +382,7 @@ public class Indexar {
 
                                         //Guardamos el par (termino, offset de bytes) en un diccionario
                                         offset = offset + linea_leida.getBytes().length;
-                                        this.diccionarioTerminos_indice.replace(termino_linea, linea_leida.getBytes().length);
+                                        this.diccionarioTerminos_indice.replace(termino_linea, new Long(linea_leida.getBytes().length));
                                     }
 
                                 }
@@ -387,7 +403,7 @@ public class Indexar {
 
                                         //Guardamos el par (termino, offset de bytes) en un diccionario
                                         offset = offset + linea_escribir.getBytes().length;
-                                        this.diccionarioTerminos_indice.replace(e.getTermino(), linea_escribir.getBytes().length);
+                                        this.diccionarioTerminos_indice.replace(e.getTermino(), new Long(linea_escribir.getBytes().length));
                                     }
                                 }
 
@@ -410,13 +426,70 @@ public class Indexar {
         }finally{
                 // we must always close the zip file.
                 stream.close();
+                buildDics();
+                writeDics();
             }
     }
 
     
+    public void buildDics() {
         
+       BufferedReader b;
+       try {
+           diccionarioDocs_NM = new HashMap<>(); //(docId, nombre del documento)
+           diccionarioTerminos_indice = new HashMap<>(); //(termino, offset de bytes en el fichero de indice)
+           b = new BufferedReader(new FileReader(path));
+           String line;
+           String termino;
+           while((line = b.readLine()) != null){
+               int idx = line.indexOf(Utils.ESPACIO);
+               termino = line.substring(0,idx);
+               diccionarioTerminos_indice.put(termino, new Long(line.getBytes().length));
+               
+               //  **** El otro diccionario
+               // La lista de postings
+               List<String> post_list = Arrays.asList(line.split(Utils.ExternPostingSeparator));
+               // Eliminamos el termino
+               post_list.remove(0);
+               List<Posting> p_list = new ArrayList<>();
+               
+               // Iteramos sobre la lista [termino, (docid,pos1,pos2) , (docid2,pos1,pos2) ]
+               post_list.stream().map((s) -> Arrays.asList(s.split(Utils.InternPostingSeparator))).forEach((posting) -> {
+                   String docId = posting.get(0);
+                   posting.remove(0);
+                   List<Long> positions = posting.stream().map(Long::parseLong).collect(Collectors.toList());
+                   p_list.add(new Posting(docId, positions));
+                   diccionarioDocs_NM.get(Integer.parseInt(docId)).updateModulo(Utils._tf_idf(docId, p_list, this.getNumDocs()));
+               });
+               
+           }
+       } catch (FileNotFoundException ex) {
+           Logger.getLogger(Indexar.class.getName()).log(Level.SEVERE, null, ex);
+       } catch (IOException ex){
+           Logger.getLogger(Indexar.class.getName()).log(Level.SEVERE, null, ex);
+       }
         
-    public static Posting stringToPosting(String str){
+    }
+    
+    public void writeDics(){
+       try {
+           ObjectOutputStream OOS;
+           
+           OOS = new ObjectOutputStream(new FileOutputStream(Utils.dicDocId_ModuloNombre_FILE));
+           OOS.writeObject(diccionarioDocs_NM);
+           
+           OOS = new ObjectOutputStream(new FileOutputStream(Utils.dicTerminoOffset_FILE));
+           OOS.writeObject(diccionarioTerminos_indice);
+           
+       } catch (FileNotFoundException ex) {
+           Logger.getLogger(Indexar.class.getName()).log(Level.SEVERE, null, ex);
+       } catch (IOException ex) {
+           Logger.getLogger(Indexar.class.getName()).log(Level.SEVERE, null, ex);
+       }
+    }
+        
+    
+    public  Posting stringToPosting(String str){
         String[] s = str.split(",");
         
         Posting p;
