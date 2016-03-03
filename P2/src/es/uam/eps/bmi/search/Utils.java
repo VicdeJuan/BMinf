@@ -27,5 +27,19 @@ public class Utils {
         public static final String ExternPostingSeparator = " ";
 
     
+    public static double _tf_idf(String docid,List<Posting> termPostings,double numDoc){
+        double ndoc;
+        double tf;
+        double idf;
+        
+        Posting post = termPostings.get(termPostings.indexOf(docid));
+        tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
+        
+        ndoc = termPostings.size();
+        idf = Math.log(numDoc / ndoc) / Math.log(2);
+        
+        return tf*idf;
+    }
+    
 
 }
