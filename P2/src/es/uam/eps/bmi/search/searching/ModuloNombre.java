@@ -20,6 +20,19 @@ public class ModuloNombre {
     public double getModulo() {
         return modulo;
     }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setModulo(double modulo) {
+        this.modulo = modulo;
+    }
+
+    public void updateModulo(double module) {
+        this.modulo += module;
+    }
+    
     
     
 }

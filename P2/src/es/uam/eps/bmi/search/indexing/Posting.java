@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Posting {
 
+   
+
 	private String docId;
 	private List<Long> termPositions;
 
@@ -13,13 +15,12 @@ public class Posting {
 	 * de posiciones.
 	 *
 	 * @param docId Id del documento en el que se encuentra el termino.
-	 * @param term Termino para el que queremos crear el posting.
 	 * @param termPositions Lista de posiciones en las que se encuentra el
 	 * termino dentro del documento.
 	 */
         
         public Posting(){
-            this.termPositions = new ArrayList<Long>();
+            this.termPositions = new ArrayList<>();
         }
         
 	public Posting(String docId, List<Long> termPositions) {

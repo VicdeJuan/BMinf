@@ -105,7 +105,9 @@ public class BasicReader {
 		List<String> l = Arrays.asList(cadena);
 		//Eliminamos el término.
 		l.remove(0);
-		l.stream().forEach((hit) -> toret.add(getPost(Arrays.asList(hit.split(Utils.STR_POSTING_SEPARATOR)),termino)));
+		l.stream().forEach(
+                        (hit) ->  
+                            toret.add(getPost(Arrays.asList(hit.split(Utils.InternPostingSeparator)))));
 	
 		return toret;
 	}
@@ -116,7 +118,7 @@ public class BasicReader {
 	}
 
 
-	private Posting getPost(List<String> asList,String termino) {
+	private Posting getPost(List<String> asList) {
 		List<Long> positions = new ArrayList<>(asList.size()-2);
 		String docId = asList.get(0);
 		asList.remove(0);
