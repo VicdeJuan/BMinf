@@ -16,6 +16,8 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,8 +35,9 @@ public class LiteralMatchingSearcher implements Searcher {
 		String outputCollectionPath = "querys.txt";
                 
                 BasicIndex basicIdx = new BasicIndex();
+                
 
-		if (basicIdx.getReader() != null ) {
+		
 			TFIDFSearcher tfSearch = new TFIDFSearcher();
 			tfSearch.build(basicIdx);
 			//ahora leemos de teclado las querys
@@ -42,7 +45,7 @@ public class LiteralMatchingSearcher implements Searcher {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			String query = br.readLine();
                         String prueba="a b";
-                    List<ScoredTextDocument> search = tfSearch.search(prueba);
+                        List<ScoredTextDocument> search = tfSearch.search(prueba);
 
 			List<ScoredTextDocument> resul = tfSearch.search(query);
 			if (resul != null && resul.size() > 0) {
@@ -57,13 +60,20 @@ public class LiteralMatchingSearcher implements Searcher {
 		}
                 
                 
-	}
+	
     
 
     @Override
     public void build(Index index) {
         this.indexdir = index.getPath();
-          this.indice= ((BasicIndex)index).getReader();
+        
+        try {
+            this.indice= new BasicReader(((BasicIndex)index).getPath())  ;
+        } catch (IOException ex) {
+            Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 

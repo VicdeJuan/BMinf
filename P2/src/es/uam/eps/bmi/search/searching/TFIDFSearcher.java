@@ -38,15 +38,16 @@ public class TFIDFSearcher implements Searcher{
     private final static int TOP=5;
     
     
-    	public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 		
 		String inputCollectionPath = "indice.txt";
 		String outputCollectionPath = "querys.txt";
                 
                 BasicIndex basicIdx = new BasicIndex();
+                basicIdx.build(inputCollectionPath, outputCollectionPath, null);
                 
 
-		if (basicIdx.getReader() != null || true ) {
+		
 			TFIDFSearcher tfSearch = new TFIDFSearcher();
 			tfSearch.build(basicIdx);
 			//ahora leemos de teclado las querys
@@ -66,23 +67,24 @@ public class TFIDFSearcher implements Searcher{
 				System.out.println("Consulta vacia");
 			}
 
-		}
+		
                 
                 
 	}
     
+
     @Override
     public void build(Index index) {
-        //this.indexdir = index.getPath();
-        //this.indice= ((BasicIndex)index).getReader();
-        String indice="indice.txt";
+        this.indexdir = index.getPath();
+        
         try {
-            this.indice= new BasicReader(indice);
+            this.indice= new BasicReader(((BasicIndex)index).getPath())  ;
         } catch (IOException ex) {
-            Logger.getLogger(TFIDFSearcher.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TFIDFSearcher.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
     @Override
