@@ -5,6 +5,7 @@
  */
 package es.uam.eps.bmi.search.indexing;
 
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,22 +20,24 @@ import java.util.zip.ZipInputStream;
 public class Pruebas2 {
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
+        String input = "/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/pruebas.zip";
+        String outpath = "/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docIndicePrueba1";
+        HTMLSimpleParser parser = new HTMLSimpleParser(); //QUita del text html todas las etiquetas.
+        BasicIndex index = new BasicIndex();
         
-        //Documentos que vamos a analizar:
-        HashMap diccionarioDocs = new HashMap(); //(nombre del documento, id del documento)
-        int idDoc = 0; //id
+        //Para probarlo, ejecutar primero index.build, y despues, comentar esa linea para futuras pruebas-
+        //index.build(input, outpath, parser);
         
-        // create a buffer to improve copy performance later.
-        String value, texto = "";
-        byte[] buffer = new byte[2048];
+        //index.load(outpath);
         
-        InputStream theFile = new FileInputStream("/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docs1k.zip");
-        ZipInputStream stream = new ZipInputStream(theFile);
-        String outpath1 = "/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docIndice1";
-        String outpath2 = "/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docIndice2";
-        
-        Indexar index = new Indexar();
-        index.build("/home/parra/NetBeansProjects/p2_v1/datos/clueweb-1K/docs1k.zip", outpath1, null);
+        /*DEBUG
+        for(Posting p : index.getTermPostings("c")){
+            for(Long pos : p.getTermPositions()){
+                System.out.println(pos);
+            }
+            System.out.println("_________________________");
+        }
+        */
         
     }
 }

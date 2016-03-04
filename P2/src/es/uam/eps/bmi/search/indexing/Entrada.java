@@ -14,27 +14,17 @@ import java.util.HashMap;
  */
 public class Entrada {
     private String termino;
-    private long modulo;
     private ArrayList<Posting> listaPostings;
     private HashMap diccionarioPostings; //(docId, posicion array listaPostings)
     
     public Entrada(String termino){
         this.termino = termino;
-        this.modulo = 999;
-        this.listaPostings = new ArrayList<Posting>();
-        this.diccionarioPostings = new HashMap();
-    }
-    
-    public Entrada(String termino, long modulo){
-        this.termino = termino;
-        this.modulo = modulo;
         this.listaPostings = new ArrayList<Posting>();
         this.diccionarioPostings = new HashMap();
     }
 
-    public Entrada(String termino, long modulo, ArrayList<Posting> listaPostings) {
+    public Entrada(String termino, ArrayList<Posting> listaPostings) {
         this.termino = termino;
-        this.modulo = modulo;
         this.listaPostings = listaPostings;
         this.diccionarioPostings = new HashMap();
     }
@@ -97,20 +87,12 @@ public class Entrada {
         this.termino = termino;
     }
 
-    public void setModulo(long modulo) {
-        this.modulo = modulo;
-    }
-
     public void setListaPostings(ArrayList<Posting> listaPostings) {
         this.listaPostings = listaPostings;
     }
 
     public String getTermino() {
         return termino;
-    }
-
-    public long getModulo() {
-        return modulo;
     }
 
     public ArrayList<Posting> getListaPostings() {
