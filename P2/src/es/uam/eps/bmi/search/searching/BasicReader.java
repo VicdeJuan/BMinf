@@ -60,6 +60,7 @@ public class BasicReader {
         this.diccionario_docId_modulo = diccionario_docId_modulo;
         this.dicTermino_Offset = diccionarioTerminos_indice;
         this.accesoIndice = new RandomAccessFile(indice,"r");
+        this.numDoc=diccionarioDocs.keySet().size();
     }
     
 

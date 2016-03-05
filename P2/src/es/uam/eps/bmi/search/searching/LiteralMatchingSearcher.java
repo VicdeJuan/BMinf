@@ -28,47 +28,41 @@ public class LiteralMatchingSearcher implements Searcher {
     BasicReader indice;
     private String indexdir;
     private final static int TOP = 5;
-    
+
     public static void main(String[] args) throws IOException {
-		
-		String inputCollectionPath = "indice.txt";
-		String outputCollectionPath = "querys.txt";
-                
-                BasicIndex basicIdx = new BasicIndex();
-                
 
-		
-			TFIDFSearcher tfSearch = new TFIDFSearcher();
-			tfSearch.build(basicIdx);
-			//ahora leemos de teclado las querys
-			System.out.println("Introducir las palabras de la búsqueda:");
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			String query = br.readLine();
-                        String prueba="a b";
-                        List<ScoredTextDocument> search = tfSearch.search(prueba);
+        String inputCollectionPath = "indice.txt";
+        String outputCollectionPath = "querys.txt";
 
-			List<ScoredTextDocument> resul = tfSearch.search(query);
-			if (resul != null && resul.size() > 0) {
-				for (int i = 0; i < TOP; i++) {
-					System.out.println(resul.get(i).getDocId());
-				}
+        BasicIndex basicIdx = new BasicIndex();
 
-			} else {
-				System.out.println("Consulta vacia");
-			}
+        TFIDFSearcher tfSearch = new TFIDFSearcher();
+        tfSearch.build(basicIdx);
+        //ahora leemos de teclado las querys
+        System.out.println("Introducir las palabras de la búsqueda:");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String query = br.readLine();
+        String prueba = "a b";
+        List<ScoredTextDocument> search = tfSearch.search(prueba);
 
-		}
-                
-                
-	
-    
+        List<ScoredTextDocument> resul = tfSearch.search(query);
+        if (resul != null && resul.size() > 0) {
+            for (int i = 0; i < TOP; i++) {
+                System.out.println(resul.get(i).getDocId());
+            }
+
+        } else {
+            System.out.println("Consulta vacia");
+        }
+
+    }
 
     @Override
     public void build(Index index) {
         this.indexdir = index.getPath();
-        
+
         try {
-            this.indice= new BasicReader(((BasicIndex)index).getPath())  ;
+            this.indice = new BasicReader(((BasicIndex) index).getPath());
         } catch (IOException ex) {
             Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -134,14 +128,14 @@ public class LiteralMatchingSearcher implements Searcher {
         }
         for (String docid : doctf_id.keySet()) {
             double old = doctf_id.get(docid);
-                        //Falta dividir old por el modulo del documento    
-            //FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAa
-            //FALTAAAAAAAAAAAAAAAAAAAA que no se olvide     
+            Object get = this.indice.getDiccionario_docId_modulo().get(docid);
+            String a = get.toString();
+            double modulo = Double.parseDouble(a);
+            old = old / modulo;
+            //comprobar modulo correcto    
             doctf_id.put(docid, old);
         }
         int k = 0;
-        
-
 
         for (int g = 0; k < termsprincipal.size(); g++) {
             String doc = termsprincipal.get(g).getDocId();
@@ -157,25 +151,29 @@ public class LiteralMatchingSearcher implements Searcher {
     /**
      * Computa el producto de tf*id de un término y un documento dado.
      *
-     * @param termino   Termino.
-     * @param docid     Id del documento.
+     * @param termino Termino.
+     * @param docid Id del documento.
      * @return
      */
-  
     public double tf_idf(String termino, String docid) {
 
-        
-        double ndoc;
-        double tf;
-        double idf;
+        double freq = 0;
+        double ndoc = 0;
+        double tf = 0;
+        double idf = 0;
         List<Posting> termPostings = indice.getTermPostings(termino);
-        Posting post = termPostings.get(termPostings.indexOf(docid));
+        for (Posting post : termPostings) {
+            // Cada vuelta es en un documento distinto.
+            if (post.getDocId().equals(docid)) {
 
-        tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
-        ndoc = termPostings.size();
+                freq = post.getTermFrequency();
 
-        
-        // val 2 = tf
+                tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
+            }
+            ndoc++;
+
+        }
+	// val 2 = tf
         //tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
         // val 3 = idf = log(nº doc/nºdocs con ese termino)
         idf = Math.log(indice.getNumDoc() / ndoc) / Math.log(2);

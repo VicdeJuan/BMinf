@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
@@ -59,7 +60,9 @@ public class TFIDFSearcher implements Searcher{
 
 			List<ScoredTextDocument> resul = tfSearch.search(prueba);
 			if (resul != null && resul.size() > 0) {
-				for (int i = 0; i < TOP; i++) {
+                            int topp=TOP;
+                            if(resul.size()<TOP) topp=resul.size();
+				for (int i = 0; i < topp; i++) {
 					System.out.println(resul.get(i).getDocId());
 				}
 
@@ -89,7 +92,8 @@ public class TFIDFSearcher implements Searcher{
 
     @Override
     public List<ScoredTextDocument> search(String query) {
-         List<ScoredTextDocument> toret = null;
+         List<ScoredTextDocument> toret;
+        toret = new ArrayList<>();
          BinaryHeap heap;
         String[] querys;
         TreeMap<String,Double> doctf_id=new TreeMap();
@@ -101,20 +105,24 @@ public class TFIDFSearcher implements Searcher{
              List<Posting> termPostings = indice.getTermPostings(qaux);
              for(Posting post:termPostings){
                 double tf_idf=tf_idf(qaux,post.getDocId());
-                if(!doctf_id.containsKey(qaux)){
+                if(!doctf_id.containsKey(post.getDocId())){
                     doctf_id.put(post.getDocId(),tf_idf );
                 }
-                double old=doctf_id.get(qaux);
+                else{
+                double old=doctf_id.get(post.getDocId());
                 old +=tf_idf;
-                doctf_id.put(qaux, old);
+                doctf_id.put(post.getDocId(), old);
+                }
                        
              }
         }
         for(String docid:doctf_id.keySet()){
             double old=doctf_id.get(docid);
-            double modulo=Double.parseDouble((String) this.indice.getDiccionario_docId_modulo().get(docid));
+             Object get = this.indice.getDiccionario_docId_modulo().get(docid);
+            String a=get.toString();
+             double modulo=Double.parseDouble(a);
             old= old/modulo;
-            //Falta dividir old por el modulo del documento    
+            //Falta comprobar el modulo   
 
             doctf_id.put(docid,old);
         }
@@ -135,26 +143,35 @@ public class TFIDFSearcher implements Searcher{
         
         return toret;
     }
-       public double tf_idf(String termino, String docid) {
-
+       public double tf_idf(String termino, String docid ) {
+         
+	
+	double freq = 0;
+	double ndoc = 0;
+	double tf = 0;
+	double idf = 0;
+	List<Posting> termPostings = indice.getTermPostings(termino);
+	for (Posting post : termPostings){
+		// Cada vuelta es en un documento distinto.
+            if(post.getDocId().equals(docid)){
+                
+                freq = post.getTermFrequency();
+		
+		tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
+            }
+            ndoc++;
+            
+            
+		
+	}
+	// val 2 = tf
+	//tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
+	// val 3 = idf = log(nº doc/nºdocs con ese termino)
+	idf = Math.log(indice.getNumDoc() / ndoc) / Math.log(2);
+		
+    return tf*idf;
+        }
         
-        double ndoc;
-        double tf;
-        double idf;
-        List<Posting> termPostings = indice.getTermPostings(termino);
-        Posting post = termPostings.get(termPostings.indexOf(docid));
-
-        tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
-        ndoc = termPostings.size();
-
-        
-        // val 2 = tf
-        //tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
-        // val 3 = idf = log(nº doc/nºdocs con ese termino)
-        idf = Math.log(indice.getNumDoc() / ndoc) / Math.log(2);
-
-        return tf * idf;
-    }
     
         
         
