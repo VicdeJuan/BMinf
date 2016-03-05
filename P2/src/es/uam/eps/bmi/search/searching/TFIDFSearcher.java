@@ -44,20 +44,20 @@ public class TFIDFSearcher implements Searcher{
 		String outputCollectionPath = "querys.txt";
                 
                 BasicIndex basicIdx = new BasicIndex();
-                basicIdx.build(inputCollectionPath, outputCollectionPath, null);
-                
-
+                //basicIdx.build(inputCollectionPath, outputCollectionPath, null);
+                basicIdx.load(inputCollectionPath);
+                basicIdx.loadDICS();
 		
 			TFIDFSearcher tfSearch = new TFIDFSearcher();
 			tfSearch.build(basicIdx);
 			//ahora leemos de teclado las querys
 			System.out.println("Introducir las palabras de la búsqueda:");
-			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			String query = br.readLine();
+			//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			//String query = br.readLine();
                         String prueba="a b";
-                        List<ScoredTextDocument> search = tfSearch.search(prueba);
+                        //List<ScoredTextDocument> search = tfSearch.search(query);
 
-			List<ScoredTextDocument> resul = tfSearch.search(query);
+			List<ScoredTextDocument> resul = tfSearch.search(prueba);
 			if (resul != null && resul.size() > 0) {
 				for (int i = 0; i < TOP; i++) {
 					System.out.println(resul.get(i).getDocId());
@@ -76,14 +76,14 @@ public class TFIDFSearcher implements Searcher{
     @Override
     public void build(Index index) {
         this.indexdir = index.getPath();
-        
+        BasicIndex aux=((BasicIndex)index);
+        aux.loadDICS();
         try {
-            this.indice= new BasicReader(((BasicIndex)index).getPath())  ;
-        } catch (IOException ex) {
-            Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
+            aux.loadReader();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TFIDFSearcher.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.indice= aux.getReader() ;
 
     }
 
@@ -112,9 +112,10 @@ public class TFIDFSearcher implements Searcher{
         }
         for(String docid:doctf_id.keySet()){
             double old=doctf_id.get(docid);
+            double modulo=Double.parseDouble((String) this.indice.getDiccionario_docId_modulo().get(docid));
+            old= old/modulo;
             //Falta dividir old por el modulo del documento    
-            //FALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAa
-            //FALTAAAAAAAAAAAAAAAAAAAA que no se olvide
+
             doctf_id.put(docid,old);
         }
         int k=1;
