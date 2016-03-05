@@ -12,6 +12,7 @@ import es.uam.eps.bmi.search.indexing.Posting;
 import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.QueryParser;
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class LiteralMatchingSearcher implements Searcher {
     private String indexdir;
     private final static int TOP = 5;
 
+
     public static void main(String[] args) throws IOException {
 		String outputCollectionPath = "idx.txt";
                 
@@ -42,11 +44,11 @@ public class LiteralMatchingSearcher implements Searcher {
                 else
                     basicIdx.load(outputCollectionPath);
 
-        
 
         LiteralMatchingSearcher LMSearch = new LiteralMatchingSearcher();
         LMSearch.build(basicIdx);
         //ahora leemos de teclado las querys
+
         
             System.out.println("Introducir las palabras de la búsqueda:");
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -57,6 +59,7 @@ public class LiteralMatchingSearcher implements Searcher {
         String prueba = "a b";
         List<ScoredTextDocument> resul = LMSearch.search(prueba);
 */
+
         
         if (resul != null && resul.size() > 0) {
             int topp = TOP;
@@ -82,11 +85,7 @@ public class LiteralMatchingSearcher implements Searcher {
     public void build(Index index) {
         this.indexdir = index.getPath();
 
-        try {
-            this.indice = new BasicReader(((BasicIndex) index).getPath());
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.indice = ((BasicIndex) index).getReader();
 
     }
 
@@ -215,7 +214,7 @@ public class LiteralMatchingSearcher implements Searcher {
             ndoc++;
 
         }
-	// val 2 = tf
+        // val 2 = tf
         //tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
         // val 3 = idf = log(nº doc/nºdocs con ese termino)
         idf = Math.log(indice.getNumDoc() / ndoc) / Math.log(2);
