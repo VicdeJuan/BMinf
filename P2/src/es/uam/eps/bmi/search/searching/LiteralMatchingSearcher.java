@@ -9,10 +9,12 @@ import es.uam.eps.bmi.search.ScoredTextDocument;
 import es.uam.eps.bmi.search.indexing.BasicIndex;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.QueryParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
@@ -30,22 +32,32 @@ public class LiteralMatchingSearcher implements Searcher {
     private final static int TOP = 5;
 
     public static void main(String[] args) throws IOException {
+		String outputCollectionPath = "idx.txt";
+                
+                BasicIndex basicIdx = new BasicIndex();
+                boolean build = true;
+                // Asi no hay que ir comentando uno o el otro.
+                if (build)
+                    basicIdx.build("pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
+                else
+                    basicIdx.load(outputCollectionPath);
 
-        String inputCollectionPath = "indice.txt";
-        String outputCollectionPath = "querys.txt";
+        
 
-        BasicIndex basicIdx = new BasicIndex();
-
-        TFIDFSearcher tfSearch = new TFIDFSearcher();
-        tfSearch.build(basicIdx);
+        LiteralMatchingSearcher LMSearch = new LiteralMatchingSearcher();
+        LMSearch.build(basicIdx);
         //ahora leemos de teclado las querys
-        System.out.println("Introducir las palabras de la búsqueda:");
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String query = br.readLine();
+        /*
+            System.out.println("Introducir las palabras de la búsqueda:");
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            String query = br.readLine();
+            List<ScoredTextDocument> resul = tfSearch.search(query);
+        */
+        
         String prueba = "a b";
-        List<ScoredTextDocument> search = tfSearch.search(prueba);
+        List<ScoredTextDocument> resul = LMSearch.search(prueba);
 
-        List<ScoredTextDocument> resul = tfSearch.search(query);
+        
         if (resul != null && resul.size() > 0) {
             for (int i = 0; i < TOP; i++) {
                 System.out.println(resul.get(i).getDocId());
@@ -63,9 +75,7 @@ public class LiteralMatchingSearcher implements Searcher {
 
         try {
             this.indice = new BasicReader(((BasicIndex) index).getPath());
-        } catch (IOException ex) {
-            Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(LiteralMatchingSearcher.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -102,7 +112,7 @@ public class LiteralMatchingSearcher implements Searcher {
         // vamos descartando los Postings que no cumplan la busqueda literal, los buenos se quedan en nuevaprincipal
         for (String qaux : querysaux) {
             List<Posting> termPostings = indice.getTermPostings(qaux);
-            List<Posting> nuevaprincipal = null;
+            ArrayList<Posting> nuevaprincipal = new ArrayList<>();
 
             for (Posting postprincipal : termsprincipal) {
                 for (Posting acomparar : termPostings) {
@@ -128,9 +138,7 @@ public class LiteralMatchingSearcher implements Searcher {
         }
         for (String docid : doctf_id.keySet()) {
             double old = doctf_id.get(docid);
-            Object get = this.indice.getDiccionario_docId_modulo().get(docid);
-            String a = get.toString();
-            double modulo = Double.parseDouble(a);
+            double modulo = this.indice.getDiccionarioDocs_NM().get(docid).getModulo();
             old = old / modulo;
             //comprobar modulo correcto    
             doctf_id.put(docid, old);

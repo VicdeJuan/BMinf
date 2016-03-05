@@ -25,12 +25,20 @@ import java.util.logging.Logger;
  */
 public class BasicReader {
     RandomAccessFile accesoIndice; // indice
-    HashMap<String,Long> dicTermino_Offset = null;//diccionario de offset para cada termino
+    
     double numDoc;
     //HashMap<String,ModuloNombre> dicDocId_ModuloNombre = null;//mantenemos la misma estructura que el indice mejor
-     private HashMap diccionarioDocs; //(docId, nombre del documento)
-    private HashMap diccionario_docId_modulo; //(docId, modulo)
-    //private HashMap diccionarioTerminos_indice; //(termino, offset de bytes en el fichero de indice)
+     
+    private HashMap<String,ModuloNombre> diccionarioDocs_NM; //(docId, (nombre del documento,modulo))
+
+    public HashMap<String, ModuloNombre> getDiccionarioDocs_NM() {
+        return diccionarioDocs_NM;
+    }
+
+    public HashMap<String, Long> getDiccionarioTerminos_indice() {
+        return diccionarioTerminos_indice;
+    }
+    private HashMap<String,Long> diccionarioTerminos_indice; //(termino, offset de bytes en el fichero de indice)
     
     /**
      * Constructor del Reader. 
@@ -47,20 +55,14 @@ public class BasicReader {
         
         ObjectInputStream objectInputStream;
         
-        /*objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicDocId_ModuloNombre_FILE));
-	dicDocId_ModuloNombre = (HashMap <String,ModuloNombre>) objectInputStream.readObject();
+        objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicDocId_ModuloNombre_FILE));
+	diccionarioDocs_NM = (HashMap <String,ModuloNombre>) objectInputStream.readObject();
         
         objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicTerminoOffset_FILE));
-        dicTermino_Offset = (HashMap <String,Long>) objectInputStream.readObject();
-	*/
-    }
-
-    public BasicReader(String indice,HashMap diccionarioDocs, HashMap diccionario_docId_modulo, HashMap diccionarioTerminos_indice) throws FileNotFoundException {
-        this.diccionarioDocs = diccionarioDocs;
-        this.diccionario_docId_modulo = diccionario_docId_modulo;
-        this.dicTermino_Offset = diccionarioTerminos_indice;
-        this.accesoIndice = new RandomAccessFile(indice,"r");
-        this.numDoc=diccionarioDocs.keySet().size();
+        diccionarioTerminos_indice = (HashMap <String,Long>) objectInputStream.readObject();
+        
+        this.numDoc=diccionarioDocs_NM.keySet().size();
+	
     }
     
 
@@ -72,7 +74,7 @@ public class BasicReader {
      */
     public String leerLineaDelTermino(String termino) {
         String linea;
-        Long offset= dicTermino_Offset.get(termino);
+        Long offset= diccionarioTerminos_indice.get(termino);
         
 	    try {
 		accesoIndice.seek(offset);
@@ -88,28 +90,14 @@ public class BasicReader {
     return linea;
     }
     
-    	/**
-	 * Getter del diccionario de Offset.
-	 * @return 
-	 */
-	public HashMap<String, Long> getDicTermino_Offset() {
-		return dicTermino_Offset;
-	}
-
-    public HashMap getDiccionarioDocs() {
-        return diccionarioDocs;
-    }
-
-    public HashMap getDiccionario_docId_modulo() {
-        return diccionario_docId_modulo;
-    }
+    	
         
 
 	List<Posting> getTermPostings(String termino) {
         	List<Posting> toret = new ArrayList();
 		String linea= leerLineaDelTermino(termino);
         
-        	String[] cadena=linea.split(" ");
+        	String[] cadena=linea.split(Utils.ExternPostingSeparator);
         	//0 termino 2 lista de postings k estan separados por comas
 	
         	// Al menos tiene que tener el término y la lista de postings.
@@ -122,16 +110,16 @@ public class BasicReader {
 			return null;
 		}
 
-		List<String> l = new ArrayList<String>(Arrays.asList(cadena));
+		ArrayList<String> l = new ArrayList<>(Arrays.asList(cadena));
 		//Eliminamos el término.
-		String borrado=l.remove(0);
+		l.remove(0);
                 
                 for(String post:l){
                     String[] aux= post.split(",");
                     Posting p=null;
 
 
-                    List<Long> termPositions = new ArrayList<Long>();
+                    ArrayList<Long> termPositions = new ArrayList<>();
 
                     String docId = aux[0];
                     String numTerms = aux[1];
@@ -142,11 +130,7 @@ public class BasicReader {
 
                     p = new Posting(docId, termPositions);
                     toret.add(p);
-                }/*
-		l.stream().forEach(
-                        (hit) ->  
-                            toret.add(getPost(Arrays.asList(hit.split(Utils.InternPostingSeparator)))));
-                            */
+                }
 		return toret;
 	}
 	

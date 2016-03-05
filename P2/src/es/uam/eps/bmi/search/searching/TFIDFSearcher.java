@@ -41,13 +41,17 @@ public class TFIDFSearcher implements Searcher{
     
     public static void main(String[] args) throws IOException {
 		
-		String inputCollectionPath = "indice.txt";
-		String outputCollectionPath = "querys.txt";
+		
+		String outputCollectionPath = "idx.txt";
                 
                 BasicIndex basicIdx = new BasicIndex();
-                //basicIdx.build(inputCollectionPath, outputCollectionPath, null);
-                basicIdx.load(inputCollectionPath);
-                basicIdx.loadDICS();
+                boolean build = true;
+                // Asi no hay que ir comentando uno o el otro.
+                if (build)
+                    basicIdx.build("pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
+                else
+                    basicIdx.load(outputCollectionPath);
+                
 		
 			TFIDFSearcher tfSearch = new TFIDFSearcher();
 			tfSearch.build(basicIdx);
@@ -80,10 +84,12 @@ public class TFIDFSearcher implements Searcher{
     public void build(Index index) {
         this.indexdir = index.getPath();
         BasicIndex aux=((BasicIndex)index);
-        aux.loadDICS();
+        
         try {
             aux.loadReader();
         } catch (FileNotFoundException ex) {
+            Logger.getLogger(TFIDFSearcher.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException | ClassNotFoundException ex) {
             Logger.getLogger(TFIDFSearcher.class.getName()).log(Level.SEVERE, null, ex);
         }
         this.indice= aux.getReader() ;
@@ -116,12 +122,13 @@ public class TFIDFSearcher implements Searcher{
                        
              }
         }
+        
         for(String docid:doctf_id.keySet()){
-            double old=doctf_id.get(docid);
-             Object get = this.indice.getDiccionario_docId_modulo().get(docid);
-            String a=get.toString();
-             double modulo=Double.parseDouble(a);
-            old= old/modulo;
+            double old = doctf_id.get(docid);
+            ModuloNombre get = this.indice.getDiccionarioDocs_NM().get(docid);
+            double modulo = get.getModulo();
+            
+            old = old/modulo;
             //Falta comprobar el modulo   
 
             doctf_id.put(docid,old);
@@ -130,12 +137,12 @@ public class TFIDFSearcher implements Searcher{
         
         for(String doc:doctf_id.keySet()){
             if(k<=TOP){
-            ScoredTextDocument aux= new ScoredTextDocument(doc,doctf_id.get(doc));
-            toret.add(aux);
-            k++;
+                ScoredTextDocument aux= new ScoredTextDocument(doc,doctf_id.get(doc));
+                toret.add(aux);
+                k++;
             }
             else{
-            break;
+                break;
             }
         }
         

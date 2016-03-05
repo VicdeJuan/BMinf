@@ -43,26 +43,24 @@ import java.util.zip.ZipInputStream;
  */
 public class BasicIndex implements Index {
     private String indexPath;
-    private HashMap diccionarioDocs; //(docId, nombre del documento)
-    private HashMap diccionario_docId_modulo; //(docId, modulo)
-    private HashMap diccionarioTerminos_indice; //(termino, offset de bytes en el fichero de indice)
-    private BasicReader reader;
-    public HashMap getDiccionarioDocs() {
-        return diccionarioDocs;
-    }
-
-    public HashMap getDiccionario_docId_modulo() {
-        return diccionario_docId_modulo;
-    }
-
-    public HashMap getDiccionarioTerminos_indice() {
-        return diccionarioTerminos_indice;
-    }
+    
     private HashMap<String,ModuloNombre> diccionarioDocs_NM;          //(docId -> (nombre del documento, modulo))
     private HashMap<String,Long> diccionarioTerminos_indice;  //(termino -> offset de bytes en el fichero de indice)
     
-        public void loadReader() throws FileNotFoundException{
-        this.reader= new BasicReader(this.indexPath,this.diccionarioDocs, this.diccionario_docId_modulo, this.diccionarioTerminos_indice);
+    private BasicReader reader;
+    public HashMap<String,ModuloNombre> getDiccionarioDocs_NM() {
+        return diccionarioDocs_NM;
+    }
+
+    
+    
+         public HashMap<String,Long> getDiccionarioTerminos_indice() {
+            return diccionarioTerminos_indice;
+        }
+    
+        public void loadReader() throws FileNotFoundException, IOException, ClassNotFoundException{
+            this.reader= new BasicReader(this.indexPath);
+            
         }
 
     public BasicReader getReader() {
@@ -74,20 +72,7 @@ public class BasicIndex implements Index {
         this.diccionarioTerminos_indice = new HashMap();
         this.diccionarioDocs_NM = new HashMap();
     }
-    
-    /*PRUEBAS*/
-    public void loadDICS(){
-        
-        this.diccionarioDocs.put("1", 1);
-        this.diccionarioDocs.put("0", 0);
-        this.diccionarioDocs.put("3", 3);
-        
-        this.diccionario_docId_modulo.put("3", 5);
-        this.diccionario_docId_modulo.put("1", 4);
-        this.diccionario_docId_modulo.put("0", 4);
-        
-        
-    }
+ 
 
     /**
 	 * Construye un índice a partir de una colección de documentos de texto.
@@ -427,7 +412,7 @@ public class BasicIndex implements Index {
             stream.close();
             
             buildDics();
-            writeDics(outputIndexPath);
+            writeDics();
 
 
         } catch (Exception e) {
@@ -439,16 +424,19 @@ public class BasicIndex implements Index {
 
     public void buildDics() {
         
-       BufferedReader b;
+       BufferedReader c;
        try {
 
-           b = new BufferedReader(new FileReader(indexPath));
+           RandomAccessFile b = new RandomAccessFile(indexPath,"r");
+           
            String line;
            String termino;
            while((line = b.readLine()) != null){
                int idx = line.indexOf(Utils.ESPACIO);
                termino = line.substring(0,idx);
-               diccionarioTerminos_indice.put(termino, new Long(line.getBytes().length));
+               long p = b.getFilePointer();
+               int l = line.getBytes().length+1;
+               diccionarioTerminos_indice.put(termino, p - l);
                
                //  **** El otro diccionario
                // La lista de postings
@@ -481,15 +469,15 @@ public class BasicIndex implements Index {
         
     }
     
-    public void writeDics(String OutputCollectionPath){
+    public void writeDics(){
        try {
            ObjectOutputStream OOS;
            
-           OOS = new ObjectOutputStream(new FileOutputStream(OutputCollectionPath + Utils.dicDocId_ModuloNombre_FILE));
+           OOS = new ObjectOutputStream(new FileOutputStream( Utils.dicDocId_ModuloNombre_FILE));
            OOS.writeObject(diccionarioDocs_NM);
            OOS.close();
            
-           OOS = new ObjectOutputStream(new FileOutputStream(OutputCollectionPath + Utils.dicTerminoOffset_FILE));
+           OOS = new ObjectOutputStream(new FileOutputStream( Utils.dicTerminoOffset_FILE));
            OOS.writeObject(diccionarioTerminos_indice);
            OOS.close();
 
