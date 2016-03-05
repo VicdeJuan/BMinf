@@ -43,10 +43,31 @@ import java.util.zip.ZipInputStream;
  */
 public class BasicIndex implements Index {
     private String indexPath;
+    private HashMap diccionarioDocs; //(docId, nombre del documento)
+    private HashMap diccionario_docId_modulo; //(docId, modulo)
+    private HashMap diccionarioTerminos_indice; //(termino, offset de bytes en el fichero de indice)
+    private BasicReader reader;
+    public HashMap getDiccionarioDocs() {
+        return diccionarioDocs;
+    }
+
+    public HashMap getDiccionario_docId_modulo() {
+        return diccionario_docId_modulo;
+    }
+
+    public HashMap getDiccionarioTerminos_indice() {
+        return diccionarioTerminos_indice;
+    }
     private HashMap<String,ModuloNombre> diccionarioDocs_NM;          //(docId -> (nombre del documento, modulo))
     private HashMap<String,Long> diccionarioTerminos_indice;  //(termino -> offset de bytes en el fichero de indice)
     
-        
+        public void loadReader() throws FileNotFoundException{
+        this.reader= new BasicReader(this.indexPath,this.diccionarioDocs, this.diccionario_docId_modulo, this.diccionarioTerminos_indice);
+        }
+
+    public BasicReader getReader() {
+        return reader;
+    }
     
     public BasicIndex(){
         this.indexPath = "";
@@ -54,6 +75,19 @@ public class BasicIndex implements Index {
         this.diccionarioDocs_NM = new HashMap();
     }
     
+    /*PRUEBAS*/
+    public void loadDICS(){
+        
+        this.diccionarioDocs.put("1", 1);
+        this.diccionarioDocs.put("0", 0);
+        this.diccionarioDocs.put("3", 3);
+        
+        this.diccionario_docId_modulo.put("3", 5);
+        this.diccionario_docId_modulo.put("1", 4);
+        this.diccionario_docId_modulo.put("0", 4);
+        
+        
+    }
 
     /**
 	 * Construye un índice a partir de una colección de documentos de texto.
