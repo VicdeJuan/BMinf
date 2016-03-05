@@ -25,7 +25,7 @@ public class Utils {
         
         public static final String InternPostingSeparator = ",";
         public static final String ExternPostingSeparator = " ";
-
+    public static int RAM_LIMIT = 500000000;
     
     public static double _tf_idf(String docid,List<Posting> termPostings,double numDoc){
         double ndoc;

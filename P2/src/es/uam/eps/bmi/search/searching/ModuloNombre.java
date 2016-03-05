@@ -1,10 +1,12 @@
 package es.uam.eps.bmi.search.searching;
 
+import java.io.Serializable;
+
 /**
  *
  * @author e267044
  */
-public class ModuloNombre {
+public class ModuloNombre implements Serializable {
     String nombre;
     double modulo;
     
