@@ -42,49 +42,59 @@ import java.util.zip.ZipInputStream;
  * @author parra
  */
 public class BasicIndex implements Index {
+
     private String indexPath;
-    
-    private HashMap<String,ModuloNombre> diccionarioDocs_NM;          //(docId -> (nombre del documento, modulo))
-    private HashMap<String,Long> diccionarioTerminos_indice;  //(termino -> offset de bytes en el fichero de indice)
-    
+
+    private HashMap<String, ModuloNombre> diccionarioDocs_NM;          //(docId -> (nombre del documento, modulo))
+    private HashMap<String, Long> diccionarioTerminos_indice;  //(termino -> offset de bytes en el fichero de indice)
+
     private BasicReader reader;
-    public HashMap<String,ModuloNombre> getDiccionarioDocs_NM() {
+
+    public HashMap<String, ModuloNombre> getDiccionarioDocs_NM() {
         return diccionarioDocs_NM;
     }
 
-    
-    
-         public HashMap<String,Long> getDiccionarioTerminos_indice() {
-            return diccionarioTerminos_indice;
-        }
-    
-        public void loadReader() throws FileNotFoundException, IOException, ClassNotFoundException{
-            this.reader= new BasicReader(this.indexPath);
-            
-        }
+    /*PRUEBAS*/
+    public void loadDICS() {
+        ModuloNombre m1 = new ModuloNombre("1", 5.0);
+        ModuloNombre m2 = new ModuloNombre("0", 4.0);
+        ModuloNombre m3 = new ModuloNombre("3", 4.0);
+        this.diccionarioDocs_NM.put("1", m1);
+        this.diccionarioDocs_NM.put("0", m2);
+        this.diccionarioDocs_NM.put("3", m3);
+
+    }
+
+    public HashMap<String, Long> getDiccionarioTerminos_indice() {
+        return diccionarioTerminos_indice;
+    }
+
+    public void loadReader() throws FileNotFoundException, IOException, ClassNotFoundException {
+        //this.reader = new BasicReader(this.indexPath);
+        this.reader= new BasicReader(this.indexPath,this.diccionarioDocs_NM,this.diccionarioTerminos_indice);
+    }
 
     public BasicReader getReader() {
         return reader;
     }
-    
-    public BasicIndex(){
+
+    public BasicIndex() {
         this.indexPath = "";
         this.diccionarioTerminos_indice = new HashMap();
         this.diccionarioDocs_NM = new HashMap();
     }
- 
 
     /**
-	 * Construye un índice a partir de una colección de documentos de texto.
-	 *
-	 * @param inputCollectionPath ruta de la carpeta en la que se encuentran
-	 * los documentos a indexar
-	 * @param outputIndexPath ruta de la carpeta en la que almacenar el
-	 * índice creado,
-	 * @param textParser parser de texto que procesará el texto de los
-	 * documentos para su indexación
+     * Construye un índice a partir de una colección de documentos de texto.
+     *
+     * @param inputCollectionPath ruta de la carpeta en la que se encuentran los
+     * documentos a indexar
+     * @param outputIndexPath ruta de la carpeta en la que almacenar el índice
+     * creado,
+     * @param textParser parser de texto que procesará el texto de los
+     * documentos para su indexación
      * @throws java.io.FileNotFoundException
-	 */
+     */
     @Override
     public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
         int idDoc = 1; //contador id de documentos
@@ -139,7 +149,6 @@ public class BasicIndex implements Index {
                     //System.out.println("Documento " + idDoc + "----" + entry.getName() + "----tamaño:" + entry.getSize());
                     //System.out.println("Memoria total: " + Runtime.getRuntime().totalMemory() + "-- Memoria libre: " + Runtime.getRuntime().freeMemory() + "-- Memoria máxima: " + Runtime.getRuntime().maxMemory());
                     //System.out.println("Diferencia: " + numBytes);
-
                     //Obtenemos el texto en bruto del fichero:
                     while ((len = stream.read(buffer)) > 0) {
                         value = new String(buffer, 0, (int) len, "UTF-8");
@@ -153,17 +162,17 @@ public class BasicIndex implements Index {
                     //Añadimos documento en hashmap de documentos:
                     String nombreDocumento = entry.getName();
                     int docId_actual = idDoc;
-                    
+
                     // Para guardar tambien el modulo, 
                     //      este es el HashMap que utilizamos
-                    diccionarioDocs_NM.putIfAbsent("" + docId_actual, new ModuloNombre(nombreDocumento,0));
+                    diccionarioDocs_NM.putIfAbsent("" + docId_actual, new ModuloNombre(nombreDocumento, 0));
 
                     //Tokenizamos el texto, y cogemos uno a uno los términos metiéndolos en el indice
                     StringTokenizer tokens = new StringTokenizer(texto, " ,;:\n\r\t"); //PREGUNTAR SI ESTAN BIEN ESTOS SEPARADORES
                     while (tokens.hasMoreTokens()) {
                         String termino = tokens.nextToken();
 
-                                //Parseamos el termino, decidimos si merece la pena meterlo en el diccionario:
+                        //Parseamos el termino, decidimos si merece la pena meterlo en el diccionario:
                         // FALTA CODIGO
                         //Si el termino no esta en el indice lo metemos
                         if (!indice.contieneTermino(termino)) {
@@ -221,10 +230,10 @@ public class BasicIndex implements Index {
                     quedanArchivos = false;
                 }
 
-                        //A continuación se fusiona el índice que hemos creado en RAM, con el que tenemos en disco.
+                //A continuación se fusiona el índice que hemos creado en RAM, con el que tenemos en disco.
                 //Miramos primero si vamos a fusionar este documento o esperamos a juntar mas.
                 //Si entry es null, no podemos juntar más documentos y por tanto, fusionamos con lo que haya.
-                if ((numBytes > Utils.RAM_LIMIT) || ( entry == null)) {
+                if ((numBytes > Utils.RAM_LIMIT) || (entry == null)) {
                     System.out.println("FUSIONAMOS");
                     flagIndice = true; //Indicamos que para el próximo documento que leamos, hay que crear un nuevo indice en RAM
                     numBytes = 0; //Reinicializamos numero total de bytes leidos a 0
@@ -293,7 +302,7 @@ public class BasicIndex implements Index {
                             //Nos guardamos el primer elemento, que es el término:
                             String termino_linea = tokens_linea.nextToken();
 
-                                    //Buscamos el termino en el indice que esta en RAM
+                            //Buscamos el termino en el indice que esta en RAM
                             //Si lo contiene, tenemos que modificar esa entrada del índice:
                             if (indice.contieneTermino(termino_linea)) {
                                 //Guardamos la Entrada asociada al termino de RAM:
@@ -356,11 +365,10 @@ public class BasicIndex implements Index {
                                 //Guardamos el par (termino, offset de bytes) en un diccionario
                                 //offset = offset + linea_escribir.getBytes().length;
                                 //this.diccionarioTerminos_indice.replace(termino_linea, offset);
-
                                 //Eliminamos del indice de RAM la entrada correspondiente a ese término.:
                                 indice.eliminarEntrada(entrada_ram);
 
-                            // Si no lo contiene la volvemos a escribir tal cual:
+                                // Si no lo contiene la volvemos a escribir tal cual:
                             } else {
                                 linea_leida = linea_leida + "\n";
                                 bw.write(linea_leida);
@@ -410,46 +418,44 @@ public class BasicIndex implements Index {
             }//Fin del while de coger archivos del zip
 
             stream.close();
-            
+
             buildDics();
             writeDics();
 
-
         } catch (Exception e) {
-            System.out.println("Error: "+e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-
     public void buildDics() {
-        
-       BufferedReader c;
-       try {
 
-           RandomAccessFile b = new RandomAccessFile(indexPath,"r");
-           
-           String line;
-           String termino;
-           while((line = b.readLine()) != null){
-               int idx = line.indexOf(Utils.ESPACIO);
-               termino = line.substring(0,idx);
-               long p = b.getFilePointer();
-               int l = line.getBytes().length+1;
-               diccionarioTerminos_indice.put(termino, p - l);
-               
+        BufferedReader c;
+        try {
+
+            RandomAccessFile b = new RandomAccessFile(indexPath, "r");
+
+            String line;
+            String termino;
+            while ((line = b.readLine()) != null) {
+                int idx = line.indexOf(Utils.ESPACIO);
+                termino = line.substring(0, idx);
+                long p = b.getFilePointer();
+                int l = line.getBytes().length + 1;
+                diccionarioTerminos_indice.put(termino, p - l);
+
                //  **** El otro diccionario
-               // La lista de postings
-               ArrayList<String> post_list = new ArrayList<>(
-                       Arrays.asList(line.split(Utils.ExternPostingSeparator)));
-               // Eliminamos el termino
-               post_list.remove(0);
-               ArrayList<Posting> p_list = new ArrayList<>();
-               
+                // La lista de postings
+                ArrayList<String> post_list = new ArrayList<>(
+                        Arrays.asList(line.split(Utils.ExternPostingSeparator)));
+                // Eliminamos el termino
+                post_list.remove(0);
+                ArrayList<Posting> p_list = new ArrayList<>();
+
                // Iteramos sobre la lista [["termino"],["docid,pos1,pos2"],["docid2,pos1,pos2"]]
-               //   convirtiendo cada termino de la lista en una lista de terminos, separando por
-               //   comas
-               post_list.stream().map((s) -> new ArrayList<String>(Arrays.asList(s.split(Utils.InternPostingSeparator)))).
+                //   convirtiendo cada termino de la lista en una lista de terminos, separando por
+                //   comas
+                post_list.stream().map((s) -> new ArrayList<String>(Arrays.asList(s.split(Utils.InternPostingSeparator)))).
                         forEach((posting) -> {
                             String docId = posting.get(0);
                             posting.remove(0);
@@ -458,77 +464,93 @@ public class BasicIndex implements Index {
                             p_list.add(new Posting(docId, positions));
 //                            diccionarioDocs_NM.get(docId).updateModulo(Math.pow(Utils._tf_idf(docId, p_list, this.getNumDocs()),2));
                         }
-                    );
-               diccionarioDocs_NM.forEach((k,v)-> v.setModulo(Math.sqrt(v.getModulo())));
-           }
-       } catch (FileNotFoundException ex) {
-           Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
-       } catch (IOException ex){
-           Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
-       }
-        
-    }
-    
-    public void writeDics(){
-       try {
-           ObjectOutputStream OOS;
-           
-           OOS = new ObjectOutputStream(new FileOutputStream( Utils.dicDocId_ModuloNombre_FILE));
-           OOS.writeObject(diccionarioDocs_NM);
-           OOS.close();
-           
-           OOS = new ObjectOutputStream(new FileOutputStream( Utils.dicTerminoOffset_FILE));
-           OOS.writeObject(diccionarioTerminos_indice);
-           OOS.close();
+                        );
+                diccionarioDocs_NM.forEach((k, v) -> v.setModulo(Math.sqrt(v.getModulo())));
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-       } catch (FileNotFoundException ex) {
-           Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
-       } catch (IOException ex) {
-           Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
-       }
     }
-     
-        
-        
-    public static Posting stringToPosting(String str){
+
+    public void writeDics() {
+        try {
+            ObjectOutputStream OOS;
+
+            OOS = new ObjectOutputStream(new FileOutputStream(Utils.dicDocId_ModuloNombre_FILE));
+            OOS.writeObject(diccionarioDocs_NM);
+            OOS.close();
+
+            OOS = new ObjectOutputStream(new FileOutputStream(Utils.dicTerminoOffset_FILE));
+            OOS.writeObject(diccionarioTerminos_indice);
+            OOS.close();
+
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(BasicIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static Posting stringToPosting(String str) {
         String[] s = str.split(",");
-        
+
         Posting p;
-        
+
         List<Long> termPositions = new ArrayList<>();
         String docId = s[0];
         String numTerms = s[1];
-        for (int i=0; i< Integer.parseInt(numTerms); i++){
+        for (int i = 0; i < Integer.parseInt(numTerms); i++) {
             //System.out.println("dentro de stringtoposting: "+s[i+2]);
-            termPositions.add(Long.parseLong(s[i+2]));
+            termPositions.add(Long.parseLong(s[i + 2]));
         }
-        
+
         p = new Posting(docId, termPositions);
         return p;
     }
 
     @Override
+    /*
     public void load(String indexPath) {
-        
+
         this.indexPath = indexPath;
-        
-        try{
+
+        try {
             //Cargamos en RAM el diccionario (docId, nombre del documento)
-            ObjectInputStream ois = 
-                    new ObjectInputStream(new FileInputStream(indexPath+Utils.dicDocId_ModuloNombre_FILE));
-            this.diccionarioDocs_NM = (HashMap<String,ModuloNombre>) ois.readObject();
+            ObjectInputStream ois
+                    = new ObjectInputStream(new FileInputStream(indexPath + Utils.dicDocId_ModuloNombre_FILE));
+            this.diccionarioDocs_NM = (HashMap<String, ModuloNombre>) ois.readObject();
             ois.close();
-            
-            ois = new ObjectInputStream(new FileInputStream(indexPath+Utils.dicTerminoOffset_FILE));
-            this.diccionarioTerminos_indice = (HashMap<String,Long>) ois.readObject();
-            ois.close();         
-            
-        }catch(Exception e){
-            System.out.println("Error: "+e.getMessage());
+
+            ois = new ObjectInputStream(new FileInputStream(indexPath + Utils.dicTerminoOffset_FILE));
+            this.diccionarioTerminos_indice = (HashMap<String, Long>) ois.readObject();
+            ois.close();
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
-        
+*/
+    public void load(String indexPath) {
+         this.indexPath = indexPath;
+         
+         try{
+            
+            //Cargamos en RAM el diccionario (termino, offset en indice)
+           RandomAccessFile br = new RandomAccessFile(indexPath, "r");
+           String linea_leida;
+           while ((linea_leida = br.readLine()) != null) {
+                //Tokenizamos la línea para obtener el término y todos los valores:
+                StringTokenizer tokens_linea = new StringTokenizer(linea_leida, " \n\r");
+                String termino = tokens_linea.nextToken();
+                this.diccionarioTerminos_indice.put(termino, br.getFilePointer()-linea_leida.getBytes().length-1);
+            }
+            br.close();}
+         catch(Exception e){}
+    }
     @Override
     public String getPath() {
         return this.indexPath;
@@ -553,40 +575,40 @@ public class BasicIndex implements Index {
     @Override
     public List<Posting> getTermPostings(String term) {
         ArrayList<Posting> lp = new ArrayList<>();
-        
+
         Long offset = this.diccionarioTerminos_indice.get(term);
-        
+
         try {
             RandomAccessFile br = new RandomAccessFile(this.indexPath, "r");
             br.seek(offset);
             String linea = br.readLine();
-            
+
             //Tokenizamos la línea para obtener el término y todos los valores:
             StringTokenizer tokens_linea = new StringTokenizer(linea, " \n\r");
-            
+
             //Nos guardamos el primer elemento, que es el término:
             String termino_linea = tokens_linea.nextToken();
-            
-            System.out.println(term+"--"+termino_linea+"--"+linea);
-            
-            if(term.equals(termino_linea)){
+
+            System.out.println(term + "--" + termino_linea + "--" + linea);
+
+            if (term.equals(termino_linea)) {
                 while (tokens_linea.hasMoreTokens()) {
                     lp.add(stringToPosting(tokens_linea.nextToken()));
                 }
-            }else{
+            } else {
                 throw new Exception("El término no coindice con el offset en el indice.");
             }
-            
+
         } catch (Exception e) {
-            System.out.println("Error: "+e.getMessage());
+            System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return lp;
     }
 
     private double getNumDocs() {
         return this.diccionarioTerminos_indice.size();
     }
-    
+
 }

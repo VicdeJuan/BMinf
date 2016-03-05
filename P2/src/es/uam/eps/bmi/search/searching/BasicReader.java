@@ -64,7 +64,14 @@ public class BasicReader {
         this.numDoc=diccionarioDocs_NM.keySet().size();
 	
     }
-    
+
+    public BasicReader(String indice,HashMap<String, ModuloNombre> diccionarioDocs_NM, HashMap<String, Long> diccionarioTerminos_indice) throws FileNotFoundException {
+        this.diccionarioDocs_NM = diccionarioDocs_NM;
+        this.diccionarioTerminos_indice = diccionarioTerminos_indice;
+         this.accesoIndice = new RandomAccessFile(indice,"r");
+         this.numDoc= diccionarioDocs_NM.entrySet().size();
+    }
+     
 
     /**
      * Leemos la linea entera del índice en la que se encuentra el término.

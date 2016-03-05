@@ -45,7 +45,7 @@ public class TFIDFSearcher implements Searcher{
 		String outputCollectionPath = "idx.txt";
                 
                 BasicIndex basicIdx = new BasicIndex();
-                boolean build = true;
+                boolean build = false;
                 // Asi no hay que ir comentando uno o el otro.
                 if (build)
                     basicIdx.build("pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
@@ -57,17 +57,20 @@ public class TFIDFSearcher implements Searcher{
 			tfSearch.build(basicIdx);
 			//ahora leemos de teclado las querys
 			System.out.println("Introducir las palabras de la búsqueda:");
-			//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-			//String query = br.readLine();
-                        String prueba="a b";
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			String query = br.readLine();
+                        //String prueba="a b";
                         //List<ScoredTextDocument> search = tfSearch.search(query);
 
-			List<ScoredTextDocument> resul = tfSearch.search(prueba);
+			List<ScoredTextDocument> resul = tfSearch.search(query);
 			if (resul != null && resul.size() > 0) {
                             int topp=TOP;
                             if(resul.size()<TOP) topp=resul.size();
 				for (int i = 0; i < topp; i++) {
-					System.out.println(resul.get(i).getDocId());
+                                    String docidd=resul.get(i).getDocId();
+                                    ModuloNombre doc= tfSearch.indice.getDiccionarioDocs_NM().get(docidd);
+                                    String docname=doc.getNombre();
+					System.out.println(docname);
 				}
 
 			} else {
