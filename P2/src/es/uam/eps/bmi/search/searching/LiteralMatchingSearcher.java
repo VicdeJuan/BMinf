@@ -35,7 +35,7 @@ public class LiteralMatchingSearcher implements Searcher {
 		String outputCollectionPath = "idx.txt";
                 
                 BasicIndex basicIdx = new BasicIndex();
-                boolean build = true;
+                boolean build = false;
                 // Asi no hay que ir comentando uno o el otro.
                 if (build)
                     basicIdx.build("pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
@@ -47,20 +47,29 @@ public class LiteralMatchingSearcher implements Searcher {
         LiteralMatchingSearcher LMSearch = new LiteralMatchingSearcher();
         LMSearch.build(basicIdx);
         //ahora leemos de teclado las querys
-        /*
+        
             System.out.println("Introducir las palabras de la búsqueda:");
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String query = br.readLine();
-            List<ScoredTextDocument> resul = tfSearch.search(query);
-        */
+            List<ScoredTextDocument> resul = LMSearch.search(query);
         
+        /*
         String prueba = "a b";
         List<ScoredTextDocument> resul = LMSearch.search(prueba);
-
+*/
         
         if (resul != null && resul.size() > 0) {
-            for (int i = 0; i < TOP; i++) {
-                System.out.println(resul.get(i).getDocId());
+            int topp = TOP;
+            if (resul.size() < TOP) {
+                topp = resul.size();
+            }
+            for (int i = 0; i < topp; i++) {
+                //System.out.println(resul.get(i).getDocId());
+                String docidd = resul.get(i).getDocId();
+                ModuloNombre doc = LMSearch.indice.getDiccionarioDocs_NM().get(docidd);
+                String docname = doc.getNombre();
+                System.out.println(docname);
+
             }
 
         } else {
@@ -84,7 +93,7 @@ public class LiteralMatchingSearcher implements Searcher {
     @Override
     //Esta la normal, no literal
     public List<ScoredTextDocument> search(String query) {
-        List<ScoredTextDocument> toret = null;
+        List<ScoredTextDocument> toret = new ArrayList();
         BinaryHeap heap;
         String[] querys;
         TreeMap<String, Double> doctf_id = new TreeMap();
@@ -98,15 +107,16 @@ public class LiteralMatchingSearcher implements Searcher {
             if (!doctf_id.containsKey(querys[0])) {
 
                 doctf_id.put(post.getDocId(), tf_idf);
+            } else {
+                double old = doctf_id.get(querys[0]);
+                old += tf_idf;
+                doctf_id.put(querys[0], old);
             }
-            double old = doctf_id.get(querys[0]);
-            old += tf_idf;
-            doctf_id.put(querys[0], old);
         }
 
         String[] querysaux = new String[querys.length - 1];
         //quiero quitar el primer termino de la query
-        for (int i = 0; i < querys.length; i++) {
+        for (int i = 0; i < querys.length - 1; i++) {
             querysaux[i] = querys[i + 1];
         }
         // vamos descartando los Postings que no cumplan la busqueda literal, los buenos se quedan en nuevaprincipal
@@ -117,23 +127,44 @@ public class LiteralMatchingSearcher implements Searcher {
             for (Posting postprincipal : termsprincipal) {
                 for (Posting acomparar : termPostings) {
                     List<Long> posicionesLiteral = postprincipal.posicionesLiteral(acomparar);
-                    if (postprincipal.getDocId().equals(acomparar.getDocId())) {
+                    if (postprincipal.getDocId().equals(acomparar.getDocId()) && posicionesLiteral.size() != 0) {
 
                         Posting sobrevive = new Posting(postprincipal.getDocId(), posicionesLiteral);
                         nuevaprincipal.add(sobrevive);
                     }
                 }
             }
+            if(nuevaprincipal.size()==0){
+            return null;
+            }
             termsprincipal = nuevaprincipal;
+             ArrayList<String> borrado=new ArrayList<>();
+            //elimino del treemap todo lo que no este en termsprincipal, si no esta es que no es literal
+            for (String key : doctf_id.keySet()) {
+                int flag_borrado = 1;
+               
+                for (Posting post : termsprincipal) {
+                    if ((key.equals(post.getDocId()))) {
+                        flag_borrado = 0;
+                    }
+                }
+                if (flag_borrado == 1) {
+                    borrado.add(key);
+                }
+            }
+            for(String borrarKey:borrado){
+            doctf_id.remove(borrarKey);
+            }
             for (Posting post : termsprincipal) {
                 double tf_idf = tf_idf(qaux, post.getDocId());
-                if (!doctf_id.containsKey(querys[0])) {
+                if (!doctf_id.containsKey(post.getDocId())) {
 
                     doctf_id.put(post.getDocId(), tf_idf);
+                } else {
+                    double old = doctf_id.get(post.getDocId());
+                    old += tf_idf;
+                    doctf_id.put(post.getDocId(), old);
                 }
-                double old = doctf_id.get(qaux);
-                old += tf_idf;
-                doctf_id.put(qaux, old);
             }
         }
         for (String docid : doctf_id.keySet()) {
@@ -145,15 +176,18 @@ public class LiteralMatchingSearcher implements Searcher {
         }
         int k = 0;
 
-        for (int g = 0; k < termsprincipal.size(); g++) {
+        for (int g = 0; g < termsprincipal.size(); g++) {
             String doc = termsprincipal.get(g).getDocId();
             double score = doctf_id.get(doc);
             ScoredTextDocument scoretext = new ScoredTextDocument(doc, score);
             toret.add(scoretext);
         }
         Collections.sort(toret);
-
-        return toret.subList(0, TOP);
+        int topp = TOP;
+        if (toret.size() < TOP) {
+            topp = toret.size();
+        }
+        return toret.subList(0, topp);
     }
 
     /**
