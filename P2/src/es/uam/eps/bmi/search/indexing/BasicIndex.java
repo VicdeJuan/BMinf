@@ -1,13 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.Utils;
-import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
 import es.uam.eps.bmi.search.searching.BasicReader;
 import es.uam.eps.bmi.search.searching.ModuloNombre;
@@ -21,15 +15,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
-import static java.util.Arrays.stream;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,6 +41,10 @@ public class BasicIndex implements Index {
 
     private BasicReader reader;
 
+    /**
+     * Diccionario que asocia cada documento con su ModuloNombre.
+     * @return el hashmap con el diccionario descrito.
+     */
     public HashMap<String, ModuloNombre> getDiccionarioDocs_NM() {
         return diccionarioDocs_NM;
     }
@@ -65,6 +60,10 @@ public class BasicIndex implements Index {
 
     }
 
+    /**
+     * Diccionario que asocia cada termino con su posicion en el indice.
+     * @return Hashmap que contiene el diccionario descrito.
+     */
     public HashMap<String, Long> getDiccionarioTerminos_indice() {
         return diccionarioTerminos_indice;
     }
@@ -78,6 +77,9 @@ public class BasicIndex implements Index {
         return reader;
     }
 
+    /**
+     * Constructor basico.
+     */
     public BasicIndex() {
         this.indexPath = "";
         this.diccionarioTerminos_indice = new HashMap();
@@ -93,7 +95,6 @@ public class BasicIndex implements Index {
      * creado,
      * @param textParser parser de texto que procesará el texto de los
      * documentos para su indexación
-     * @throws java.io.FileNotFoundException
      */
     @Override
     public void build(String inputCollectionPath, String outputIndexPath, TextParser textParser) {
@@ -428,7 +429,10 @@ public class BasicIndex implements Index {
         }
     }
 
-    public void buildDics() {
+    /**
+     * Construye los diccionarios a partir del indice.
+     */
+    private void buildDics() {
 
         BufferedReader c;
         try {
@@ -475,7 +479,10 @@ public class BasicIndex implements Index {
 
     }
 
-    public void writeDics() {
+    /**
+     * Vuelva los diccionarios en fichero para su posterior uso.
+     */
+    private void writeDics() {
         try {
             ObjectOutputStream OOS;
 
@@ -494,6 +501,12 @@ public class BasicIndex implements Index {
         }
     }
 
+    /**
+     * Convierte una cadena de texto del indice en un posting.
+     * @param str Cadena de la forma: 
+     *  "%s,%d,%d,%d,...",dicId,numPosiciones,posicion1,posicion2,...
+     * @return El posting creado a partir de la cadena.
+     */
     public static Posting stringToPosting(String str) {
         String[] s = str.split(",");
 
@@ -551,6 +564,7 @@ public class BasicIndex implements Index {
             br.close();}
          catch(Exception e){}
     }
+    
     @Override
     public String getPath() {
         return this.indexPath;
@@ -563,7 +577,7 @@ public class BasicIndex implements Index {
 
     @Override
     public TextDocument getDocument(String docId) {
-        TextDocument td = new TextDocument(docId, this.diccionarioDocs_NM.get(docId).toString());
+        TextDocument td = new TextDocument(docId, this.diccionarioDocs_NM.get(docId).getNombre());
         return td;
     }
 
@@ -607,7 +621,11 @@ public class BasicIndex implements Index {
         return lp;
     }
 
-    private double getNumDocs() {
+    /**
+    * 
+    * @return el numero de documentos que tiene el indice.
+    */
+    public double getNumDocs() {
         return this.diccionarioTerminos_indice.size();
     }
 

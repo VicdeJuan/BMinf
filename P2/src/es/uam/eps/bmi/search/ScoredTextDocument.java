@@ -5,6 +5,11 @@ public class ScoredTextDocument implements java.lang.Comparable {
 	private String docId;
 	private double score;
 
+        /**
+         * Constructor de la clase, dados el id y su puntuacion.
+         * @param docId Id del documento.
+         * @param score Puntuacion.
+         */
 	public ScoredTextDocument(String docId, double score) {
 		this.docId = docId;
 		this.score = score;
