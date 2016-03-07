@@ -28,10 +28,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/**
- *
- * @author parra
- */
+
 public class BasicIndex implements Index {
 
     private String indexPath;

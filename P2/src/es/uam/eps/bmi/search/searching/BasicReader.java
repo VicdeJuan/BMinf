@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.Utils;
@@ -19,10 +14,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author e267044
- */
+
+
 public class BasicReader {
     RandomAccessFile accesoIndice; // indice
     
@@ -99,7 +92,11 @@ public class BasicReader {
     
     	
         
-
+        /**
+         * Devuelve la lista de postings de un termino.
+         * @param termino   termino del que devolver su lista de postings.
+         * @return  Lista de postings del termino.
+         */
 	List<Posting> getTermPostings(String termino) {
         	List<Posting> toret = new ArrayList();
 		String linea= leerLineaDelTermino(termino);
@@ -142,6 +139,10 @@ public class BasicReader {
 	}
 	
 
+        /**
+         * 
+         * @return El numero de documentos del indice.
+         */
 	public double getNumDoc() {
 		return numDoc;
 	}
