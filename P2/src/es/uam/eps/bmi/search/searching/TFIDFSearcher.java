@@ -63,32 +63,34 @@ public class TFIDFSearcher implements Searcher {
                 ModuloNombre doc = tfSearch.indice.getDiccionarioDocs_NM().get(docidd);
                 String docname = doc.getNombre();
                 System.out.println(docname);
-                theFile = new FileInputStream(docname);
+                theFile = new FileInputStream("pruebas/docs.zip");
 
                 ZipInputStream stream = new ZipInputStream(theFile);
                 ZipEntry entry;
+
                 while ((entry = stream.getNextEntry()) != null) {
                     //Cogemos siguiente documento del zip
-                    entry = stream.getNextEntry();
-                    String value, texto = "";
-                    while ((len = stream.read(buffer)) > 0) {
-                        value = new String(buffer, 0, (int) len, "UTF-8");
-                        texto = texto.concat(value);
-                    }
+                    
+                    if (entry.getName().equals(docname)) {
+                        String value, texto = "";
+                        while ((len = stream.read(buffer)) > 0) {
+                            value = new String(buffer, 0, (int) len, "UTF-8");
+                            texto = texto.concat(value);
+                        }
 
-                    String[] split = texto.split(",;:\n\r\t");
-                    for (int k = 0; k < split.length; k++) {
-                        for (String q : querys) {
-                            if (split[k].contains(q)) {
-                                for(int j=0;j<MOSTRAR;j++){
-                                    System.out.print(split[k+j]);
-                                    
+                        String[] split = texto.split(",;:\n\r\t");
+                        for (int k = 0; k < split.length; k++) {
+                            for (String q : querys) {
+                                if (split[k].contains(q)) {
+                                    for (int j = 0; j < MOSTRAR; j++) {
+                                        System.out.print(split[k + j]);
+
+                                    }
+                                    break;
                                 }
-                                break;
                             }
                         }
                     }
-
                 }
             }
 
