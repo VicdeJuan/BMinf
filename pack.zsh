@@ -1,7 +1,7 @@
 
-practica="P1"
+practica="P2"
 mem="Memoria"
-name="bmi-p1-12"
+name="bmi-p2-12"
 mkdir $name
 
 ## Generación de los pdfs
@@ -17,7 +17,7 @@ cd ..
 
 jdoc=$practica"/dist/javadoc"
 cp -r $jdoc $name
-src="P1/src"
+src=$practica"/src"
 cp -r $src $name
 
 zip -rv $name".zip" $name/*.pdf "$name/"javadoc
