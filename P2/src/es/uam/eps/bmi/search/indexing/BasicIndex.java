@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -46,18 +47,7 @@ public class BasicIndex implements Index {
         return diccionarioDocs_NM;
     }
 
-    /*PRUEBAS*/
-    public void loadDICS() {
-        ModuloNombre m1 = new ModuloNombre("1", 5.0);
-        ModuloNombre m2 = new ModuloNombre("0", 4.0);
-        ModuloNombre m3 = new ModuloNombre("3", 4.0);
-        this.diccionarioDocs_NM.put("1", m1);
-        this.diccionarioDocs_NM.put("0", m2);
-        this.diccionarioDocs_NM.put("3", m3);
-
-    }
-
-    /**
+     /**
      * Diccionario que asocia cada termino con su posicion en el indice.
      * @return Hashmap que contiene el diccionario descrito.
      */
@@ -71,6 +61,7 @@ public class BasicIndex implements Index {
     }
 
     public BasicReader getReader() {
+       
         return reader;
     }
 
@@ -144,8 +135,8 @@ public class BasicIndex implements Index {
                     long pos_termino = 0; //posición del término en el documento
                     String value, texto = "";
 
-                    //System.out.println("Documento " + idDoc + "----" + entry.getName() + "----tamaño:" + entry.getSize());
-                    //System.out.println("Memoria total: " + Runtime.getRuntime().totalMemory() + "-- Memoria libre: " + Runtime.getRuntime().freeMemory() + "-- Memoria máxima: " + Runtime.getRuntime().maxMemory());
+                    System.out.println("Documento " + idDoc + "----" + entry.getName() + "----tamaño:" + entry.getSize());
+                    System.out.println("Memoria total: " + Runtime.getRuntime().totalMemory() + "-- Memoria libre: " + Runtime.getRuntime().freeMemory() + "-- Memoria máxima: " + Runtime.getRuntime().maxMemory());
                     //System.out.println("Diferencia: " + numBytes);
                     //Obtenemos el texto en bruto del fichero:
                     while ((len = stream.read(buffer)) > 0) {
@@ -431,7 +422,7 @@ public class BasicIndex implements Index {
      */
     private void buildDics() {
 
-        BufferedReader c;
+      
         try {
 
             RandomAccessFile b = new RandomAccessFile(indexPath, "r");
@@ -522,7 +513,7 @@ public class BasicIndex implements Index {
     }
 
     @Override
-    /*
+
     public void load(String indexPath) {
 
         this.indexPath = indexPath;
@@ -530,21 +521,23 @@ public class BasicIndex implements Index {
         try {
             //Cargamos en RAM el diccionario (docId, nombre del documento)
             ObjectInputStream ois
-                    = new ObjectInputStream(new FileInputStream(indexPath + Utils.dicDocId_ModuloNombre_FILE));
+                    = new ObjectInputStream(new FileInputStream(Utils.dicDocId_ModuloNombre_FILE));
             this.diccionarioDocs_NM = (HashMap<String, ModuloNombre>) ois.readObject();
             ois.close();
 
-            ois = new ObjectInputStream(new FileInputStream(indexPath + Utils.dicTerminoOffset_FILE));
+            ois = new ObjectInputStream(new FileInputStream(Utils.dicTerminoOffset_FILE));
             this.diccionarioTerminos_indice = (HashMap<String, Long>) ois.readObject();
             ois.close();
+            
+            loadReader();
 
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
         }
     }
-*/
-    public void load(String indexPath) {
+
+  /*  public void load(String indexPath) {
          this.indexPath = indexPath;
          
          try{
@@ -561,7 +554,7 @@ public class BasicIndex implements Index {
             br.close();}
          catch(Exception e){}
     }
-    
+    */
     @Override
     public String getPath() {
         return this.indexPath;

@@ -32,7 +32,7 @@ public class TFIDFSearcher implements Searcher {
         String outputCollectionPath = "idx.txt";
 
         BasicIndex basicIdx = new BasicIndex();
-        boolean build = true;
+        boolean build = false;
         // Asi no hay que ir comentando uno o el otro.
         if (build) {
             basicIdx.build("pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
@@ -63,7 +63,10 @@ public class TFIDFSearcher implements Searcher {
                 ModuloNombre doc = tfSearch.indice.getDiccionarioDocs_NM().get(docidd);
                 String docname = doc.getNombre();
                 System.out.println(docname);
+
                 theFile = new FileInputStream("pruebas/docs.zip");
+
+
 
                 ZipInputStream stream = new ZipInputStream(theFile);
                 ZipEntry entry;
@@ -78,7 +81,7 @@ public class TFIDFSearcher implements Searcher {
                             texto = texto.concat(value);
                         }
 
-                        String[] split = texto.split(",;:\n\r\t");
+                        String[] split = texto.split(" ");
                         for (int k = 0; k < split.length; k++) {
                             for (String q : querys) {
                                 if (split[k].contains(q)) {

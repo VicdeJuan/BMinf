@@ -29,7 +29,7 @@ public class LiteralMatchingSearcher implements Searcher {
                 boolean build = false;
                 // Asi no hay que ir comentando uno o el otro.
                 if (build)
-                    basicIdx.build("pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
+                    basicIdx.build("/home/alumnos/e267044/BMinf/P2/pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
                 else
                     basicIdx.load(outputCollectionPath);
 

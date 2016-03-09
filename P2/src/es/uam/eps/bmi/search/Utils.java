@@ -25,21 +25,11 @@ public class Utils {
         
         public static final String InternPostingSeparator = ",";
         public static final String ExternPostingSeparator = " ";
-    public static int RAM_LIMIT = 500000000;
-    
-    public static double _tf_idf(String docid,List<Posting> termPostings,double numDoc){
-        double ndoc;
-        double tf;
-        double idf;
         
-        Posting post = termPostings.get(termPostings.indexOf(docid));
-        tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
+        public static int RAM_LIMIT = 500000000;
         
-        ndoc = termPostings.size();
-        idf = Math.log(numDoc / ndoc) / Math.log(2);
-        
-        return tf*idf;
-    }
+        public static String DefaultSeparators =" ;\n\r\t.,";
+
     
 
 }

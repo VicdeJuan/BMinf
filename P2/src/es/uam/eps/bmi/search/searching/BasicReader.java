@@ -75,7 +75,8 @@ public class BasicReader {
     public String leerLineaDelTermino(String termino) {
         String linea;
         Long offset= diccionarioTerminos_indice.get(termino);
-        
+        if (offset == null)
+            return null;
 	    try {
 		accesoIndice.seek(offset);
         	linea = accesoIndice.readLine();
@@ -100,7 +101,9 @@ public class BasicReader {
 	List<Posting> getTermPostings(String termino) {
         	List<Posting> toret = new ArrayList();
 		String linea= leerLineaDelTermino(termino);
-        
+                if (linea == null)
+                    return toret;
+                
         	String[] cadena=linea.split(Utils.ExternPostingSeparator);
         	//0 termino 2 lista de postings k estan separados por comas
 	
