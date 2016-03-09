@@ -1,0 +1,13 @@
+Para el desarollo de esta pŕactica, hemos implementado 3 tipos de indices, el básico, el indice que parsea las stopWords, y el indice que hace stemming se encarga de darle un formato a los terminos eliminando morfemas que formas parte de la misma raiz, a pesar de que podamos tener falsos positivos.
+
+El stemming utilizado es el siguiente://// RELLENAR
+
+
+Para la creacion del indice, usamos 500 mgBytes de RAM, y en esa ram leemos los documentos que entren, y escribimos el indice en disco.
+Continuamos de esta manera hasta que hayamos leido todos los documentos de la coleccion y en este punto hacemos el merge.
+
+
+
+Para las consultas, hacemos consultas orientadas a termino, es decir leemos secuencialmente todos los postings de todos los docId de cada termino de la consulta, y usamos la funcion de scoring vectorial Tf_idf, implementada de la forma vista en clase.
+
+Para la busqueda literal, guardamos los postings del primer documento y a partir de estos vamos reduciendo el num de postings que no cumplan con la funcion que nos dice si el siguiente termino es el siguiente en posicion respecto al anterior. de esta manera mantenemos en memoria una lista de docid, posiciones de todos los elementos del primer término.
