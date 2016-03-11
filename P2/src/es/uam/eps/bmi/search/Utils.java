@@ -1,13 +1,5 @@
 package es.uam.eps.bmi.search;
 
-import es.uam.eps.bmi.search.indexing.Posting;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-
 public class Utils {
 
 	public static final String STR_CONTENT = "contents";
@@ -29,6 +21,11 @@ public class Utils {
         public static int RAM_LIMIT = 500000000;
         
         public static String DefaultSeparators =" ;\n\r\t.,";
+	public static String collection_folder=  "pruebas";
+	public static String collection_folder_1K=  "pruebas/clueweb-1K";
+	public static String collection_folder_10K=  "pruebas/clueweb-10K";
+	public static String collection_folder_100K=  "pruebas/clueweb-100K";
+	public static String index_folder = "indices";
 
     
 
