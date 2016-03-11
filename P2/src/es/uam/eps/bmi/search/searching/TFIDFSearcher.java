@@ -32,10 +32,10 @@ public class TFIDFSearcher implements Searcher {
         String outputCollectionPath = "idx.txt";
 
         BasicIndex basicIdx = new BasicIndex();
-        boolean build = false;
+        boolean build = true;
         // Asi no hay que ir comentando uno o el otro.
         if (build) {
-            basicIdx.build("pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
+            basicIdx.build("pruebas/clueweb-1K/docs.zip", outputCollectionPath, new HTMLSimpleParser());
         } else {
             basicIdx.load(outputCollectionPath);
         }

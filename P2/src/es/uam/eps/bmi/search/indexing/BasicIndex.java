@@ -531,9 +531,11 @@ public class BasicIndex implements Index {
             
             loadReader();
 
-        } catch (Exception e) {
+        } catch (IOException | ClassNotFoundException e) {
+		System.out.println("Error: no se ha podido cargar el índice porque no ha sido creado con anterioridad");
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
+	    System.exit(-1);
         }
     }
 
