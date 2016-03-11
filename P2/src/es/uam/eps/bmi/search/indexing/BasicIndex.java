@@ -448,13 +448,14 @@ public class BasicIndex implements Index {
                 //   convirtiendo cada termino de la lista en una lista de terminos, separando por
                 //   comas
                 post_list.stream().map((s) -> new ArrayList<String>(Arrays.asList(s.split(Utils.InternPostingSeparator)))).
+		
                         forEach((posting) -> {
                             String docId = posting.get(0);
                             posting.remove(0);
                             // Obtenemos la lista de posiciones a partir del texto que forma el posting.
                             List<Long> positions = posting.stream().map(Long::parseLong).collect(Collectors.toList());
                             p_list.add(new Posting(docId, positions));
-//                            diccionarioDocs_NM.get(docId).updateModulo(Math.pow(Utils._tf_idf(docId, p_list, this.getNumDocs()),2));
+                            diccionarioDocs_NM.get(docId).updateModulo(Math.pow(Utils.tf_idf(termino,docId, p_list, this.getNumDocs()),2));
                         }
                         );
                 diccionarioDocs_NM.forEach((k, v) -> v.setModulo(Math.sqrt(v.getModulo())));

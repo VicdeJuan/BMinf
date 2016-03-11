@@ -1,5 +1,8 @@
 package es.uam.eps.bmi.search;
 
+import es.uam.eps.bmi.search.indexing.Posting;
+import java.util.List;
+
 public class Utils {
 
 	public static final String STR_CONTENT = "contents";
@@ -26,7 +29,34 @@ public class Utils {
 	public static String collection_folder_10K=  "pruebas/clueweb-10K";
 	public static String collection_folder_100K=  "pruebas/clueweb-100K";
 	public static String index_folder = "indices";
+	public static String index_file = "idx.txt";
+
+    public static double tf_idf(String termino, String docid, List<Posting> termPostings, double numDoc) {
+
+        double freq = 0;
+        double ndoc = 0;
+        double tf = 0;
+        double idf = 0;
+        for (Posting post : termPostings) {
+            // Cada vuelta es en un documento distinto.
+            if (post.getDocId().equals(docid)) {
+
+                freq = post.getTermFrequency();
+
+                tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
+            }
+            ndoc++;
+
+        }
+        // val 2 = tf
+        //tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
+        // val 3 = idf = log(nº doc/nºdocs con ese termino)
+        idf = Math.log(numDoc / ndoc) / Math.log(2);
+
+        return tf * idf;
+    }
+
+}
 
     
 
-}

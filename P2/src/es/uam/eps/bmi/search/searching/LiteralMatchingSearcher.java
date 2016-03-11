@@ -1,6 +1,7 @@
 package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.ScoredTextDocument;
+import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.indexing.BasicIndex;
 import es.uam.eps.bmi.search.indexing.Index;
 import es.uam.eps.bmi.search.indexing.Posting;
@@ -23,13 +24,13 @@ public class LiteralMatchingSearcher implements Searcher {
 
 
     public static void main(String[] args) throws IOException {
-		String outputCollectionPath = "idx.txt";
+		String outputCollectionPath = Utils.index_file;
                 
                 BasicIndex basicIdx = new BasicIndex();
                 boolean build = false;
                 // Asi no hay que ir comentando uno o el otro.
                 if (build)
-                    basicIdx.build("/home/alumnos/e267044/BMinf/P2/pruebas/docs.zip", outputCollectionPath, new HTMLSimpleParser());
+                    basicIdx.build(Utils.collection_folder+"/docs.zip", outputCollectionPath, new HTMLSimpleParser());
                 else
                     basicIdx.load(outputCollectionPath);
 
