@@ -32,7 +32,7 @@ public class TFIDFSearcher implements Searcher {
         String outputCollectionPath = "idx.txt";
 
         BasicIndex basicIdx = new BasicIndex();
-        boolean build = true;
+        boolean build = false;
         // Asi no hay que ir comentando uno o el otro.
         if (build) {
             basicIdx.build("pruebas/clueweb-1K/docs.zip", outputCollectionPath, new HTMLSimpleParser());
@@ -64,7 +64,7 @@ public class TFIDFSearcher implements Searcher {
                 String docname = doc.getNombre();
                 System.out.println(docname);
 
-                theFile = new FileInputStream("pruebas/docs.zip");
+                theFile = new FileInputStream("pruebas/clueweb-1K/docs.zip");
 
 
 
@@ -86,8 +86,8 @@ public class TFIDFSearcher implements Searcher {
                             for (String q : querys) {
                                 if (split[k].contains(q)) {
                                     for (int j = 0; j < MOSTRAR; j++) {
-                                        System.out.print(split[k + j]);
-
+					    if (split.length >= k+j)
+	                                        System.out.print(split[k + j]);
                                     }
                                     break;
                                 }
