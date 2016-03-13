@@ -8,12 +8,16 @@ import es.uam.eps.bmi.search.indexing.Posting;
 import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.QueryParser;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 
 public class LiteralMatchingSearcher implements Searcher {
@@ -21,6 +25,7 @@ public class LiteralMatchingSearcher implements Searcher {
     BasicReader indice;
     private String indexdir;
     private final static int TOP = 5;
+    private final static int MOSTRAR = 10;
 
 
     public static void main(String[] args) throws IOException {
@@ -37,12 +42,18 @@ public class LiteralMatchingSearcher implements Searcher {
 
         LiteralMatchingSearcher LMSearch = new LiteralMatchingSearcher();
         LMSearch.build(basicIdx);
+
+        
+        long len = 0;
+        byte[] buffer = new byte[2048];
+        InputStream theFile;
         //ahora leemos de teclado las querys
 
         
             System.out.println("Introducir las palabras de la búsqueda:");
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String query = br.readLine();
+            String[] querys = new QueryParser().parses(query);
             List<ScoredTextDocument> resul = LMSearch.search(query);
         
         /*
@@ -63,7 +74,43 @@ public class LiteralMatchingSearcher implements Searcher {
                 String docname = doc.getNombre();
                 System.out.println(docname);
 
+            
+                            theFile = new FileInputStream("pruebas/clueweb-1K/docs.zip");
+
+
+
+                ZipInputStream stream = new ZipInputStream(theFile);
+                ZipEntry entry;
+
+                while ((entry = stream.getNextEntry()) != null) {
+                    //Cogemos siguiente documento del zip
+                    
+                    if (entry.getName().equals(docname)) {
+                        String value, texto = "";
+                        while ((len = stream.read(buffer)) > 0) {
+                            value = new String(buffer, 0, (int) len, "UTF-8");
+                            texto = texto.concat(value);
+                        }
+                        HTMLSimpleParser aux= new HTMLSimpleParser();
+                        String auxx= aux.parse(texto);
+                        String[] split = auxx.split(" ");
+                        for (int k = 0; k < split.length; k++) {
+                            for (String q : querys) {
+                                if (split[k].contains(q)) {
+                                    for (int j = 0; j < MOSTRAR; j++) {
+					    if (split.length >= k+j)
+	                                        System.out.print(split[k + j]+" ");
+                                    }
+                                    System.out.println();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
             }
+            
+            
 
         } else {
             System.out.println("Consulta vacia");

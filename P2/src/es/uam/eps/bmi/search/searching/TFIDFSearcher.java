@@ -25,7 +25,7 @@ public class TFIDFSearcher implements Searcher {
     BasicReader indice;
     private String indexdir;
     private final static int TOP = 5;
-    private final static int MOSTRAR = 20;
+    private final static int MOSTRAR = 2;
 
     public static void main(String[] args) throws IOException {
 
@@ -80,15 +80,17 @@ public class TFIDFSearcher implements Searcher {
                             value = new String(buffer, 0, (int) len, "UTF-8");
                             texto = texto.concat(value);
                         }
-
-                        String[] split = texto.split(" ");
+                        HTMLSimpleParser aux= new HTMLSimpleParser();
+                        String auxx= aux.parse(texto);
+                        String[] split = auxx.split(" ");
                         for (int k = 0; k < split.length; k++) {
                             for (String q : querys) {
                                 if (split[k].contains(q)) {
                                     for (int j = 0; j < MOSTRAR; j++) {
 					    if (split.length >= k+j)
-	                                        System.out.print(split[k + j]);
+	                                        System.out.print(split[k + j]+" ");
                                     }
+                                    System.out.println();
                                     break;
                                 }
                             }
