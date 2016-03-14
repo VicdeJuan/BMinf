@@ -32,7 +32,11 @@ public class TFIDFSearcher implements Searcher {
 	private String indexdir;
 	private final static int TOP = 5;
 	private final static int MOSTRAR = 2;
-
+	
+	@Override
+	public String toString(){
+		return "TFIDF";
+	}
 	public static void main(String[] args) throws IOException {
 
 		XMLReader xmlReader = new XMLReader("index-settings.xml");
@@ -220,6 +224,11 @@ public class TFIDFSearcher implements Searcher {
 		idf = Math.log(indice.getNumDoc() / ndoc) / Math.log(2);
 
 		return tf * idf;
+	}
+
+	@Override
+	public String getDocName(String docId) {
+		return this.indice.getDiccionarioDocs_NM().get(docId).getNombre();
 	}
 
 }

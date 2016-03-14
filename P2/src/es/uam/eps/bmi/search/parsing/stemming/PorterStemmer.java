@@ -23,9 +23,16 @@ public class PorterStemmer implements Stemmer {
 				str = stripSuffixes(str);
 			}
 		}
-		return step5(step4(step3(step2(step1(str)))));
+		return _stem(str);
 	}
 
+	private String _stem(String str){
+		
+		if (str.length() <= 2)
+			return str;
+		return step5(step4(step3(step2(step1(str)))));
+
+	}
 	String clean_mantain_spaces(String str) {
 
 		int last = str.length();

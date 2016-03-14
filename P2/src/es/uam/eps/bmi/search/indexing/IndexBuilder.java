@@ -66,7 +66,7 @@ public class IndexBuilder {
 		indices.put("basic", (Index) new BasicIndex());
 
 		for (Map.Entry<String, Index> e : indices.entrySet()) {
-			System.out.print(indexFolder + e.getKey());
+			System.out.println("" + e.getKey()+":");
 
 			File dir = new File(indexFolder + e.getKey());
 			boolean c = dir.mkdir();

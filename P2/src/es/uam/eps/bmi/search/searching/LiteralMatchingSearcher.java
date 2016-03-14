@@ -31,6 +31,11 @@ public class LiteralMatchingSearcher implements Searcher {
 	private final static int TOP = 5;
 	private final static int MOSTRAR = 10;
 
+	@Override
+	public String toString(){
+		return "Literal";
+	}
+	
 	public static void main(String[] args) throws IOException {
 
 
@@ -38,7 +43,6 @@ public class LiteralMatchingSearcher implements Searcher {
 		String indexDir = xmlReader.getTextValue(Utils.XMLTAG_INDEXFOLDER);
 		String collectionPath = xmlReader.getTextValue(Utils.XMLTAG_COLLECTIONFOLDER);
 		String collectionZipFile = collectionPath +  Utils.STR_DEFAULT_ZIPNAME;
-		String indexFile = indexDir + "/" + Utils.index_file;
 
 		TextParser parser;
 		System.out.println("Selecciona método:\n\t1)Básico.\n\t2)Stopwords.\n\t3)Stemming.");
@@ -47,17 +51,22 @@ public class LiteralMatchingSearcher implements Searcher {
 		switch (input) {
 			case 1: //Básico
 				parser = new HTMLSimpleParser();
+				indexDir += "basic/";
 				break;
 			case 2: // Stopwords
 				parser = new StopwordsParser();
+				indexDir += "stopword/";
 				break;
 			case 3: // Stemming
 				parser = new StemParser();
+				indexDir += "stem/";
 				break;
 			default:
 				parser = new HTMLSimpleParser();
+				indexDir += "basic/";
 				break;
 		}
+		String indexFile = indexDir + "/" + Utils.index_file;
 
 		BasicIndex basicIdx = new BasicIndex();
 
@@ -281,6 +290,11 @@ public class LiteralMatchingSearcher implements Searcher {
 		idf = Math.log(indice.getNumDoc() / ndoc) / Math.log(2);
 
 		return tf * idf;
+	}
+
+	@Override
+	public String getDocName(String docId) {
+		return this.indice.getDiccionarioDocs_NM().get(docId).getNombre();
 	}
 
 }

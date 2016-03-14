@@ -24,4 +24,6 @@ public interface Searcher {
 	 */
 	List<ScoredTextDocument> search(String query);
 
+	public String getDocName(String docId);
+
 }

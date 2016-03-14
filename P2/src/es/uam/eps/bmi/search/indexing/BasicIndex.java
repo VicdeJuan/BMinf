@@ -103,7 +103,7 @@ public class BasicIndex implements Index {
 		System.out.println("Creando índice...");
 		int idDoc = 1; //contador id de documentos
 		indexDirectory = outputIndexPath + "/";
-		indexFile = outputIndexPath + Utils.index_file;
+		indexFile = indexDirectory + Utils.index_file;
 
 
 		String indexPath = outputIndexPath + Utils.index_file;
@@ -552,11 +552,11 @@ public class BasicIndex implements Index {
 		try {
 			//Cargamos en RAM el diccionario (docId, nombre del documento)
 			ObjectInputStream ois
-				= new ObjectInputStream(new FileInputStream(Utils.dicDocId_ModuloNombre_FILE));
+				= new ObjectInputStream(new FileInputStream(this.indexDirectory + Utils.dicDocId_ModuloNombre_FILE));
 			this.diccionarioDocs_NM = (HashMap<String, ModuloNombre>) ois.readObject();
 			ois.close();
 
-			ois = new ObjectInputStream(new FileInputStream(Utils.dicTerminoOffset_FILE));
+			ois = new ObjectInputStream(new FileInputStream(this.indexDirectory + Utils.dicTerminoOffset_FILE));
 			this.diccionarioTerminos_indice = (HashMap<String, Long>) ois.readObject();
 			ois.close();
 
