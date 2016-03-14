@@ -8,8 +8,8 @@ import es.uam.eps.bmi.search.indexing.StemIndex;
 import es.uam.eps.bmi.search.indexing.StopwordIndex;
 import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
 import es.uam.eps.bmi.search.parsing.XMLReader;
-import static es.uam.eps.bmi.search.searching.TestSearcherOld._evaluate_results;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -116,7 +116,7 @@ public class SearcherTest {
 		String collectionPath = xmlReader.getTextValue(Utils.XMLTAG_COLLECTIONFOLDER);
 		String collectionZipFile = collectionPath;
 
-		boolean small = true;
+		boolean small = false;
 
 		ArrayList<String> sizes = new ArrayList<>();
 		sizes.add("1K");
@@ -150,7 +150,9 @@ public class SearcherTest {
 
 		Runtime runtime = Runtime.getRuntime();
 		Index idx;
-
+		
+		
+		
 		for (String size : sizes) {
 
 			for (Map.Entry<String, Index> e : indices.entrySet()) {
@@ -162,7 +164,7 @@ public class SearcherTest {
 				// Stop y Stem ignoran en tercer argumento.
 				long allocatedMemory = runtime.totalMemory();
 				long startTime = System.currentTimeMillis();
-				//idx.build(collectionFolder + size+"/", dir.getPath() , new HTMLSimpleParser());
+				idx.build(collectionFolder + size+"/", dir.getPath() , new HTMLSimpleParser());
 				
 				System.out.print(dir.getPath());
 				long estimatedTime = System.currentTimeMillis() - startTime;
@@ -172,8 +174,9 @@ public class SearcherTest {
 
 				// Búsqueda
 				String indexPath = "outputCollection_" + size;
-
+				long estimatedAllocatedMemory_sch = 0,estimatedTime_sch=0; 
 				for (Searcher sch : searchers) {
+					BufferedWriter bw = new BufferedWriter(new FileWriter("timing_"+e.getKey()+"-"+sch.toString()));
 					for (int max : maxs) {
 						System.out.println("\t" + max);
 						String outputFile_build = "Querys" + "_" + max + "-" + size + "-" + sch.toString() + "-" + e.getKey() + ".txt";
@@ -186,14 +189,17 @@ public class SearcherTest {
 						long allocatedMemory_sch = runtime.totalMemory();
 						long startTime_sch = System.currentTimeMillis();
 						ArrayList<ArrayList<String>> resultados = _build_results(outputFile_build, idx, sch, queryFile, max);
-						long estimatedTime_sch = System.currentTimeMillis() - startTime;
-						long estimatedAllocatedMemory_sch = runtime.totalMemory() - allocatedMemory;
+						estimatedTime_sch += System.currentTimeMillis() - startTime;
+						estimatedAllocatedMemory_sch += runtime.totalMemory() - allocatedMemory;
 
 						//evaluamos los resultados
 						_evaluate_results(outputFile_evaluate, resultados, max, compareToFile);
 
 					}
+					bw.write(String.format("%s&%d&%d&%d&%d&%d\\\\",size+"_"+sch.toString()+"_"+e.getKey(),estimatedTime,estimatedAllocatedMemory,diskSize,estimatedTime_sch,estimatedAllocatedMemory_sch));
 				}
+
+				
 			}
 		}
 	}
