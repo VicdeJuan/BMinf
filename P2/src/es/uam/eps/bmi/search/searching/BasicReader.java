@@ -2,6 +2,7 @@ package es.uam.eps.bmi.search.searching;
 
 import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.indexing.Posting;
+import es.uam.eps.bmi.search.parsing.TextParser;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -17,11 +18,12 @@ import java.util.logging.Logger;
 
 
 public class BasicReader {
-    RandomAccessFile accesoIndice; // indice
-    
-    double numDoc;
-    //HashMap<String,ModuloNombre> dicDocId_ModuloNombre = null;//mantenemos la misma estructura que el indice mejor
-     
+
+
+    private RandomAccessFile accesoIndice; // indice
+    private double numDoc;
+    private TextParser parser;
+    private HashMap<String,Long> diccionarioTerminos_indice; //(termino, offset de bytes en el fichero de indice)
     private HashMap<String,ModuloNombre> diccionarioDocs_NM; //(docId, (nombre del documento,modulo))
 
     public HashMap<String, ModuloNombre> getDiccionarioDocs_NM() {
@@ -31,38 +33,52 @@ public class BasicReader {
     public HashMap<String, Long> getDiccionarioTerminos_indice() {
         return diccionarioTerminos_indice;
     }
-    private HashMap<String,Long> diccionarioTerminos_indice; //(termino, offset de bytes en el fichero de indice)
     
     /**
      * Constructor del Reader. 
      * 		Abre el índice para ser leido.
      * 		Carga el diccionario de (término -> offset)
-     * @param indice	Path donde se encuentra el índice.
+     * 		Carga el diccionario de (docId -> [nombre,modulo])
+     * @param indexFile	Path donde se encuentra el índice.
      * @throws FileNotFoundException En caso de no encontrar el fichero del índice.
      * @throws IOException 	En caso de malformación del diccionario o de error de IO.
      * @throws java.lang.ClassNotFoundException     Se ha intentado leer un fichero auxiliar mal formado.
      */
-    public BasicReader(String indice) throws FileNotFoundException, IOException, ClassNotFoundException {
+    public BasicReader(String indexFile,String indexDirectory,TextParser parser) throws FileNotFoundException, IOException, ClassNotFoundException {
 
-        this.accesoIndice = new RandomAccessFile(indice,"r");
+        this.accesoIndice = new RandomAccessFile(indexFile,"r");
         
         ObjectInputStream objectInputStream;
         
-        objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicDocId_ModuloNombre_FILE));
+        objectInputStream = new ObjectInputStream(new FileInputStream(indexDirectory + Utils.dicDocId_ModuloNombre_FILE));
 	diccionarioDocs_NM = (HashMap <String,ModuloNombre>) objectInputStream.readObject();
         
-        objectInputStream = new ObjectInputStream(new FileInputStream(Utils.dicTerminoOffset_FILE));
+        objectInputStream = new ObjectInputStream(new FileInputStream(indexDirectory + Utils.dicTerminoOffset_FILE));
         diccionarioTerminos_indice = (HashMap <String,Long>) objectInputStream.readObject();
         
         this.numDoc=diccionarioDocs_NM.keySet().size();
+
+	this.parser = parser;
 	
     }
 
-    public BasicReader(String indice,HashMap<String, ModuloNombre> diccionarioDocs_NM, HashMap<String, Long> diccionarioTerminos_indice) throws FileNotFoundException {
+    /**
+     * Constructor del Reader. 
+     * 		Abre el índice para ser leido.
+     * 		Carga el diccionario de (término -> offset)
+     * 		Carga el diccionario de (docId -> [nombre,modulo])
+     * @param indice	Path donde se encuentra el índice.
+	 * @param diccionarioDocs_NM
+	 * @param diccionarioTerminos_indice
+	 * @param parser
+     * @throws FileNotFoundException En caso de no encontrar el fichero del índice.
+     */ 
+    public BasicReader(String indice,HashMap<String, ModuloNombre> diccionarioDocs_NM, HashMap<String, Long> diccionarioTerminos_indice,TextParser parser) throws FileNotFoundException {
         this.diccionarioDocs_NM = diccionarioDocs_NM;
         this.diccionarioTerminos_indice = diccionarioTerminos_indice;
-         this.accesoIndice = new RandomAccessFile(indice,"r");
-         this.numDoc= diccionarioDocs_NM.entrySet().size();
+        this.accesoIndice = new RandomAccessFile(indice,"r");
+        this.numDoc= diccionarioDocs_NM.entrySet().size();
+	this.parser = parser;
     }
      
 

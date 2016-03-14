@@ -2,6 +2,7 @@ package es.uam.eps.bmi.search.indexing;
 
 import es.uam.eps.bmi.search.TextDocument;
 import es.uam.eps.bmi.search.parsing.TextParser;
+import es.uam.eps.bmi.search.searching.BasicReader;
 import java.util.List;
 
 public interface Index {
@@ -68,4 +69,15 @@ public interface Index {
 	 * @return
 	 */
 	List<Posting> getTermPostings(String term);
+
+	/**
+	 * Carga un lector del índice.
+	 */
+	public void loadReader();
+
+	/**
+	 * Devuelve el lector del índice.
+	 * @return 
+	 */
+	public BasicReader getReader();
 }

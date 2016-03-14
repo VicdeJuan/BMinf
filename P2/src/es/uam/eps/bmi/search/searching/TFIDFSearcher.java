@@ -29,13 +29,13 @@ public class TFIDFSearcher implements Searcher {
 
     public static void main(String[] args) throws IOException {
 
-        String outputCollectionPath = "idx.txt";
+        String outputCollectionPath = "pruebas/indice1K/";
 
         BasicIndex basicIdx = new BasicIndex();
         boolean build = false;
         // Asi no hay que ir comentando uno o el otro.
         if (build) {
-            basicIdx.build("pruebas/clueweb-1K/docs.zip", outputCollectionPath, new HTMLSimpleParser());
+            basicIdx.build("pruebas/clueweb-1K/", outputCollectionPath, new HTMLSimpleParser());
         } else {
             basicIdx.load(outputCollectionPath);
         }
@@ -108,16 +108,9 @@ public class TFIDFSearcher implements Searcher {
     @Override
     public void build(Index index) {
         this.indexdir = index.getPath();
-        BasicIndex aux = ((BasicIndex) index);
-
-        try {
-            aux.loadReader();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(TFIDFSearcher.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException | ClassNotFoundException ex) {
-            Logger.getLogger(TFIDFSearcher.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        this.indice = aux.getReader();
+        Index aux =  index;
+        aux.loadReader();
+	this.indice = aux.getReader();
 
     }
 

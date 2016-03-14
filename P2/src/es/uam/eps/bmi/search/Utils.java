@@ -30,6 +30,11 @@ public class Utils {
 	public static String collection_folder_100K=  "pruebas/clueweb-100K";
 	public static String index_folder = "indices";
 	public static String index_file = "idx.txt";
+	
+	public static final String STR_DEFAULT_ZIPNAME = "docs.zip";
+	
+	public final static String XMLTAG_INDEXFOLDER= "index-folder";
+	public final static String XMLTAG_COLLECTIONFOLDER = "collection-folder";
 
     public static double tf_idf(String termino, String docid, List<Posting> termPostings, double numDoc) {
 
