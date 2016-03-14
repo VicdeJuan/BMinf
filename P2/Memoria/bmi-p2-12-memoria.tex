@@ -17,4 +17,53 @@
 %% Apéndices (ejercicios, exámenes)
 %\appendix
 
+
+\section{Creación del índice}
+
+Para la creación del índice hemos utilizado una máquina con las siguientes características:
+
+\begin{itemize}
+	\item \textbf{RAM: }5,7 GB (Usamos hasta 5 GB en la máquina virtual de Java)
+	\item \textbf{Procesador: } Intel® Core™ i7-4702MQ CPU @ 2.20GHz × 8 
+\end{itemize}
+
+EL método $build()$ de la clase $BasicIndex$, crea un índice a partir de un conjunto de documentos comprimidos en un zip.
+
+Para ello, carga en RAM el índice relativo a esos documentos documentos hasta un máximo de 400 MB, cuándo llena ese espacio, lo fusiona con el índice que se encuentra guardado en disco. Este índice sigue la siguiente estructura:
+
+\begin{verbatim}
+linea: termino ESPACIO lista_de_postings
+
+lista_de_postings: posting
+	| posting ESPACIO lista_de_postings
+
+posting: docId COMA num_posiciones COMA posiciones
+
+posiciones: long
+	| long COMA posiciones
+
+\end{verbatim}
+
+Por ejemplo:
+
+\begin{verbatim}
+libro 1,3,1,2,3 2,2,1,2
+\end{verbatim}
+
+Significa que el término $libro$ aparece en el documento con Id $1$, 3 veces, en las posiciones 1,2 y 3. Y en el documento con Id $2$, dos veces, en las posiciones 1 y 2.
+
+Obtenemos los siguientes resultados de rendimiento:
+
+\begin{tabular}{|c|c|c|c|}
+	\hline
+	1K & 10K & 100K &  \\
+	\hline
+	0 & 1 & 1 & 1 \\
+	\hline
+	1 & 1 & 1 & 1 \\
+	\hline
+\end{tabular}
+
+\section{Búsqueda}
+
 \end{document}
