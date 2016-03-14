@@ -52,8 +52,6 @@ public class IndexBuilder {
 
 		// Recibir como argumentos:
 		XMLReader xmlReader = new XMLReader("index-settings.xml");
-
-		
 		collectionFolder = xmlReader.getTextValue(Utils.XMLTAG_COLLECTIONFOLDER);
 		indexFolder = xmlReader.getTextValue(Utils.XMLTAG_INDEXFOLDER);
 		checkFolders();

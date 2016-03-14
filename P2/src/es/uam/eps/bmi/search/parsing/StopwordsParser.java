@@ -57,11 +57,11 @@ public class StopwordsParser extends HTMLSimpleParser {
 		String toparse = Jsoup.parse(text).text();
                 String toret = "",token;
                 
-                StringTokenizer tokens = new StringTokenizer(toparse, Utils.DefaultSeparators); //PREGUNTAR SI ESTAN BIEN ESTOS SEPARADORES
+                StringTokenizer tokens = new StringTokenizer(toparse, Utils.DefaultSeparators); 
                     while (tokens.hasMoreTokens()) {
                         token =  tokens.nextToken();
                         if (!stopwordsBag.contains(token))
-                            toret += token;
+                            toret += token + " ";
                     }
                 
 		return toret;

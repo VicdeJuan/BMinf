@@ -10,6 +10,7 @@ import es.uam.eps.bmi.search.parsing.QueryParser;
 import es.uam.eps.bmi.search.parsing.StemParser;
 import es.uam.eps.bmi.search.parsing.StopwordsParser;
 import es.uam.eps.bmi.search.parsing.TextParser;
+import es.uam.eps.bmi.search.parsing.XMLReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,15 +33,18 @@ public class LiteralMatchingSearcher implements Searcher {
 
 	public static void main(String[] args) throws IOException {
 
-		String outputCollectionPath = "pruebas/indice1K/";
-		String inputCollection = "pruebas/clueweb-1K/";
 
-		
+		XMLReader xmlReader = new XMLReader("index-settings.xml");
+		String indexDir = xmlReader.getTextValue(Utils.XMLTAG_INDEXFOLDER);
+		String collectionPath = xmlReader.getTextValue(Utils.XMLTAG_COLLECTIONFOLDER);
+		String collectionZipFile = collectionPath +  Utils.STR_DEFAULT_ZIPNAME;
+		String indexFile = indexDir + "/" + Utils.index_file;
+
 		TextParser parser;
 		System.out.println("Selecciona método:\n\t1)Básico.\n\t2)Stopwords.\n\t3)Stemming.");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int input = Integer.parseInt(br.readLine());
-		switch(input){
+		switch (input) {
 			case 1: //Básico
 				parser = new HTMLSimpleParser();
 				break;
@@ -54,17 +58,16 @@ public class LiteralMatchingSearcher implements Searcher {
 				parser = new HTMLSimpleParser();
 				break;
 		}
-		
-		BasicIndex basicIdx = new BasicIndex();
-		
-		//Si no existe, se crea
-		boolean build = ! (new File(outputCollectionPath+"/"+Utils.index_file).exists());
-		if (build) {
-			basicIdx.build(inputCollection,outputCollectionPath,parser); 
-		} else {
-			basicIdx.load(outputCollectionPath);
-		}
 
+		BasicIndex basicIdx = new BasicIndex();
+
+		//Si no existe, se crea
+		boolean build = !(new File(indexFile).exists());
+		if (build) {
+			basicIdx.build(collectionPath, indexDir, parser);
+		} else {
+			basicIdx.load(indexDir);
+		}
 
 		LiteralMatchingSearcher LMSearch = new LiteralMatchingSearcher();
 		LMSearch.build(basicIdx);
@@ -72,14 +75,14 @@ public class LiteralMatchingSearcher implements Searcher {
 		long len = 0;
 		byte[] buffer = new byte[2048];
 		InputStream theFile;
-        //ahora leemos de teclado las querys
+		//ahora leemos de teclado las querys
 
 		System.out.println("Introducir las palabras de la búsqueda:");
 		br = new BufferedReader(new InputStreamReader(System.in));
 		String query = br.readLine();
-		
-		
-		String[] querys = new QueryParser().parses(query);
+
+		query = parser.parse(query);
+		String[] querys = new QueryParser().parses(parser.parse(query));
 		List<ScoredTextDocument> resul = LMSearch.search(query);
 
 		/*
@@ -98,13 +101,13 @@ public class LiteralMatchingSearcher implements Searcher {
 				String docname = doc.getNombre();
 				System.out.println(docname);
 
-				theFile = new FileInputStream(inputCollection + Utils.STR_DEFAULT_ZIPNAME );
+				theFile = new FileInputStream(collectionZipFile);
 
 				ZipInputStream stream = new ZipInputStream(theFile);
 				ZipEntry entry;
 
 				while ((entry = stream.getNextEntry()) != null) {
-                    //Cogemos siguiente documento del zip
+					//Cogemos siguiente documento del zip
 
 					if (entry.getName().equals(docname)) {
 						String value, texto = "";
@@ -254,7 +257,7 @@ public class LiteralMatchingSearcher implements Searcher {
 	 * @param docid Id del documento.
 	 * @return
 	 */
-	public double tf_idf(String termino, String docid) {
+	private double tf_idf(String termino, String docid) {
 
 		double freq = 0;
 		double ndoc = 0;
@@ -272,7 +275,7 @@ public class LiteralMatchingSearcher implements Searcher {
 			ndoc++;
 
 		}
-        // val 2 = tf
+		// val 2 = tf
 		//tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
 		// val 3 = idf = log(nº doc/nºdocs con ese termino)
 		idf = Math.log(indice.getNumDoc() / ndoc) / Math.log(2);
