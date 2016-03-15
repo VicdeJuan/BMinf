@@ -20,16 +20,9 @@
 
 \section{Creación del índice}
 
-Para la creación del índice hemos utilizado una máquina con las siguientes características:
+Para creación del índice hemos utilizado el método $build()$ de la clase $BasicIndex$, crea un índice a partir de un conjunto de documentos comprimidos en un zip.
 
-\begin{itemize}
-	\item \textbf{RAM: }5,7 GB (Usamos hasta 5 GB en la máquina virtual de Java)
-	\item \textbf{Procesador: } Intel® Core™ i7-4702MQ CPU @ 2.20GHz × 8 
-\end{itemize}
-
-EL método $build()$ de la clase $BasicIndex$, crea un índice a partir de un conjunto de documentos comprimidos en un zip.
-
-Para ello, carga en RAM el índice relativo a esos documentos documentos hasta un máximo de 400 MB, cuándo llena ese espacio, lo fusiona con el índice que se encuentra guardado en disco. Este índice sigue la siguiente estructura:
+Para ello, carga en RAM el índice relativo a esos documentos hasta un máximo de 400 MB, cuándo llena ese espacio, lo fusiona con el índice que se encuentra guardado en disco. Este índice sigue la siguiente estructura:
 
 \begin{verbatim}
 linea: termino ESPACIO lista_de_postings
@@ -52,17 +45,19 @@ libro 1,3,1,2,3 2,2,1,2
 
 Significa que el término $libro$ aparece en el documento con Id $1$, 3 veces, en las posiciones 1,2 y 3. Y en el documento con Id $2$, dos veces, en las posiciones 1 y 2.
 
-Obtenemos los siguientes resultados de rendimiento:
+Para la creación del índice en RAM hemos utilizado las siguientes clases:
+\begin{itemize}
+	\item $Posting$: En esta clase guardamos la estructura de un posting, es decir, una lista de posiciones y el id del documento al que pertenecen.
+	\item $Entrada$: En esta clase guardamos la estructura de una entrada, es decir, un término seguido de una lista de postings.
+	\item $Indice$: En esta clase guardamos la estructura de indice, es decir, una lista de entradas.
+\end{itemize}
 
-\begin{tabular}{|c|c|c|c|}
-	\hline
-	1K & 10K & 100K &  \\
-	\hline
-	0 & 1 & 1 & 1 \\
-	\hline
-	1 & 1 & 1 & 1 \\
-	\hline
-\end{tabular}
+En RAM se va guardando el índice estructurado de esa manera hasta completar un máximo de 400MB leídos de documentos. En ese momento fusionamos lo que tenemos en RAM con lo que tenemos en disco. Además, al crear el índice en disco, también guardamos dos tablas Hash:
+\begin{itemize}
+	\item La primera tabla hash relaciona el id de un documento con el nombre del documento y su módulo.
+	\item La segunda tabla hash relaciona un término del índice con la posición (offset de bytes) en la que se encuentra en el fichero de índice.
+\end{itemize}
+
 
 \section{Búsqueda}
 

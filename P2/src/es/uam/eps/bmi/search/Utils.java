@@ -21,7 +21,7 @@ public class Utils {
         public static final String InternPostingSeparator = ",";
         public static final String ExternPostingSeparator = " ";
         
-        public static int RAM_LIMIT = 500000000;
+        public static int RAM_LIMIT = 400000000;
         
         public static String DefaultSeparators =" ;\n\r\t.,";
 	/*public static String collection_folder=  "pruebas";

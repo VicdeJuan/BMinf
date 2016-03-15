@@ -154,9 +154,12 @@ public class BasicIndex implements Index {
 					long pos_termino = 0; //posición del término en el documento
 					String value, texto = "";
 
-                    //System.out.println("Documento " + idDoc + "----" + entry.getName() + "----tamaño:" + entry.getSize());
-					//System.out.println("Memoria total: " + Runtime.getRuntime().totalMemory() + "-- Memoria libre: " + Runtime.getRuntime().freeMemory() + "-- Memoria máxima: " + Runtime.getRuntime().maxMemory());
-					//System.out.println("Diferencia: " + numBytes);
+                                        if (idDoc%100 == 0){
+                                            System.out.println("Documento " + idDoc + "----" + entry.getName() + "----tamaño:" + entry.getSize());
+                                            System.out.println("Memoria total: " + Runtime.getRuntime().totalMemory() + "-- Memoria libre: " + Runtime.getRuntime().freeMemory() + "-- Memoria máxima: " + Runtime.getRuntime().maxMemory());
+                                            //System.out.println("Diferencia: " + numBytes);
+                                        }
+                                            
 					//Obtenemos el texto en bruto del fichero:
 					while ((len = stream.read(buffer)) > 0) {
 						value = new String(buffer, 0, (int) len, "UTF-8");
@@ -165,7 +168,9 @@ public class BasicIndex implements Index {
 					}
 
 					//parseamos el texto
-					texto = textParser.parse(texto);
+                                        if(textParser != null){
+                                            texto = textParser.parse(texto);
+                                        }
 
 					//Añadimos documento en hashmap de documentos:
 					String nombreDocumento = entry.getName();
