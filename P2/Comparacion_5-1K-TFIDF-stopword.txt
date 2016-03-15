@@ -1,0 +1,5 @@
+Query: 1	0.0
+Query: 2	0.0
+Query: 3	0.0
+Query: 4	0.6
+Query: 5	0.0

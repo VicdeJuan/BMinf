@@ -1,0 +1,21 @@
+ querys Top 10
+1:obama family tree -- 1:
+clueweb09-en0004-41-04748	clueweb09-en0001-02-21241	
+2:french lick resort and casino -- 2:
+Query vacia	
+3:getting organized -- 3:
+clueweb09-en0009-30-2733	clueweb09-en0000-60-02036	clueweb09-en0005-33-32645	clueweb09-en0011-82-06242	clueweb09-en0001-93-17134	
+4:toilet -- 4:
+clueweb09-en0009-30-2481	clueweb09-en0009-39-29431	clueweb09-en0009-30-2505	clueweb09-en0009-30-2416	clueweb09-en0009-33-32876	
+5:mitchell college -- 5:
+clueweb09-en0003-13-14436	clueweb09-en0000-89-18919	clueweb09-en0000-17-16569	clueweb09-en0004-19-08697	clueweb09-en0003-77-29412	
+6:kcs -- 6:
+clueweb09-enwp01-21-16276	clueweb09-en0011-25-28905	clueweb09-en0003-67-02912	clueweb09-en0008-19-30746	clueweb09-en0006-32-18971	
+7:air travel information -- 7:
+clueweb09-enwp01-03-21816	clueweb09-en0005-10-33001	clueweb09-en0004-97-08214	clueweb09-en0002-91-13742	clueweb09-en0007-90-23688	
+8:appraisals -- 8:
+clueweb09-enwp01-17-8297	clueweb09-en0009-30-2741	clueweb09-en0009-30-2586	clueweb09-en0009-30-2868	clueweb09-enwp01-02-10086	
+9:used car parts -- 9:
+clueweb09-en0009-30-2860	clueweb09-en0009-30-2812	clueweb09-en0009-30-2583	clueweb09-enwp00-96-9495	clueweb09-en0009-30-2968	
+10:cheap internet -- 10:
+clueweb09-en0009-73-30747	clueweb09-en0009-30-2721	clueweb09-en0009-71-20281	clueweb09-en0009-25-12184	clueweb09-en0004-28-00281	
