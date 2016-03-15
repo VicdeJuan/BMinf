@@ -1,0 +1,21 @@
+ querys Top 5
+1:obama family tree -- 1:
+Query vacia	
+2:french lick resort and casino -- 2:
+clueweb09-en0010-65-25357	clueweb09-en0002-28-30328	clueweb09-en0003-49-21968	clueweb09-en0006-39-11415	clueweb09-enwp00-67-20889	
+3:getting organized -- 3:
+Query vacia	
+4:toilet -- 4:
+clueweb09-en0009-30-2481	clueweb09-en0009-39-29431	clueweb09-en0009-30-2505	clueweb09-en0009-30-2416	clueweb09-enwp03-16-16773	
+5:mitchell college -- 5:
+Query vacia	
+6:kcs -- 6:
+Query vacia	
+7:air travel information -- 7:
+Query vacia	
+8:appraisals -- 8:
+Query vacia	
+9:used car parts -- 9:
+Query vacia	
+10:cheap internet -- 10:
+clueweb09-en0009-73-30747	clueweb09-enwp01-40-3554	clueweb09-en0009-30-2721	clueweb09-en0009-71-20281	clueweb09-en0009-30-2581	
