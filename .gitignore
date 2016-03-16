@@ -24,6 +24,7 @@ outputCollection*
 *.txt
 .dic*
 
+*/indices/*
 # Lucene index files
 *.fdt
 *.fdx
