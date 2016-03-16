@@ -60,5 +60,18 @@ En RAM se va guardando el índice estructurado de esa manera hasta completar un 
 
 
 \section{Búsqueda}
+Hacemos consultas orientadas a término, es decir leemos secuencialmente todos los postings de todos los docId de cada término de la consulta, y usamos la función de scoring vectorial tf-idf, implementada de la forma vista en clase.
+
+Estos scores los guardamos en un TreeMap con clave el docId, y vamos sumando los tf-idf.
+
+Para la búsqueda literal, procedemos de forma similar.
+
+En primer lugar guardamos los postings del primer documento y a partir de estos vamos reduciendo el número de postings que no cumplan con la función que nos dice si el siguiente termino es el siguiente en posición en el documento respecto del anterior.
+
+De esta manera mantenemos en memoria una lista de docId, posiciones de todos los elementos del primer término y progresivamente eliminamos los que no están de forma consecutiva.
+
+Los docId que siguen estando se van almacenando en un TreeMap como en la anterior búsqueda, y se van sumando los scores.
+
+
 
 \end{document}

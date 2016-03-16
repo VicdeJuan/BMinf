@@ -37,8 +37,8 @@ public class BasicReader {
     /**
      * Constructor del Reader. 
      * 		Abre el índice para ser leido.
-     * 		Carga el diccionario de (término -> offset)
-     * 		Carga el diccionario de (docId -> [nombre,modulo])
+     * 		Carga el diccionario de (término -- offset)
+     * 		Carga el diccionario de (docId -- [nombre,modulo])
      * @param indexFile	Path donde se encuentra el índice.
      * @throws FileNotFoundException En caso de no encontrar el fichero del índice.
      * @throws IOException 	En caso de malformación del diccionario o de error de IO.
@@ -65,8 +65,8 @@ public class BasicReader {
     /**
      * Constructor del Reader. 
      * 		Abre el índice para ser leido.
-     * 		Carga el diccionario de (término -> offset)
-     * 		Carga el diccionario de (docId -> [nombre,modulo])
+     * 		Carga el diccionario de (término -- offset)
+     * 		Carga el diccionario de (docId -- [nombre,modulo])
      * @param indice	Path donde se encuentra el índice.
 	 * @param diccionarioDocs_NM
 	 * @param diccionarioTerminos_indice

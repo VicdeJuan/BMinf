@@ -14,8 +14,6 @@ public class Posting {
 	 * Crea un posting nuevo para un termino, en un documento con su lista
 	 * de posiciones.
 	 *
-	 * @param docId Id del documento en el que se encuentra el termino.
-	 * @param termPositions Lista de posiciones en las que se encuentra el
 	 * termino dentro del documento.
 	 */
         
@@ -98,7 +96,7 @@ public class Posting {
         /**
 	 * Añade una posición del término.
 	 *
-	 * @param pos posicion que añadir.
+         * @return Numero de temrinos
 	 */
 	public int getNumTerms() {
 		return this.termPositions.size();

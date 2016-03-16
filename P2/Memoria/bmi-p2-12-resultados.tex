@@ -24,6 +24,7 @@
 %% Apéndices (ejercicios, exámenes)
 %\appendix
 
+\section{Resultados de tiempos y memoria}
 Para la creación del índice hemos utilizado una máquina con las siguientes características:
 
 \begin{itemize}
@@ -42,14 +43,54 @@ El resumen de los tiempos y el uso de memoria tanto del indexado como de la bús
 	 & Tiempo de & Consumo máximo & Tamaño total & Tamaño total de respuesta & Consumo máximo  \\
 	 & indexado & de RAM en indexado & del índice en disco & a la batería de consultas & de RAM en consulta \\
 	\hline
-	1K & 4:36 & 1028 MB  & 43 MB & & \\
+	1K & 4min 36s & 1028 MB  & 43 MB & & \\
 	\hline
-	10K & 40:37 & 2100 MB & 107 MB & & \\
+	10K & 40min 37s & 2100 MB & 107 MB & & \\
 	\hline
-	100K &  &  & & & \\
+	100K & 36horas 25min &  4700 MB  & 310 MB & & \\
 	\hline
 \end{tabular}
 \end{changemargin}
 }
+
+\newpage
+\section{Resultados ejercicio 2}
+Para las búsquedas hemos obtenidos los siguientes resultados de evaluación:
+
+Para los Indices de 1k, los P@5 son los siguientes:
+\begin{itemize}
+\item Para el indice literal basico: $0$.
+\item Para el indice literal stemming $0$.
+\item Para el indice literal stop-words $0$.
+\item Para el indice basico $0.12$.
+\item Para el indice stemming $0.12$.
+\item Para el indice stop-words $0.12$.
+\end{itemize}
+
+
+Para los Indices de 10k, los P@5 son los siguientes:
+\begin{itemize}
+	\item Para el indice literal basico: $0.08$.
+	\item Para el indice literal stemming $0$.
+	\item Para el indice literal stop-words $0.08$.
+	\item Para el indice basico $0$.
+	\item Para el indice stemming $0$.
+	\item Para el indice stop-words $0$.
+\end{itemize}
+
+
+Para los Indices de 10k, los P@5 son los siguientes:
+\begin{itemize}
+	\item Para el indice literal basico: $0.04$.
+	\item Para el indice literal stemming $0$.
+	\item Para el indice literal stop-words $0.04$.
+	\item Para el indice basico $0.04$.
+	\item Para el indice stemming $0$.
+	\item Para el indice stop-words $0.04$.
+\end{itemize}
+
+
+Como ejemplos de los resultados de las querys, se puede ver cualquiera de ellas en los ficheros del directorio $salidas\_queries$, cuyos nombres son los suficientemente descriptivos para saber sobre que índice se ha buscado.
+
 
 \end{document}
