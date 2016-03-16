@@ -1,7 +1,7 @@
 
-practica="P2"
+practica="P3"
 mem="Memoria"
-name="bmi-p2-12"
+name="bmi-p3-12"
 mkdir $name
 
 ## Generación de los pdfs
