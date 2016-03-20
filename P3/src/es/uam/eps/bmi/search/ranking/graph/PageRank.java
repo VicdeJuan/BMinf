@@ -2,23 +2,27 @@ package es.uam.eps.bmi.search.ranking.graph;
 
 import es.uam.eps.bmi.search.Utils;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
-import org.ejml.alg.dense.mult.MatrixVectorMult;
-import org.ejml.data.DenseMatrix64F;
+
 
 public class PageRank {
 	
 	public double DEFAULT_PRECISSION = 0.00005;
 
+	public final String filetowrite = "colecciones/pageRank/page_rank1K.txt";
+	
 	private String fileOfLinks;
 	private Matrix matrix;
 	private double[] scores;
@@ -26,10 +30,27 @@ public class PageRank {
 	private LinkedHashMap<String, Integer> dicNameDocID;
 	private int countDocs; // Variable para crear la matriz del grafo.
 	private double r; // r entre 0 y 1. Ponderación del peso de la probabilidad de teleportación.
+	private boolean scoresCalculated = false;
 	
 	private final int MAX_ITER = 100;
 	
-
+	public void writeValues(){
+		try {
+			FileWriter fw = new FileWriter(filetowrite);
+			BufferedWriter bw = new BufferedWriter(fw);
+			
+			if (!scoresCalculated)
+				calculateScores();
+			
+			for (Map.Entry<String, Integer> e : dicNameDocID.entrySet()){
+				bw.write(e.getKey() + " " + scores[e.getValue()] + "\r\n");
+			}
+			bw.close();
+			
+		} catch (IOException ex) {
+			Logger.getLogger(PageRank.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
 	public PageRank(String fileOfLinks, int collectionSize,double r) {
 		
@@ -143,6 +164,7 @@ public class PageRank {
 	}
 
 	public void calculateScores(){
+		scoresCalculated = true;
 		scores = iterate(DEFAULT_PRECISSION).getRow(0);
 	}
 	public double[] getScores(){
