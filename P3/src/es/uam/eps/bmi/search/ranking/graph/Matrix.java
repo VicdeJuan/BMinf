@@ -33,8 +33,8 @@ public class Matrix {
 		return mat.numCols;
 	}
 	
-	public Matrix producto(Matrix m1, Matrix m2) {
-		DenseMatrix64F ret = new DenseMatrix64F(m1.getNumRows(), m1.getNumCols());
+	public static Matrix producto(Matrix m1, Matrix m2) {
+		DenseMatrix64F ret = new DenseMatrix64F(m1.getNumRows(), m2.getNumCols());
 		CommonOps.mult(m1.mat, m2.mat, ret);
 		return new Matrix(ret);
 	}
@@ -58,12 +58,13 @@ public class Matrix {
 		return mat.get(row, col);
 	}
 
-	public Matrix power(Matrix m1, int exp) {
+	public static Matrix power(Matrix m1, int exp) {
 		Matrix a;
 		if (exp <= 1) {
 			return m1;
 		} else {
-			a =producto(m1, m1);
+			a = Matrix.producto(m1, m1);
+			a.normalize();
 			return power(a, exp - 1);
 		}
 
@@ -86,12 +87,22 @@ public class Matrix {
 		for (int row = 0; row < this.getNumRows();row++){
 			rowValues = this.getRow(row);
 			valueToNorm = DoubleStream.of(rowValues).parallel().sum();
-			if (valueToNorm==1)
+			if ((valueToNorm==1) || (valueToNorm == 0))
 				continue;
 			for(int col = 0; col < this.getNumCols(); col ++){
 				m_norm.set(mat.get(row,col)/valueToNorm, row, col);
 			}
 		}
 	}
+
+	void teleport(double r) {
+		
+		double[] d = new double[mat.numCols*mat.numRows];
+		Arrays.fill(d, 1.0/mat.numCols);
+		Matrix m = new Matrix(d,mat.numRows,mat.numCols);
+		CommonOps.add(1-r, mat, r, m.mat, mat);
+	}
+	
+	
 
 }

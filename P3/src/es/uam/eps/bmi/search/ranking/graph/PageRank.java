@@ -1,24 +1,23 @@
 package es.uam.eps.bmi.search.ranking.graph;
 
-import edu.uci.ics.jung.graph.DirectedGraph;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import es.uam.eps.bmi.search.Utils;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
-import org.ejml.ops.CommonOps;
+import org.ejml.alg.dense.mult.MatrixVectorMult;
+import org.ejml.data.DenseMatrix64F;
 
 public class PageRank {
+	
+	public double DEFAULT_PRECISSION = 0.00005;
 
 	private String fileOfLinks;
 	private Matrix matrix;
@@ -26,36 +25,61 @@ public class PageRank {
 	private int numDocs;
 	private LinkedHashMap<String, Integer> dicNameDocID;
 	private int countDocs; // Variable para crear la matriz del grafo.
+	private double r; // r entre 0 y 1. Ponderación del peso de la probabilidad de teleportación.
 	
 	private final int MAX_ITER = 100;
 	
-	public PageRank(String fileOfLinks) {
-		int collectionSize = 0;
-		// Calcular tamañaoI
 
-	}
 
-	public PageRank(String fileOfLinks, int collectionSize) {
+	public PageRank(String fileOfLinks, int collectionSize,double r) {
 		
 		//int nrow;
 		//nrow = 1;
 		dicNameDocID = new LinkedHashMap<>();
 		matrix = new Matrix( collectionSize, collectionSize);
+		this.r = r;
 		load(fileOfLinks,collectionSize);
 		scores = new double[collectionSize];
 		
+	}
 	
+	
+	private Matrix _iterate(Matrix matrix, double precission, int numIterations){
+		Matrix m = Matrix.power(matrix, 2);
+		Matrix sc = new Matrix(scores, m.getNumRows(), 1);
+	
+		if (numIterations <= 2)
+			return m;
+		
+		OptionalDouble od = DoubleStream.of(
+			Matrix.resta(
+				m,
+				matrix).
+			getData()).max();
+		
+		if (od.isPresent()){
+			if(od.getAsDouble() < precission)
+				return m;
+			else{
+				
+				return _iterate(m,precission,numIterations-1);
+			}
+		}
+				
+		return _iterate(m,precission,numIterations);
 	}
 	
 	public Matrix iterate(double precission,int numIterations){
-		return iterate(numIterations);
+		return _iterate(matrix, precission, numIterations);
+
 	}
 	public Matrix iterate(double precission){
 		
 		return iterate(precission,MAX_ITER);
 	}
+	
 	public Matrix iterate(int numIterations){
-		Matrix m = matrix.power(matrix,numIterations);
+		Matrix m = Matrix.power(matrix,numIterations);
 		return m;
 		//return m.getRow(0);
 	}
@@ -104,7 +128,10 @@ public class PageRank {
 				}
 
 			}
+			// Normalizamos la matriz
 			matrix.normalize();
+			//Añadimos la correspondiente matriz de 1/N
+			matrix.teleport(this.r);
 			
 			br.close();
 		} catch (FileNotFoundException ex) {
@@ -115,6 +142,12 @@ public class PageRank {
 		}
 	}
 
+	public void calculateScores(){
+		scores = iterate(DEFAULT_PRECISSION).getRow(0);
+	}
+	public double[] getScores(){
+		return scores;
+	}
 	public double getScoreOf(String docId) {
 		return matrix.get((int) dicNameDocID.get(docId),0);
 	}
