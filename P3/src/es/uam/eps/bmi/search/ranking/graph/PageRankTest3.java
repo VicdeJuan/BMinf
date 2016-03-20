@@ -5,6 +5,7 @@
  */
 package es.uam.eps.bmi.search.ranking.graph;
 
+import es.uam.eps.bmi.search.Utils;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,29 +16,20 @@ import java.util.stream.DoubleStream;
 
 public class PageRankTest3 {
 
-	private final static String fileOfLinks = "colecciones/pageRank/links_1K.txt";
+	private final static String CLUEWEB = "10K";
+	private final static String fileOfLinks = "colecciones/pageRank/links_"+CLUEWEB+"K.txt";
+	private final static String colections = "colecciones/clueweb-"+CLUEWEB+"/docs.zip";
+	private final static String towrite = "colecciones/pageRank/page_rank_"+CLUEWEB+"";
 	private static int size;
 	private static final double r = 0.1;
 
 	public static void main(String[] argv) {
-		String line;
-		size = 0;
-		try {
-			FileReader fr = new FileReader(fileOfLinks);
-			BufferedReader br = new BufferedReader(fr);
+		
+		size = Utils.getSizeOfFile(fileOfLinks);
 
-			while ((line = br.readLine()) != null) {
-				size++;
-			}
-
-		} catch (FileNotFoundException ex) {
-			Logger.getLogger(PageRankTest3.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
-			Logger.getLogger(PageRankTest3.class.getName()).log(Level.SEVERE, null, ex);
-		}
 
 		PageRank pg;
-		pg = new PageRank(fileOfLinks, size, r);
+		pg = new PageRank(fileOfLinks, size, r,towrite,colections);
 
 		pg.calculateScores();
 		System.out.println(DoubleStream.of(pg.getScores()).max());

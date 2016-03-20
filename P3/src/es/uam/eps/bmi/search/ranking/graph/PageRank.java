@@ -3,6 +3,7 @@ package es.uam.eps.bmi.search.ranking.graph;
 import es.uam.eps.bmi.search.Utils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,65 +11,41 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalDouble;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.apache.commons.collections4.comparators.ComparableComparator;
 
 public class PageRank {
 
 	public double DEFAULT_PRECISSION = 0.00005;
 
-	public final String filetowrite = "colecciones/pageRank/page_rank1K.txt";
+	public String filetowrite;
+	public String colection; 
 
 	private String fileOfLinks;
-	private Matrix matrix;
+	private final Matrix matrix;
 	private double[] scores;
 	private int numDocs;
-	private LinkedHashMap<String, Integer> dicNameDocID;
+	private final LinkedHashMap<String, Integer> dicNameDocID;
 	private int countDocs; // Variable para crear la matriz del grafo.
-	private double r; // r entre 0 y 1. Ponderación del peso de la probabilidad de teleportación.
+	private final double r; // r entre 0 y 1. Ponderación del peso de la probabilidad de teleportación.
 	private boolean scoresCalculated = false;
 
 	private final int MAX_ITER = 100;
 
-	public void writeValues() {
-		int lim = 10;
-		
-		List<String> docs = dicNameDocID.entrySet().stream().sorted(
-			(
-				Map.Entry<String, Integer> o1,
-				Map.Entry<String, Integer> o2)
-			-> Double.compare(scores[o2.getValue()], scores[o1.getValue()])
-		).limit(lim).map(
-			(ent) -> ent.getKey()
-		).collect(Collectors.toList());
-
-		try {
-			FileWriter fw = new FileWriter(filetowrite);
-			BufferedWriter bw = new BufferedWriter(fw);
-
-			if (!scoresCalculated) {
-				calculateScores();
-			}
-
-			for (String d : docs) {
-				bw.write(d + " " + scores[dicNameDocID.get(d)] + "\r\n");
-				bw.write(getFirstLines(d));
-			}
-			bw.close();
-
-		} catch (IOException ex) {
-			Logger.getLogger(PageRank.class.getName()).log(Level.SEVERE, null, ex);
-		}
-	}
-
-	public PageRank(String fileOfLinks, int collectionSize, double r) {
+	public PageRank(String fileOfLinks, int collectionSize, double r, String fileToWrite, String colection) {
 
 		//int nrow;
 		//nrow = 1;
@@ -77,8 +54,16 @@ public class PageRank {
 		this.r = r;
 		load(fileOfLinks, collectionSize);
 		scores = new double[collectionSize];
+		this.colection = colection;
+		filetowrite = fileToWrite;
 
 	}
+	
+	public PageRank(String fileOfLinks,int collectionSize,double r){
+		this(fileOfLinks,collectionSize,r,null,null);
+	}
+
+
 
 	private Matrix _iterate(Matrix matrix, double precission, int numIterations) {
 		Matrix m = Matrix.power(matrix, 2);
@@ -198,8 +183,74 @@ public class PageRank {
 		return this.matrix.toString();
 	}
 
-	private char[] getFirstLines(String d) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+	public void writeValues() {
+		int lim = 10;
 
+		List<String> docs = dicNameDocID.entrySet().stream().sorted(
+			(
+				Map.Entry<String, Integer> o1,
+				Map.Entry<String, Integer> o2)
+			-> Double.compare(scores[o2.getValue()], scores[o1.getValue()])
+		).limit(lim).map(
+			(ent) -> ent.getKey()
+		).collect(Collectors.toList());
+
+		HashMap<String, String> dicDocFirstLines;
+		try {
+			FileWriter fw = new FileWriter(filetowrite);
+			BufferedWriter bw = new BufferedWriter(fw);
+
+			if (!scoresCalculated) {
+				calculateScores();
+			}
+
+			dicDocFirstLines = getFirstLines(docs);
+
+			for (String d : docs) {
+				bw.write(d + " " + scores[dicNameDocID.get(d)] + "\r\n");
+				bw.write(dicDocFirstLines.get(d) + "\r\n");
+			}
+			bw.close();
+
+		} catch (IOException ex) {
+			Logger.getLogger(PageRank.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+	
+	
+	private HashMap<String, String> getFirstLines(List<String> docs) {
+
+		HashMap<String, String> toret = new HashMap<>();
+		FileInputStream theFile;
+		int read;
+		String re,name;
+		byte[] buffer = new byte[2048*5];
+		try {
+			theFile = new FileInputStream(this.colection);
+
+			ZipInputStream stream = new ZipInputStream(theFile);
+			ZipEntry entry;
+			
+			
+			while ((entry = stream.getNextEntry()) != null) {
+				// Eliminamos la extensión del nombre
+				name = entry.getName().substring(0, entry.getName().length()-5);
+				if (docs.indexOf(name) != -1) {
+					read = stream.read(buffer);
+					toret.put(name,new String(buffer, 0, (int) read, "UTF-8"));
+				}
+			}
+		} catch (FileNotFoundException ex) {
+			System.err.println("No se encuentra el archivo para mostrar el contenido de cada documento");
+			Logger.getLogger(PageRank.class.getName()).log(Level.SEVERE, null, ex);
+			return null;
+		} catch (IOException ex) {
+			System.err.println("No se encuentra el archivo para mostrar el contenido de cada documento");
+
+			Logger.getLogger(PageRank.class.getName()).log(Level.SEVERE, null, ex);
+			return null;
+
+		}
+		return toret;
+	}
 }
