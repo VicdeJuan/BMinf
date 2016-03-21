@@ -5,6 +5,13 @@
  */
 package es.uam.eps.bmi.crawling;
 
+import es.uam.eps.bmi.search.ScoredTextDocument;
+import es.uam.eps.bmi.search.Utils;
+import es.uam.eps.bmi.search.indexing.BasicIndex;
+import es.uam.eps.bmi.search.parsing.HTMLSimpleParser;
+import es.uam.eps.bmi.search.parsing.QueryParser;
+import es.uam.eps.bmi.search.parsing.TextParser;
+import es.uam.eps.bmi.search.ranking.graph.PageRank;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,6 +25,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import es.uam.eps.bmi.search.parsing.XMLReader;
+import es.uam.eps.bmi.search.searching.ModuloNombre;
+import es.uam.eps.bmi.search.searching.TFIDFSearcher;
 
 /**
  *
@@ -29,20 +39,23 @@ public class GenericCrawler {
     String OUTPATHFOLDER;
     List<String> domains;
     private Set<String> pagesVisited;
+    double r;
 
     public GenericCrawler(int NUMPAGES, String OUTPATHFOLDER, List<String> domains) {
         this.NUMPAGES = NUMPAGES;
         this.OUTPATHFOLDER = OUTPATHFOLDER;
         this.domains = domains;
         this.pagesVisited = new HashSet<String>();
+        this.r=0.1;
     }
 
     public static void main(String[] args) throws IOException {
         URL url;
         File f;
+        String outfile="graph.txt";
 
         GenericCrawler crawler;
-        int numpages = 100;
+        int numpages = 10;
         String outfolder = "WEBCRAWLER";
         List<String> dom = new ArrayList<>();
         dom.add("https://es.wikipedia.org/wiki/Miner%C3%ADa_de_datos");
@@ -55,7 +68,7 @@ public class GenericCrawler {
         //le paso la primera url
         for (String paginas_dominio : dom) {
             url = new URL(paginas_dominio);
-            crawl(url, crawler);
+            crawl(url, crawler,outfile);
         }
     }
 
@@ -63,7 +76,7 @@ public class GenericCrawler {
      *
      * @param url
      */
-    public static void crawl(URL url, GenericCrawler crawler) throws IOException {
+    public static void crawl(URL url, GenericCrawler crawler,String outfile) throws IOException {
 
         List<String> urlstovisit = new ArrayList<>();
         String path = crawler.getOUTPATHFOLDER();
@@ -78,7 +91,7 @@ public class GenericCrawler {
         reader.close();
         writer.close();
         // Ya tengo todas las URL de la primera página
-        FileWriter graph = new FileWriter("grafh.txt");
+        FileWriter graph = new FileWriter(outfile);
         PrintWriter pw = null;
 
         BufferedWriter grafo = new BufferedWriter(graph);
@@ -121,7 +134,7 @@ public class GenericCrawler {
                 }
                 pagesVisited.add(tovisit);
             } else {
-                return;
+                break;
             }
         }
         Set<String> auxvisit = crawler.getPagesVisited();
@@ -130,8 +143,63 @@ public class GenericCrawler {
         graph.close();
         
         //Ya se genera todo lo necesario ahora hay que inicializar el indice y cargar pagerank
+        PageRank pg;
+        String grafotxt = "graph.txt";
+        pg = new PageRank(outfile,1000,crawler.getR(),"pagerank.txt","docs.zip");
+        //System.out.println(pg.iterate(0.005,600));
+        pg.calculateScores();
+	for (double d : pg.getScores()){
+            //System.out.println(d);
+        }
+        pg.writeValues();
+/*Queremos mostrar el TOP 10 de PageRank*/        
         
+        
+        
+        
+        
+        
+        
+        //Para construir el indice
+        TextParser parser= new HTMLSimpleParser();
+        /*XMLReader xmlReader = new XMLReader("index-settings.xml");
+        String indexDir = xmlReader.getTextValue(Utils.XMLTAG_INDEXFOLDER);
+        String indexFile = indexDir + "/" + Utils.index_file;
+        */
+        String indexDir = "indice";
+        BasicIndex basicIdx = new BasicIndex();
 
+        //Si no existe, se crea
+        //boolean build = !(new File(indexFile).exists());
+        boolean build=true;
+        if (build) {
+                basicIdx.build(crawler.getOUTPATHFOLDER(), indexDir, parser);
+        } else {
+                basicIdx.load(indexDir);
+        }
+        
+       TFIDFSearcher tfSearch = new TFIDFSearcher();
+	tfSearch.build(basicIdx);
+        System.out.println("La busqueda es: Mineria de datos");
+        
+        String query = "Mineria de datos";
+        String[] querys = new QueryParser().parses(query);
+        long len = 0;
+        byte[] buffer = new byte[2048];
+
+        InputStream theFile;
+        List<ScoredTextDocument> resul = tfSearch.search(query);
+        int topp=10;
+        if (resul.size()<10){
+            topp=resul.size();
+        }
+        for (int i = 0; i < topp; i++) {
+            String docidd = resul.get(i).getDocId();
+            ModuloNombre doc = tfSearch.getIndice().getDiccionarioDocs_NM().get(docidd);
+            String docname = doc.getNombre();
+            System.out.println(docname);
+        }
+        
     }
 
     public static List<String> retwebpages(BufferedReader reader, BufferedWriter writer, URL url) throws IOException {
@@ -158,7 +226,8 @@ public class GenericCrawler {
                         break;
                     }
 
-                } /*o bien si no tiene extension la uno a la anterior porque forma parte de la web*/ else {
+                } /*o bien si no tiene extension la uno a la anterior porque forma parte de la web*/ 
+                else {
                     if (!aux[1].contains(".")) {
                         urll = aux[1].split("\"")[1];
                         if (urll.contains("/")) {
@@ -203,4 +272,9 @@ public class GenericCrawler {
     public void setPagesVisited(Set<String> pagesVisited) {
         this.pagesVisited = pagesVisited;
     }
+
+    public double getR() {
+        return r;
+    }
+    
 }

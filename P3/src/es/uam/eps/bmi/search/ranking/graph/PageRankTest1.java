@@ -6,7 +6,7 @@ import java.util.stream.DoubleStream;
 
 public class PageRankTest1 {
 	
-	private final static String fileOfLinks = "colecciones/PageRank/test1";
+	private final static String fileOfLinks = "colecciones/pageRank/test1";
 	private final static int size = 4;
 	private static double r = 0.1;
 	

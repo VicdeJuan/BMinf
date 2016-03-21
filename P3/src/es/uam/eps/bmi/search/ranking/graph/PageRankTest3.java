@@ -16,7 +16,7 @@ import java.util.stream.DoubleStream;
 
 public class PageRankTest3 {
 
-	private final static String CLUEWEB = "10K";
+	private final static String CLUEWEB = "1K";
 	private final static String fileOfLinks = "colecciones/pageRank/links_"+CLUEWEB+"K.txt";
 	private final static String colections = "colecciones/clueweb-"+CLUEWEB+"/docs.zip";
 	private final static String towrite = "colecciones/pageRank/page_rank_"+CLUEWEB+"";

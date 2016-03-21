@@ -231,4 +231,9 @@ public class TFIDFSearcher implements Searcher {
 		return this.indice.getDiccionarioDocs_NM().get(docId).getNombre();
 	}
 
+    public BasicReader getIndice() {
+        return indice;
+    }
+        
+
 }
