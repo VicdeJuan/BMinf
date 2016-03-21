@@ -28,6 +28,7 @@ import java.util.Set;
 import es.uam.eps.bmi.search.parsing.XMLReader;
 import es.uam.eps.bmi.search.searching.ModuloNombre;
 import es.uam.eps.bmi.search.searching.TFIDFSearcher;
+import java.io.FileReader;
 
 /**
  *
@@ -99,10 +100,11 @@ public class GenericCrawler {
         crawler.setPagesVisited(pagesVisited);
         //Escribo las salientes de la primera        
         pw = new PrintWriter(graph);
-        pw.println(url + " " + urlstovisit.size());
+        pw.print(url + " " + urlstovisit.size()+" ");
         for (String prin : urlstovisit) {
             pw.print(prin + " ");
         }
+        pw.println();
         pagina++;
         /*Para cada paginas que tengo que visitar hago todo*/
 
@@ -128,10 +130,11 @@ public class GenericCrawler {
                 }
                 pagina++;
 
-                pw.println(url + " " + urlstovisit.size());
+                pw.print(url + " " + urlstovisit.size()+" ");
                 for (String prin : urlstovisit) {
                     pw.print(prin + " ");
                 }
+                pw.println();
                 pagesVisited.add(tovisit);
             } else {
                 break;
@@ -145,7 +148,23 @@ public class GenericCrawler {
         //Ya se genera todo lo necesario ahora hay que inicializar el indice y cargar pagerank
         PageRank pg;
         String grafotxt = "graph.txt";
-        pg = new PageRank(outfile,1000,crawler.getR(),"pagerank.txt","docs.zip");
+        /*Vamos a ver cuantas webs hay en graph*/
+         FileReader f = new FileReader(grafotxt);
+        BufferedReader b = new BufferedReader(f);
+        String cadena;
+        HashSet<String> docsunicos=new HashSet<>();
+        while((cadena = b.readLine())!=null) {
+            String[] split = cadena.split(" ");
+            docsunicos.add(split[0]);
+            //me quito el uno que me da cuantas hay
+            for(int j=2;j<split.length;j++){
+                docsunicos.add(split[j]);
+            }
+        }
+        b.close();
+        int ndocsunicos=docsunicos.size();
+        
+        pg = new PageRank(outfile,ndocsunicos,crawler.getR(),"pagerank.txt","docs.zip");
         //System.out.println(pg.iterate(0.005,600));
         pg.calculateScores();
 	for (double d : pg.getScores()){
