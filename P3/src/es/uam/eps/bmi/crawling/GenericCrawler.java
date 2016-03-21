@@ -119,7 +119,9 @@ public class GenericCrawler {
                 return;
             }
         }
-
+        Set<String> auxvisit = crawler.getPagesVisited();
+        auxvisit.addAll(pagesVisited);
+        crawler.setPagesVisited(auxvisit);
         graph.close();
 
     }
