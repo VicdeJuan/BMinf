@@ -102,10 +102,15 @@ public class GenericCrawler {
                 if (!pagesVisited.contains(tovisit)) {
 
                     URL nuevaUrl = new URL(tovisit);
-                    BufferedReader reader1 = new BufferedReader(new InputStreamReader(nuevaUrl.openStream()));
-                    BufferedWriter writer1 = new BufferedWriter(new FileWriter(path + "/" + pagina + ".html"));
-                    urlstovisitaux = retwebpages(reader1, writer1, nuevaUrl);
-                    urlstovisit.addAll(urlstovisitaux);
+                    try {
+                        BufferedReader reader1 = new BufferedReader(new InputStreamReader(nuevaUrl.openStream()));
+                        BufferedWriter writer1 = new BufferedWriter(new FileWriter(path + "/" + pagina + ".html"));
+                        urlstovisitaux = retwebpages(reader1, writer1, nuevaUrl);
+                        urlstovisit.addAll(urlstovisitaux);
+                    } catch (Exception e) {
+
+                        break;
+                    }
 
                 }
                 pagina++;
@@ -123,6 +128,9 @@ public class GenericCrawler {
         auxvisit.addAll(pagesVisited);
         crawler.setPagesVisited(auxvisit);
         graph.close();
+        
+        //Ya se genera todo lo necesario ahora hay que inicializar el indice y cargar pagerank
+        
 
     }
 
@@ -138,11 +146,17 @@ public class GenericCrawler {
                 String[] aux = line.split("href=");
                 /* o bien cojo la url entera*/
                 if (aux[1].contains("http:") || aux[1].contains("https:")) {
-                    urll = aux[1].split("\"")[1];
-                //System.out.println(urll);
-                    //Hay que ver porque no funcionan las webs externas
+
+                    String[] split = aux[1].split("\"");
+                    
                     //Aunque como pone en el enunciado que se restrinja a un unico dominio, no seria necesario.
-                    //urls.add(urll);
+                    if (split.length > 1) {
+                        urll = aux[1].split("\"")[1];
+                        //urls.add(urll);
+                        //System.out.println(urll);
+                    } else {
+                        break;
+                    }
 
                 } /*o bien si no tiene extension la uno a la anterior porque forma parte de la web*/ else {
                     if (!aux[1].contains(".")) {
