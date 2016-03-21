@@ -6,18 +6,12 @@
 package es.uam.eps.bmi.search.ranking.graph;
 
 import es.uam.eps.bmi.search.Utils;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.DoubleStream;
 
 public class PageRankTest3 {
 
 	private final static String CLUEWEB = "1K";
-	private final static String fileOfLinks = "colecciones/pageRank/links_"+CLUEWEB+"K.txt";
+	private final static String fileOfLinks = "colecciones/pageRank/links_"+CLUEWEB+".txt";
 	private final static String colections = "colecciones/clueweb-"+CLUEWEB+"/docs.zip";
 	private final static String towrite = "colecciones/pageRank/page_rank_"+CLUEWEB+"";
 	private static int size;
