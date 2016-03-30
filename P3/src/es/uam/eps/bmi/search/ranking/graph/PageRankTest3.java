@@ -26,7 +26,7 @@ public class PageRankTest3 {
 		pg = new PageRank(fileOfLinks, size, r,towrite,colections);
 
 		pg.calculateScores();
-		System.out.println(DoubleStream.of(pg.getScores()).max());
+		System.out.println("Page rank máximo: " + DoubleStream.of(pg.getScores()).max());
 
 		pg.writeValues();
 
