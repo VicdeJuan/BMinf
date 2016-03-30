@@ -156,7 +156,6 @@ public class LiteralMatchingSearcher implements Searcher {
 		Index aux = index;
 		aux.loadReader();
 		this.indice = aux.getReader();
-
 	}
 
 	@Override

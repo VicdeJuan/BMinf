@@ -24,7 +24,7 @@
 %% Apéndices (ejercicios, exámenes)
 %\appendix
 
-\section{Resultados de tiempos y memoria}
+\section{Creación del índice}
 Para la creación del índice hemos utilizado una máquina con las siguientes características:
 
 \begin{itemize}
@@ -34,27 +34,26 @@ Para la creación del índice hemos utilizado una máquina con las siguientes ca
 
 Además, como ya hemos indicado, leemos los documentos uno a uno del zip hasta leer un total de 400 MB de datos. Es en ese momento cuando fusionamos el índice almacenado en RAM con el que tenemos en disco.
 
-El resumen de los tiempos y el uso de memoria tanto del indexado como de la búsqueda los mostramos en la siguiente tabla:
+El resumen de los tiempos y el uso de memoria del indexado es el siguiente:
 
-\small{
-\begin{changemargin}{-2cm}{0cm}
-\begin{tabular}{|c|c|c|c|c|c|}
+
+
+\begin{tabular}{|c|c|c|c|}
 	\hline
-	 & Tiempo de & Consumo máximo & Tamaño total & Tamaño total de respuesta & Consumo máximo  \\
-	 & indexado & de RAM en indexado & del índice en disco & a la batería de consultas & de RAM en consulta \\
+	 & Tiempo de & Consumo máximo & Tamaño total \\
+	 & indexado & de RAM en indexado & del índice en disco  \\
 	\hline
-	1K & 4min 36s & 1028 MB  & 43 MB & & \\
+	1K & 4min 36s & 1028 MB  & 43 MB \\
 	\hline
-	10K & 40min 37s & 2100 MB & 107 MB & & \\
+	10K & 40min 37s & 2100 MB & 107 MB \\
 	\hline
-	100K & 36horas 25min &  4700 MB  & 310 MB & & \\
+	100K & 36horas 25min &  4700 MB  & 310 MB\\
 	\hline
 \end{tabular}
-\end{changemargin}
-}
+
 
 \newpage
-\section{Resultados ejercicio 2}
+\section{Resultados búsqueda}
 Para las búsquedas hemos obtenidos los siguientes resultados de evaluación:
 
 Para los Indices de 1k, los P@5 son los siguientes:

@@ -132,7 +132,7 @@ public class BasicIndex implements Index {
 			long numBytes = 0;
 
 			//Creacion indice en RAM.
-			Indice indice = new Indice(new ArrayList<Entrada>());;
+			Indice indice = new Indice(new ArrayList<Entrada>());
 
 			//Leemos uno por uno los documentos del zip mientras queden archivos en el zip
 			ZipEntry entry;
@@ -181,9 +181,10 @@ public class BasicIndex implements Index {
 					diccionarioDocs_NM.putIfAbsent("" + docId_actual, new ModuloNombre(nombreDocumento, 0));
 
 					//Tokenizamos el texto, y cogemos uno a uno los términos metiéndolos en el indice
-					StringTokenizer tokens = new StringTokenizer(texto, " ,;:\n\r\t"); //PREGUNTAR SI ESTAN BIEN ESTOS SEPARADORES
+					StringTokenizer tokens = new StringTokenizer(texto, Utils.DefaultSeparators); //PREGUNTAR SI ESTAN BIEN ESTOS SEPARADORES
 					while (tokens.hasMoreTokens()) {
 						String termino = tokens.nextToken();
+                                                termino = termino.toLowerCase(); 
 
                         //Parseamos el termino, decidimos si merece la pena meterlo en el diccionario:
 						// FALTA CODIGO
