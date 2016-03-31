@@ -1,0 +1,5 @@
+Para este crawler hemos usado como web de referencia wikipedia, y hemos 100 paginas y generado un fichero llamado graph.txt con las urls salientes de estas 100 páginas.
+Si se quiere ejecutar, requiere un proceso manual, debido a que no se ha conseguido automatizar la creación de un zip en el que se incluyeran todos los html de la carpeta WEBCRAWLER sin que apareciera esta carpeta dentro del docs.zip.
+Se requiere una primera ejecución para descargar todos los html y una vez realizada comprimir todos los archivos de la carpeta WEBCRAWLER en una zip llamado docs.zip
+
+Como podemos ver en la 

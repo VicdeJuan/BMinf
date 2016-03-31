@@ -61,7 +61,7 @@ public class GenericCrawler {
         String outfile = "graph.txt";
 
         GenericCrawler crawler;
-        int numpages = 10;
+        int numpages = 100;
         String outfolder = "WEBCRAWLER";
         List<String> dom = new ArrayList<>();
         dom.add("https://es.wikipedia.org/wiki/Miner%C3%ADa_de_datos");
@@ -173,8 +173,8 @@ public class GenericCrawler {
         boolean flag = true;
         int n = 1;
 
-        FileOutputStream out = new FileOutputStream("docs.zip");
-        ZipOutputStream zipOut = new ZipOutputStream(out);
+        //FileOutputStream out = new FileOutputStream("docs.zip");
+        //ZipOutputStream zipOut = new ZipOutputStream(out);
         /*
          String inputFile = "WEBCRAWLER/"+n+".html";
          FileInputStream in = new FileInputStream(inputFile);
@@ -257,7 +257,7 @@ String pathaux = "WEBCRAWLER";
         TFIDFSearcher tfSearch = new TFIDFSearcher();
         tfSearch.build(basicIdx);
         System.out.println("La busqueda es: Mineria de datos");
-
+        System.out.println("Los resultados son los siguientes:");
         String query = "datos";
         String[] querys = new QueryParser().parses(query);
         long len = 0;
