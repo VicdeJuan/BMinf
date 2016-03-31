@@ -1,0 +1,121 @@
+\documentclass[palatino,nochap]{apuntes}
+
+\title{Resultados búsqueda proximal práctica 3}
+\author{Daniel Ruiz Mayo, Alberto Javier Parramón, Víctor de Juan}
+\date{}
+
+% Paquetes adicionales
+
+% --------------------
+
+\begin{document}
+\pagestyle{plain}
+\maketitle
+
+% Contenido.
+
+%% Apéndices (ejercicios, exámenes)
+%\appendix
+
+\section{Ejecución de la práctica}
+Para probar las distintas funcionalidades implementadas tenemos que tener como directorio trabajo el directorio de la práctica. En este caso $bmi1415_p3_12$.
+
+Si se desea crear el índice de nuevo. Se debe ejecutar la clase $Indexador.java$. Cogerá automáticamente el indice de clueweb-1K situado en el directorio $colecciones/clueweb-1K$.
+
+\section{Pruebas del buscador}
+
+Para probar el buscador se debe ejecutar la clase $ProximalSearcher.java$. Se le pedirá al usuario que introduzca por teclado la búsqueda que desea realizar.
+
+Si se desea más información como el $score$ de cada documento o más detalles del modo en el que esta se realiza se puede consultar el código del método $search$ y descomentar algunas de las últimas líneas de dicho método, en concreto:
+
+Para ver el score de cada documento.
+\begin{verbatim}
+	//System.out.println("Score documento " + this.getDocName(docId) + ": " + score);
+\end{verbatim}
+
+Para ir viendo la evolución del algoritmo de búsqueda proximal:
+\begin{verbatim}
+//System.out.println("(" + a + "," + b + ")");
+\end{verbatim}
+
+Son comentarios que se han ido utilizando a modo de debug y que hemos preferido dejarlos con el objetivo de que sea fácil de ver el funcionamiento del algoritmo implementado; el cual es el mismo que se nos expone en las transparencias de la asignatura.
+
+Aquí mostramos algunos resultados del fichero queries.txt:
+
+\begin{itemize}
+	\item 'Obama family tree'
+	\begin{itemize}
+		\item Mejor documento: clueweb09-en0010-79-2218.html
+		\item Extracto de la búsqueda:
+		
+		\textit{l down our category \textbf{tree} and find the topic that fits your interest best. Then start creating your game. Remember to assign a clear and descriptive title to your trivia quiz. People use our search function in a logical way. For example, if you are writing a quiz about "african elephants", entitle your quiz "African Elephants" or "The African Elephant Quiz". But if your quiz is about "african elephant poaching", your title should reflect the content of your quiz as faithfully as possible. Hence, "African Elephant Poaching" or "Poaching of African Elephants" would be appropriate titles. Try to capitalize the first word of each noun, as in the example above. It is important that all trivia quizzes obey a specific length rule. Quizzes can have any maximum number of questions (heck, our Trivia Marathon is endless) but should have a minimum of 12 questions each or more in order to provide a relative challenge for the player. Of course, always make sure to triple check your sources of information and verify the accuracy of the quizzes you develop. After all, your reputation is at stake here. The Masters of Trivia Community will reward or penalize depending on how good or bad a job you do. Finally, needless to say, we don't tolerate any profanity or discriminatory language on our site. No need to waste your time trying; offensive quizzes will be swiftly removed by the site administrators or the Community. Games Played Game Category Points Barack \textbf{Obama Family Tree} Trivia Politic}
+	\end{itemize}
+	\item 'french lick resort and casino'
+	\begin{itemize}
+		\item Mejor documento: clueweb09-en0006-85-33176.html
+		\item Extracto de la búsqueda:
+		
+		\textit{549 Luxury \textbf{Resort}s: \textbf{French} \textbf{Lick} Springs Indiana In Midwest area hotels spas casinos conferences centers suites romantic family vacations getaways packages weddings meetings planning   Phone:    812-936-9300 Fax:          812-936-2100 8670 West State Road 56 \textbf{French} \textbf{Lick}, Indiana 47432 1-888-936-9360     12/19/08 Conde Nast Traveler Gold List 12/15/08 Renowned Performers to Headline at \textbf{French} \textbf{Lick} 11/3/08- Condé Nast Traveler Readers Pick West Baden Springs Hotel for Top 100 List 10/31/08- More than 500,000 Reasons to Visit \textbf{French} \textbf{Lick} \textbf{Resort} for the Holidays 10/9/08- \textbf{French} \textbf{Lick} Frightens \textbf{and} Delights with Halloween Activities 10/3/08- Autumn Magic Festival 8/7/08- \textbf{Resort} Hosts Special Guest from Chicago Boys \& Girls Club 7/21/08- \textbf{French} \textbf{Lick} on Schedule to Open Pete Dye Course 7/8/08- Entertainment Performers to Headline at \textbf{French} \textbf{Lick} \textbf{Resort} 6/25/08- \textbf{French} \textbf{Lick} Announces World Class Driving Festival 5/19/08- \textbf{French} \textbf{Lick} Announces New Activities Program 5/12/08- Tickets now on sale for Styx at \textbf{French} \textbf{Lick} 5/7/08- Bass Tournament Nets \$13,658 for Children 4/28/08- \textbf{French} \textbf{Lick} \textbf{Resort} \textbf{Casino} wins 2008 Gold Tee }
+	\end{itemize}
+	\item 'getting organized'
+	\begin{itemize}
+		\item Mejor documento: clueweb09-en0002-44-10207.html
+		\item Extracto de la búsqueda:
+		
+		\textit{Month Why Organize \textbf{Getting Organized} Tools of the Trade}
+	\end{itemize}
+	\item 'toilet'
+	\begin{itemize}
+		\item Mejor documento: clueweb09-en0001-14-26411.html
+		\item Extracto de la búsqueda:
+		
+		\textit{ntent-Length: 66288 \textbf{toilet} - wax seal \textbf{toilet} -}
+	\end{itemize}
+	\item 'mitchell college'
+	\begin{itemize}
+		\item Mejor documento: clueweb09-en0006-23-17720.html
+		\item Extracto de la búsqueda:
+		
+		\textit{72.0
+			2.Colorado \textbf{College}.... 24  14-10 1712  71.3
+			3.Chapman University..  7   6-1   487  69.6
+			4.Meredith \textbf{College}.... 24  13-11 1638  68.2
+			5.University of Dallas 25  11-14 1679  67.2
+			6.Finlandia University 18   6-12 1176  65.3
+			7.Nebraska Wesleyan... 26  10-16 1693  65.1
+			8.\textbf{Mitchell College}.... 24   9-}
+	\end{itemize}
+\end{itemize}
+
+
+\section{Evaluación}
+
+Para ver los valores de $p@5$ y $p@10$ se debe ejecutar la clase $TestSearcher.java$. Se obtienen los siguientes resultados para el fichero queries.txt:
+
+\begin{itemize}
+	\item Para $p@5$
+\begin{verbatim}
+Query: 1	0.2
+Query: 2	0.0
+Query: 3	0.2
+Query: 4	0.0
+Query: 5	0.0
+\end{verbatim}
+
+promedio: 0.08
+	\item Para $p@10$
+\begin{verbatim}
+Query: 1	0.5
+Query: 2	0.0
+Query: 3	0.1
+Query: 4	0.0
+Query: 5	0.0
+\end{verbatim}
+
+promedio: 0.12
+\end{itemize}
+
+
+
+
+\end{document}

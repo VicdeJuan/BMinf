@@ -111,7 +111,8 @@ public class TestSearcher {
 
         // Directorio en el que se encuentra el índice en disco
         //String indexDir = "/home/parra/Escritorio/p3Bminf/indices/1K/basic/";
-        String indexDir = "/home/parra/Escritorio/p3Bminf/clueweb-1K-new/";
+        //String indexDir = "/home/parra/Escritorio/p3Bminf/clueweb-1K-new/";
+        String indexDir = "colecciones/clueweb-1K/";
 
         // Cargamos el índice de disco
         BasicIndex basicIdx = new BasicIndex();
@@ -119,8 +120,10 @@ public class TestSearcher {
 
         for (int max : maxs) {
             System.out.println("\t" + max);
-            String queryFile = "/home/parra/Escritorio/p3Bminf/clueweb-1K/queries.txt";
-            String compareToFile = "/home/parra/Escritorio/p3Bminf/clueweb-1K/relevance-1K.txt";
+            //String queryFile = "/home/parra/Escritorio/p3Bminf/clueweb-1K/queries.txt";
+            //String compareToFile = "/home/parra/Escritorio/p3Bminf/clueweb-1K/relevance-1K.txt";
+            String queryFile = "colecciones/clueweb-1K/queries.txt";
+            String compareToFile = "colecciones/clueweb-1K/relevance-1K.txt";
             //Calculamos resultados
             ArrayList<ArrayList<String>> resultados = _build_results(basicIdx, queryFile, max);
 

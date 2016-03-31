@@ -76,9 +76,9 @@ public class ProximalSearcher implements Searcher {
             //Guardamos la lista de postings que contiene
             ArrayList<Posting> lp_termino = this.indexReader.getTermPostings(termino);
 
-            System.out.println(termino+": "+lp_termino.size());
+            //System.out.println(termino+": "+lp_termino.size());
             if ((lp_termino == null) || (lp_termino.size() == 0)) {
-                System.out.println("El término '" + termino + "' no se encuentra en ningún documento");
+                //System.out.println("El término '" + termino + "' no se encuentra en ningún documento");
                 return null;
             }
 
@@ -225,7 +225,7 @@ public class ProximalSearcher implements Searcher {
                 score = score + ((double) 1) / ((double) (b - a - query_length + 2));
                 //System.out.println("(" + a + "," + b + ")");
             }
-            System.out.println("Score documento " + this.getDocName(docId) + ": " + score);
+            //System.out.println("Score documento " + this.getDocName(docId) + ": " + score);
             res.add(new ScoredTextDocument(docId, score));
         }
 
@@ -242,8 +242,9 @@ public class ProximalSearcher implements Searcher {
 
         // Directorio en el que se encuentra el índice en disco
         //String indexDir = "/home/parra/Escritorio/p3Bminf/indices/1K/basic/";
-        String indexDir = "/home/parra/Escritorio/p3Bminf/clueweb-1K-new/";
+        //String indexDir = "/home/parra/Escritorio/p3Bminf/clueweb-1K-new/";
         //String indexDir = "/home/parra/Escritorio/p3Bminf/pruebas/";
+        String indexDir = "colecciones/clueweb-1K/";
 
         // Cargamos el índice de disco
         BasicIndex basicIdx = new BasicIndex();
@@ -331,7 +332,7 @@ public class ProximalSearcher implements Searcher {
                         if (lq.contains(termino)) {
                             lq.remove(termino);
                             
-                            System.out.println(termino+" :"+pos);
+                            //System.out.println(termino+" :"+pos);
                             
                             if (pos > max) {
                                 max = pos;
@@ -347,8 +348,8 @@ public class ProximalSearcher implements Searcher {
                     }
 
                     System.out.println("Mostramos el trozo del texto en el que aparece:");
-                    System.out.println(texto);
-                    System.out.println(min + "----" + max + "----" + maxlong);
+                    //System.out.println(texto);
+                    //System.out.println(min + "----" + max + "----" + maxlong);
                     if((min>=20)&&((max+maxlong)<=texto.length()-1)){
                         System.out.println(texto.substring(min-20, max + maxlong+20));
                     }else{

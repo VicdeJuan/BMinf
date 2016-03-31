@@ -33,14 +33,16 @@ import sun.misc.IOUtils;
  * @author parra
  */
 
-public class Pruebas {
+public class Indexador {
     public static void main(String[] args) throws FileNotFoundException, IOException {
 
         
         //InputStream theFile = new FileInputStream("/home/parra/Escritorio/p3Bminf/pruebas/pruebas.zip");
         //ZipInputStream stream = new ZipInputStream(theFile);
-        String inpath = "/home/parra/Escritorio/p3Bminf/clueweb-1K/";
-        String outpath = "/home/parra/Escritorio/p3Bminf/clueweb-1K-new/";
+        //String inpath = "/home/parra/Escritorio/p3Bminf/clueweb-1K/";
+        //String outpath = "/home/parra/Escritorio/p3Bminf/clueweb-1K-new/";
+        String inpath = "colecciones/clueweb-1K/";
+        String outpath = "colecciones/clueweb-1K/";
         
         BasicIndex index = new BasicIndex();
         index.build(inpath, outpath, new HTMLSimpleParser());
