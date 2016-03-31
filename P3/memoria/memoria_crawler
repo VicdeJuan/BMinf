@@ -2,4 +2,23 @@ Para este crawler hemos usado como web de referencia wikipedia, y hemos 100 pagi
 Si se quiere ejecutar, requiere un proceso manual, debido a que no se ha conseguido automatizar la creación de un zip en el que se incluyeran todos los html de la carpeta WEBCRAWLER sin que apareciera esta carpeta dentro del docs.zip.
 Se requiere una primera ejecución para descargar todos los html y una vez realizada comprimir todos los archivos de la carpeta WEBCRAWLER en una zip llamado docs.zip
 
-Como podemos ver en la 
+Como podemos ver en pagerank.txt las páginas con mayor score son 
+
+https://es.wikipedia.org/wiki/Miner%C3%ADa_de_datos 5.659309564233164E-4
+https://es.wikipedia.org/wiki/Tratamiento_de_base_de_datos 5.659309564233164E-4
+https://es.wikipedia.org/wiki/Inteligencia_artificial 5.659309564233164E-4
+https://es.wikipedia.org/wiki/Variable_dependiente 5.659309564233164E-4
+https://es.wikipedia.org/wiki/Histograma 5.659309564233164E-4
+https://es.wikipedia.org/wiki/Mapa_autoorganizado 5.659309564233164E-4
+https://es.wikipedia.org/wiki/M%C3%A1quina_oracle 5.659309564233164E-4
+https://es.wikipedia.org/wiki/Ciencia 5.659309564233164E-4
+https://es.wikipedia.org/wiki/Gen%C3%A9tica 5.659309564233164E-4
+https://es.wikipedia.org/wiki/Ingenier%C3%ADa_el%C3%A9ctrica 5.659309564233164E-4
+
+con los scores separados por espacio.
+
+Por otra parte los resultados a la consulta Minería de datos en el indice son los que se ven en la imagen.
+
+
+Estas páginas no nos sorprenden, pues corresponden a las páginas de wikipedia de Minería de datos, Tratamiento de base de datos,R (lenguaje de programación), SPSS y RapidMiner.
+Como detalle decir que si buscamos minería de datos en Google la primera opción es la misma que la nuestra, la pagina de mineria de datos de wikipedia.
