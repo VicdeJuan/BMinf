@@ -76,11 +76,28 @@ public class Matrix {
 		 return new Matrix(toret);
 	}
 
-	double[] getRow(int row) {
+	public double[] getRow(int row) {
 		return Arrays.copyOfRange(mat.data, row * mat.numRows, mat.numRows* (row + 1));
 	}
 
-	void normalize() {
+	public double[] getCol(int col){
+		double[] toret = new double[this.getNumCols()];
+		for(int j=0;j<this.getNumCols();j++)
+			toret[j] = this.get(j, col);
+		return toret;
+	}
+	
+	public void setCol(double[] data,int col){
+		for (int j =0;j<this.getNumRows();j++)
+			this.set(data[j], j, col);
+	}
+	
+	public void setRow(double[] data,int row){
+		for (int k = 0;k<this.getNumCols();k++)
+			this.set(data[k], row, k);
+	}
+	
+	public void normalize() {
 		Matrix m_norm = new Matrix(mat);
 		double [] rowValues;
 		double valueToNorm;
@@ -102,7 +119,14 @@ public class Matrix {
 		Matrix m = new Matrix(d,mat.numRows,mat.numCols);
 		CommonOps.add(1-r, mat, r, m.mat, mat);
 	}
+
 	
-	
+	public Matrix transpose() {
+		Matrix toret = new Matrix(this.mat);
+		CommonOps.transpose(toret.mat);
+		return toret;
+	}
+
+
 
 }
