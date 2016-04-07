@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.recommend;
 
 import java.util.Arrays;
@@ -10,8 +5,29 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
- *
- * @author victo
+ * ORIGEN DE LA CLASE:
+ * El propósito de esta clase es tener un método modular que permita leer cualquier tipo de fichero con una estructura parecida. 
+ * Esta estructura es:
+ * 
+ *	id1 propiedad1 propiedad2 propiedad 3
+ *	id2 propiedad1 propiedad2 propiedad 3
+ *	...
+ *	idn propiedad1 propiedad2 propiedad 3
+ * 
+ * El objetivo es poder dar como argumento una función que dada una línea te devuelva un array de doubles (que será la fila 
+ * de la matriz correspondiente) y el id del elemento que estamos procesando. La manera de hacer eso es tener clases de esta forma.
+ * Cada función que procese líneas tendrá una clase asociada como esta.
+ * 
+ * 
+ * EXPLICACIÓN DE LA CLASE:
+ *	
+ *	Para cada fichero que vayamos a leer en el sistema de recomendación necesitaremos definir un FilterCallableAsociado
+ *	con el método para procesar el fichero y convertirlo en double[]. 
+ *	Una vez creada la clase FilterCallableAsociada, tendremos que incluirla el método RecomenderAbs::CargarMatriz()
+ *	para que se le llame cuando corresponda.
+ * 
+ *	CUIDADO con la definición de los CODE de cada FilterCallable. Tienen que ser unívocos.
+ * 
  */
 public class FilterCallableUser implements Callable<Integer> {
 	double[] tofill;

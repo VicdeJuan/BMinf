@@ -29,6 +29,7 @@ public class ContentsRocchioTest {
 		int item = 2;
 		
 		ContentsRocchio instance = new ContentsRocchio("data/CRTItem.dat", "data/CRTUser.dat");
+		
 		// La traspa dice 0.86 pero yo diría que está bien así.
 		double expResult = 0.887;
 		double result = instance.rank(user, item);
