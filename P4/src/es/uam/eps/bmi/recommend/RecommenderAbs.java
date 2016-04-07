@@ -1,21 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.recommend;
 
-import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.ranking.graph.Matrix;
 import es.uam.eps.bmi.search.ranking.graph.PageRank;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
