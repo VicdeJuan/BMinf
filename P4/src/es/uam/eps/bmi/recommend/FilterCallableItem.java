@@ -5,7 +5,9 @@
  */
 package es.uam.eps.bmi.recommend;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -23,10 +25,16 @@ public  class FilterCallableItem implements Callable<Integer> {
 		this.tofill = tofill;
 		this.line = line;
 	}
-	
+	/** El método de Test*/
 	@Override
 	public Integer call() throws Exception {
-		return line.length();
+		List<String> l = Arrays.asList(line.split(" "));
+		int toret = Integer.parseInt(l.get(0));
+		
+		for (int i = 1; i<l.size();i++){
+			tofill[i-1] = Double.parseDouble(l.get(i));
+		}
+		return toret;
 	}
 	
 }

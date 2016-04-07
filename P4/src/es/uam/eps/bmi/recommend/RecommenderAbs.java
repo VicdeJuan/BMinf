@@ -51,7 +51,7 @@ public abstract class RecommenderAbs implements Recommender {
 	 * @param flagFileType Tipo de fichero a procesar. Cada tipo tiene asociado un valor en su correspondiente FilterCallable.
 	 * @param RealIDtoIdx
 	 */
-	public void CargarMatriz(String fichero,Matrix mat, int flagFileType, LinkedHashMap<Integer,Integer> RealIDtoIdx){
+	public void CargarMatriz(String fichero,Matrix mat, int flagFileType, LinkedHashMap<Integer,Integer> RealIDtoIdx, boolean fillCols){
 		
 		
 		if (numItem == 0 || numUser == 0){
@@ -76,6 +76,7 @@ public abstract class RecommenderAbs implements Recommender {
 			String line;
 
 			while ((line = br.readLine()) != null) {
+				tofill = new double[mat.getNumCols()];
 				int id;
 					
 				// Añadir el resto de posibles filtros dependiendo del fichero
@@ -84,11 +85,14 @@ public abstract class RecommenderAbs implements Recommender {
 				else
 					id = (new FilterCallableUser(tofill, line)).call();
 				RealIDtoIdx.putIfAbsent(id, counter);
-				mat.setCol(tofill,counter);
+				if (fillCols)
+					mat.setCol(tofill,counter);
+				else
+					mat.setRow(tofill, counter);
 				counter++;
 			}
 			// Normalizamos la matriz
-			mat.normalize();
+			//mat.normalize();
 			br.close();
 		} catch (FileNotFoundException ex) {
 			Logger.getLogger(PageRank.class.getName()).log(Level.SEVERE, null, ex);

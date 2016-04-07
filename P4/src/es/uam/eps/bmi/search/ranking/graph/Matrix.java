@@ -77,12 +77,15 @@ public class Matrix {
 	}
 
 	public double[] getRow(int row) {
-		return Arrays.copyOfRange(mat.data, row * mat.numRows, mat.numRows* (row + 1));
+		double[] toret = new double[this.getNumCols()];
+		for(int j=0;j<this.getNumCols();j++)
+			toret[j] = this.get(row,j);
+		return toret;
 	}
 
 	public double[] getCol(int col){
-		double[] toret = new double[this.getNumCols()];
-		for(int j=0;j<this.getNumCols();j++)
+		double[] toret = new double[this.getNumRows()];
+		for(int j=0;j<this.getNumRows();j++)
 			toret[j] = this.get(j, col);
 		return toret;
 	}
@@ -125,6 +128,23 @@ public class Matrix {
 		Matrix toret = new Matrix(this.mat);
 		CommonOps.transpose(toret.mat);
 		return toret;
+	}
+
+	public Matrix RocchiNormalize(Matrix users) {
+		Matrix m_norm = new Matrix(mat);
+		double [] rowValues;
+		double valueToNorm;
+		for (int row = 0; row < this.getNumRows();row++){
+			rowValues = users.getRow(row);
+			valueToNorm = 0;
+			for (int i=0;i<rowValues.length;i++)
+				valueToNorm += (rowValues[i] != 0 ? 1 : 0);
+
+			for(int col = 0; col < this.getNumCols(); col ++){
+				m_norm.set(mat.get(row,col)/valueToNorm, row, col);
+			}
+		}
+		return m_norm;
 	}
 
 

@@ -15,40 +15,6 @@ import java.util.stream.DoubleStream;
 
 public class Utils {
 
-	public static final String STR_CONTENT = "contents";
-	public static final String STR_ID = "id";
-	public static final String STR_MODIFIED = "path";
-	public static final String STR_NAME = "name";
-	public static final String DOC_STR_NAME = "name";
-        
-	public static final String STR_INDEX_SEPARATOR = " ";
-        public static final String ESPACIO = " ";
-        public static final String COMA = ",";
-    
-        public static final String dicDocId_ModuloNombre_FILE = ".dicDocId_MN";
-        public static final String dicTerminoOffset_FILE = ".dicTermOff";
-        
-        public static final String InternPostingSeparator = ",";
-        public static final String ExternPostingSeparator = " ";
-        
-        public static int RAM_LIMIT = 400000000;
-        
-        public static String DefaultSeparators =" ;\n\r\t.,?¿!¡-'";
-	/*public static String collection_folder=  "pruebas";
-	public static String collection_folder_1K=  "pruebas/clueweb-1K";
-	public static String collection_folder_10K=  "pruebas/clueweb-10K";
-	public static String collection_folder_100K=  "pruebas/clueweb-100K";
-	*/
-	
-	public static String index_folder = "indices";
-	public static String index_file = "idx.txt";
-	
-	public static final String STR_DEFAULT_ZIPNAME = "docs.zip";
-	
-	public final static String XMLTAG_INDEXFOLDER= "index-folder";
-	public final static String XMLTAG_COLLECTIONFOLDER = "collection-folder";
-
-    
     	public static int getSizeOfFile(String file) {
 		String line;
 		int size = 0;
@@ -60,7 +26,7 @@ public class Utils {
 			while ((line = br.readLine()) != null) {
 				String[] s = line.split(" ");
 				bag.add(s[0]);
-				bag.addAll(Arrays.asList(s).subList(2, s.length));
+				
 			}
 
 		} catch (FileNotFoundException ex) {
@@ -82,7 +48,7 @@ public class Utils {
 			m2 += Math.pow(v2[i],2);
 			sum += v1[i]*v2[i];			
 		}
-		return sum/(Math.sqrt(m1)+Math.sqrt(m2));
+		return sum/(Math.sqrt(m1)*Math.sqrt(m2));
 	}
 
 }
