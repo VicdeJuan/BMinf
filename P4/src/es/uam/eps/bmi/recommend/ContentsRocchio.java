@@ -12,6 +12,11 @@ public class ContentsRocchio extends RecommenderAbs {
 	
 	protected int numTags;
 	
+	/**
+	 *Dado que los id's en el fichero pueden no estar ordenados de 1 a n (como
+	 *	es el caso de movies.dat que empiezan en 75), necesitamos almacenar que el id 75 
+	 *	se corresponde con la primera columna de la matriz. Para esto están estos LinkedHashMap.
+	 */
 	LinkedHashMap<Integer,Integer> IdtoIdx_user;
 	LinkedHashMap<Integer,Integer> IdtoIdx_items;
 	
