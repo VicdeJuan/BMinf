@@ -1,6 +1,5 @@
 package es.uam.eps.bmi.search.parsing;
 
-import es.uam.eps.bmi.search.indexing.IndexBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -53,7 +52,7 @@ public class XMLReader {
 		} catch (ParserConfigurationException pce) {
 			System.out.println(pce.getMessage());
 		} catch (SAXException | IOException ex) {
-			Logger.getLogger(IndexBuilder.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger("").log(Level.SEVERE, null, ex);
 		}
 
 		return false;

@@ -1,6 +1,6 @@
 package es.uam.eps.bmi.search;
 
-import es.uam.eps.bmi.search.indexing.Posting;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -46,38 +46,6 @@ public class Utils {
 	public final static String XMLTAG_INDEXFOLDER= "index-folder";
 	public final static String XMLTAG_COLLECTIONFOLDER = "collection-folder";
 
-	/**
-	 * Cálculo general del tf_idf(t,d).
-	 * @param termino	Término t para calcular.
-	 * @param docid		Documento d para calcular.
-	 * @param termPostings	Lista de postings del término.
-	 * @param numDoc	Número total de documentos.
-	 * @return 
-	 */
-    public static double tf_idf(String termino, String docid, List<Posting> termPostings, double numDoc) {
-
-        double freq = 0;
-        double ndoc = 0;
-        double tf = 0;
-        double idf = 0;
-        for (Posting post : termPostings) {
-            // Cada vuelta es en un documento distinto.
-            if (post.getDocId().equals(docid)) {
-
-                freq = post.getTermFrequency();
-
-                tf = post.getTermFrequency() == 0 ? 1 : 1 + Math.log(post.getTermFrequency()) / Math.log(2);
-            }
-            ndoc++;
-
-        }
-        // val 2 = tf
-        //tf = freq == 0 ? 1 : 1+Math.log(freq)/Math.log(2);
-        // val 3 = idf = log(nº doc/nºdocs con ese termino)
-        idf = Math.log(numDoc / ndoc) / Math.log(2);
-
-        return tf * idf;
-    }
     
     	public static int getSizeOfFile(String file) {
 		String line;

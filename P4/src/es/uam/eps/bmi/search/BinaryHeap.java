@@ -1,4 +1,4 @@
-package es.uam.eps.bmi.search.searching;
+package es.uam.eps.bmi.search;
 
 
 public class BinaryHeap {
