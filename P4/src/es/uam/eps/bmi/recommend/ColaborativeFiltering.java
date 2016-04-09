@@ -128,11 +128,11 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
     }
 
-    public ColaborativeFiltering(int k, String fileofContents, String fileOfUsers) {
+    public ColaborativeFiltering(int k, String fileOfUsers) {
         this.k = k;
         // Obtenemos las variables previas necesarias.
         numUser = Utils.getSizeOfFile(fileOfUsers);
-        numItem = Utils.getSizeOfFile(fileofContents);
+        //numItem = Utils.getSizeOfFile(fileofContents);
 		// TODO: este 4 está puesto a pelo para satisfacer el ejemplo. 
         //	Hay que definir un Utils.getColumnsOfFile() para que funcione en todos los casos.
 
