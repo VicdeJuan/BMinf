@@ -92,7 +92,9 @@ public class ColaborativeFiltering extends RecommenderAbs {
         ColaborativeFiltering instance = new ColaborativeFiltering(B, 2);
         //ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/movie_tags_reducido.dat", "data/user_ratedmovies_reducido.dat");
         instance.Knn(userid);
-
+        System.out.println(instance.rank(1, 0));
+        //System.out.println(instance.rank(4, 1));
+        //System.out.println(instance.rank(2, 2));
     }
 
     public ColaborativeFiltering(DenseMatrix64F matris, int k) {
@@ -142,8 +144,6 @@ public class ColaborativeFiltering extends RecommenderAbs {
         loadUserMatrix(fileOfUsers);
     }
 
-    
-
     public void Knn(int usuarioArecomendar) throws Exception {
 
         BinaryHeap heap = new BinaryHeap();
@@ -152,15 +152,14 @@ public class ColaborativeFiltering extends RecommenderAbs {
         for (Integer user : IdtoIdx_user.keySet()) {
 
             int filauser = IdtoIdx_user.get(user);
-            
 
             if (filauser == filamiuser) {
                 continue;
             }
             double[] valoresuser = matriz.getRow(filauser);
-            
+
             double simil = Similitudes.coseno(valoresuser, valoresmios);
-            simil=simil*-1;
+            simil = simil * -1;
             //añadimos La similitud de lo usuarios al heap
             if (Double.isNaN(simil)) {
                 break;
@@ -175,22 +174,22 @@ public class ColaborativeFiltering extends RecommenderAbs {
             }
         }
         List<UserValue> maxUsers = new ArrayList();
-        
-        for (int g=0;g<k;g++ ) {
+
+        for (int g = 0; g < k; g++) {
             UserValue maxuser = (UserValue) heap.deleteMin();
-            maxuser.setSimil(maxuser.getSimil()*-1) ;
+            maxuser.setSimil(maxuser.getSimil() * -1);
             UserValue max = (UserValue) maxuser;
             maxUsers.add(max);
-            
+
         }
-        
-        System.out.println("Los items puntuados por el usuario son los siguientes:" );
-        for(int x=0;x<valoresmios.length;x++){
-            if(valoresmios[x]!=0){
-            System.out.println("Item "+x+": Con una puntuacion de "+valoresmios[x]);
+
+        System.out.println("Los items puntuados por el usuario son los siguientes:");
+        for (int x = 0; x < valoresmios.length; x++) {
+            if (valoresmios[x] != 0) {
+                System.out.println("Item " + x + ": Con una puntuacion de " + valoresmios[x]);
             }
         }
-        
+
         recommend(maxUsers, usuarioArecomendar);
 
     }
@@ -212,7 +211,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
             int filausuario = IdtoIdx_user.get(userscercanos.get(i).getUser());
             double similitudUsuario = userscercanos.get(i).getSimil();
-                    
+
             double[] valoresuser = matriz.getRow(filausuario);
             for (int l = 0; l < positemsvacios.size(); l++) {
                 int pos = positemsvacios.get(l);
@@ -249,25 +248,24 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
         super.CargarMatriz(fileOfUsers, matriz, FilterCallableUserMovies.CODE, IdtoIdx_user, false);
     }
-    
+
     @Override
     public double rank(int user, int item) {
-        
+
         BinaryHeap heap = new BinaryHeap();
         int filamiuser = IdtoIdx_user.get(user);
         double[] valoresmios = matriz.getRow(filamiuser);
         for (Integer use : IdtoIdx_user.keySet()) {
 
             int filauser = IdtoIdx_user.get(use);
-            
 
             if (filauser == filamiuser) {
                 continue;
             }
             double[] valoresuser = matriz.getRow(filauser);
-            
+
             double simil = Similitudes.coseno(valoresuser, valoresmios);
-            simil=simil*-1;
+            simil = simil * -1;
             //añadimos La similitud de lo usuarios al heap
             if (Double.isNaN(simil)) {
                 break;
@@ -282,26 +280,26 @@ public class ColaborativeFiltering extends RecommenderAbs {
             }
         }
         List<UserValue> maxUsers = new ArrayList();
-        
-        for (int g=0;g<k;g++ ) {
+
+        for (int g = 0; g < k; g++) {
             UserValue maxuser = (UserValue) heap.deleteMin();
-            maxuser.setSimil(maxuser.getSimil()*-1) ;
+            maxuser.setSimil(maxuser.getSimil() * -1);
             UserValue max = (UserValue) maxuser;
             maxUsers.add(max);
-            
+
         }
         double[] ratingsItem = matriz.getCol(item);
-        double prediccion=0.0;
-        double sumatorioSimilitudes=0.0;
-        
-        for(int h=0;h<ratingsItem.length;h++){
+        double prediccion = 0.0;
+        double sumatorioSimilitudes = 0.0;
+        //no va un 4 va matriz.getNumRows()
+        for (int h = 0; h < maxUsers.size(); h++) {
             UserValue get = maxUsers.get(h);
-            sumatorioSimilitudes+=get.getSimil();
-             prediccion+=get.getSimil()*ratingsItem[h];
-            
+            sumatorioSimilitudes += get.getSimil();
+            prediccion += get.getSimil() * ratingsItem[h];
+
         }
-        prediccion= prediccion * (1/sumatorioSimilitudes);
-        
+        prediccion = prediccion * (1 / sumatorioSimilitudes);
+
         return prediccion;
     }
 
