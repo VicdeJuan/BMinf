@@ -6,6 +6,7 @@ import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.ranking.graph.Matrix;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.MatrixIO;
 
@@ -209,6 +210,11 @@ public class ContentsRocchio extends RecommenderAbs {
 
 	private void loadUserMatrix(String fileOfUsers,int rowsIdx,int colsIdx,int rankIdx, int ignoreLines,int rowstep,int colstep) {
 		matriz = super.cargarMatriz(fileOfUsers,rowsIdx,colsIdx,rankIdx,IdtoIdx_user,IdtoIdx_items,rowstep,colstep,ignoreLines);
+	}
+
+	@Override
+	public List<UserValue> recommend(int user, int size) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
 }
