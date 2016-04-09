@@ -1,0 +1,67 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package es.uam.eps.bmi.recommend;
+
+/**
+ *
+ * @author dani
+ */
+public class EvaluacionRecomendacion {
+
+    double train;
+    double test;
+
+    public EvaluacionRecomendacion(double train, double test) {
+        this.train = 0.8;
+        this.test = 0.2;
+    }
+
+    public double MAE() {
+        
+        int dividendo=0;
+        double resta=0.0;
+        ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/users_movies.dat");
+        for (int k = 0; k < instance.matriz.getNumRows(); k++) {
+            if (Math.random() <= 0.2) {
+                double[] row = instance.matriz.getRow(k);
+                for (int j = 0; j < row.length; j++) {
+                    if (Math.random() <= 0.2) {
+                        double prediccion = instance.rank(k, j);
+                        double ratingreal = instance.matriz.getRow(k)[j];
+                        dividendo++;
+                        resta+= Math.abs(prediccion-ratingreal);
+                    }
+                }
+            }
+        }
+        double MAE= (1/dividendo)*resta;
+        
+        return MAE;
+    }
+
+    public double RMSE() {
+        int dividendo=0;
+        double resta=0.0;
+        ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/users_movies.dat");
+        for (int k = 0; k < instance.matriz.getNumRows(); k++) {
+            if (Math.random() <= 0.2) {
+                double[] row = instance.matriz.getRow(k);
+                for (int j = 0; j < row.length; j++) {
+                    if (Math.random() <= 0.2) {
+                        double prediccion = instance.rank(k, j);
+                        double ratingreal = instance.matriz.getRow(k)[j];
+                        dividendo++;
+                        resta+= Math.pow(prediccion-ratingreal,2);
+                    }
+                }
+            }
+        }
+        double RMSE= Math.sqrt((1/dividendo)*resta);
+        
+        return RMSE;
+    }
+
+}
