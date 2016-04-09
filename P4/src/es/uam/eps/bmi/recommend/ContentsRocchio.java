@@ -2,7 +2,10 @@ package es.uam.eps.bmi.recommend;
 
 import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.ranking.graph.Matrix;
+import java.io.IOException;
 import java.util.LinkedHashMap;
+import org.ejml.data.DenseMatrix64F;
+import org.ejml.ops.MatrixIO;
 
 
 public class ContentsRocchio extends RecommenderAbs {
@@ -16,7 +19,7 @@ public class ContentsRocchio extends RecommenderAbs {
                 
                 
                 
-		ContentsRocchio instance = new ContentsRocchio("data/movie_tags.dat", "data/user_ratedmovies.dat");
+		ContentsRocchio instance = new ContentsRocchio("data/movie_tags.dat", "data/user_ratedmovies.dat",true);
 		
 	
 		//double result =0.0;
@@ -69,6 +72,33 @@ public class ContentsRocchio extends RecommenderAbs {
 		loadUserMatrix(fileOfUsers);
 		_calculateCentroides();
 	}
+        public ContentsRocchio(String fileofContents,String fileOfUsers,boolean flag){
+		// Obtenemos las variables previas necesarias.
+		numUser = Utils.getSizeOfFile(fileOfUsers);
+		numItem = Utils.getSizeOfFile(fileofContents);
+		// TODO: este 4 está puesto a pelo para satisfacer el ejemplo. 
+		//	Hay que definir un Utils.getColumnsOfFile() para que funcione en todos los casos.
+		numTags = 4;
+		
+		// Inicialización de variables utilizadas en los métodos load.
+		IdtoIdx_items = new LinkedHashMap<>();
+		IdtoIdx_user = new LinkedHashMap<>();
+		// Cargamos matriz de items.
+		loadContents(fileofContents);
+		
+		// Cargamos matriz de usuarios.
+		try {
+        
+                DenseMatrix64F B = MatrixIO.loadCSV("data/user_ratedmovies.csv");
+                matriz=new Matrix(B);
+                    //B.print();
+                } catch (IOException e) {
+                throw new RuntimeException(e);
+                }
+                
+                
+		_calculateCentroides();
+	}
 	
 	private void _calculateCentroides(){
 		centroides = Matrix.producto(tagsItemsMatrix, matriz.transpose());
@@ -102,7 +132,7 @@ public class ContentsRocchio extends RecommenderAbs {
 	 */
 	public final void loadUserMatrix(String fileOfUsers){
             
-            System.out.println(numUser+"*"+numItem+"="+numUser*numItem);
+            
 		matriz = new Matrix(numUser,numItem);
                 
 		super.CargarMatriz(fileOfUsers, matriz, FilterCallableUserMovies.CODE, IdtoIdx_user,false);
@@ -119,7 +149,7 @@ public class ContentsRocchio extends RecommenderAbs {
 	public double rank(int user, int item) {
 		int idxuser = IdtoIdx_user.get(user);
 		int idxitem = IdtoIdx_items.get(item);
-		double[]v1 = centroides.getCol(idxuser);
+		double[] v1 = centroides.getCol(idxuser);
 		double[] v2= tagsItemsMatrix.getCol(idxitem);
 		return Similitudes.coseno(v1,v2);
 	}
