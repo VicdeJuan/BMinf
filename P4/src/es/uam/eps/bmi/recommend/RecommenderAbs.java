@@ -146,12 +146,42 @@ public abstract class RecommenderAbs implements Recommender {
 		this.numItem = numItem;
 	}
 
+	/**
+	 * Carga la matriz de datos del fichero a partir de varios parámetros necesarios.
+	 * 
+	 * @param fileofContents	Fichero donde se encuentra la información.
+	 * @param rowsIdx		Columna del fichero (empezando a numerar en 0) que vamos a tomar como filas de la matriz (típicamente serán los usuarios).
+	 * @param colsIdx		Columna del fichero (empezando a numerar en 0) que vamos a tomar como columnas de la matriz (típicamente serán los items vistos)
+	 * @param ratingsIdx		Columna del fichero (empezando a numerar en 0) que vamos a tomar como valor a insertar en la matriz.
+	 * @param IdxToId_row		HashMap de Ids de lo que vaya a actuar de filas (típicamente usuarios). De esta manera podemos trabajar datos 
+	 *				de usuarios cuyos id's empiecen en un número que no sea 0, que haya saltos, etc.
+	 * @param IdxToId_col		HashMap de Ids de lo que vaya a actuar de columnas. De esta manera podemos trabajar datos 
+	 *				de usuarios cuyos id's empiecen en un número que no sea 0, que haya saltos, etc.
+	 * @param ignoreLines		Número de líneas que van a ser ignoradas del principio dle fichero (típicamente las cabeceras)
+	 * @return 
+	 */
 	protected Matrix cargarMatrizString(String fileofContents, int rowsIdx, int colsIdx, int ratingsIdx,
 		LinkedHashMap<Integer, Integer> IdxToId_row, LinkedHashMap<Integer, Integer> IdxToId_col,int ignoreLines){
 		return this.cargarMatriz(fileofContents, rowsIdx, colsIdx, ratingsIdx, IdxToId_row, IdxToId_col, 50, 50,ignoreLines);
 		
 	}
 	
+	/**
+	 * Carga la matriz de datos del fichero a partir de varios parámetros necesarios.
+	 * 
+	 * @param fileofContents	Fichero donde se encuentra la información.
+	 * @param rowsIdx		Columna del fichero (empezando a numerar en 0) que vamos a tomar como filas de la matriz (típicamente serán los usuarios).
+	 * @param colsIdx		Columna del fichero (empezando a numerar en 0) que vamos a tomar como columnas de la matriz (típicamente serán los items vistos)
+	 * @param ratingsIdx		Columna del fichero (empezando a numerar en 0) que vamos a tomar como valor a insertar en la matriz.
+	 * @param IdxToId_row		HashMap de Ids de lo que vaya a actuar de filas (típicamente usuarios). De esta manera podemos trabajar datos 
+	 *				de usuarios cuyos id's empiecen en un número que no sea 0, que haya saltos, etc.
+	 * @param IdxToId_col		HashMap de Ids de lo que vaya a actuar de columnas. De esta manera podemos trabajar datos 
+	 *				de usuarios cuyos id's empiecen en un número que no sea 0, que haya saltos, etc.
+	 * @param rowStep		Parámetro de realloc dinámico de las filas de las matrices. Valores altos implican desperdicio de memoria, valores bajos implican poca eficiencia.
+	 * @param colStep		Parámetro de realloc dinámico de las columnas de las matrices. Valores altos implican desperdicio de memoria, valores bajos implican poca eficiencia.
+	 * @param ignoreLines		Número de líneas que van a ser ignoradas del principio dle fichero (típicamente las cabeceras)
+	 * @return 
+	 */
 	protected Matrix cargarMatriz(String fileofContents, int rowsIdx, int colsIdx, int ratingsIdx,
 		LinkedHashMap<Integer, Integer> IdxToId_row, LinkedHashMap<Integer, Integer> IdxToId_col,int rowStep,int colStep,
 		int ignoreLines) {

@@ -73,6 +73,20 @@ public class ContentsRocchio extends RecommenderAbs {
 		_calculateCentroides();
 	}
 
+	/**
+	 * Constructor 
+	 * @param fileofContents	Fichero con la información de los contenidos:
+	 * @param fileOfUsers		Fichero con la información de los usuarios y sus votos.
+	 * @param userRowsIdx	Columna del fichero de usuarios en la que se encuentran los ids de usuarios que serán las filas de la matriz.
+	 * @param userColsIdx		Columna del fichero de usuarios en la que se encuentran los ids de los items vistos que serán las columnas de la matriz.
+	 * @param userRankIdx	Columna del fichero de usuarios en la que se encuentran las valoraciones de cada usuario  
+	 * @param userIgnoreLines	Número de líneas del principio que ignorar del fichero de usuarios (Típicamente 1 para ignorar cabeceras)
+	 * @param itemRowsIdx	Columna del fichero de items en la que se encuentran los ids de los items que serán las filas de la matriz.
+	 * @param itemColsIdx		Columna del fichero de items en la que se encuentran los ids de los items vistos que serán las columnas de la matriz.
+	 * @param itemRankIdx	Columna del fichero de items en la que se encuentran las valoraciones de cada tags del item.  
+	 * @param itemIgnoreLines	Número de líneas del principio que ignorar del fichero de usuarios (Típicamente 1 para ignorar cabeceras).
+	 * @param step		Número de filas y columnas que crear dinámicamente cuando la matriz se llene.
+	 */
 	public ContentsRocchio(String fileofContents,  String fileOfUsers, 
 	int userRowsIdx,int userColsIdx,int userRankIdx, int userIgnoreLines
 	,int itemRowsIdx,int itemColsIdx,int itemRankIdx,int itemIgnoreLines,
