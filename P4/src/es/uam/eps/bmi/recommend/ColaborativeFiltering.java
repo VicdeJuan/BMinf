@@ -15,11 +15,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import static java.lang.reflect.Array.set;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import org.ejml.data.DenseMatrix64F;
 import org.ejml.ops.MatrixIO;
 
@@ -70,21 +74,21 @@ public class ColaborativeFiltering extends RecommenderAbs {
          throw new RuntimeException(e);
          }
          */
-DenseMatrix64F B=null;
+        DenseMatrix64F B = null;
         try {
 
-             B= MatrixIO.loadCSV("data/user_ratedmovies.csv");
-             B.print();
+            B = MatrixIO.loadCSV("data/user_ratedmovies.csv");
+            //B.print();
 
             //B.print();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("No falla");
+        //System.out.println("No falla");
 
         int userid = 2;
-    //ColaborativeFiltering instance = new ColaborativeFiltering(B,2);
-      ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/movie_tags_reducido.dat", "data/user_ratedmovies_reducido.dat");
+        ColaborativeFiltering instance = new ColaborativeFiltering(B, 2);
+        //ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/movie_tags_reducido.dat", "data/user_ratedmovies_reducido.dat");
         instance.Knn(userid);
 
     }
@@ -93,6 +97,31 @@ DenseMatrix64F B=null;
         this.k = k;
         matriz = new Matrix(matris);
         IdtoIdx_user = new LinkedHashMap<>();
+        IdtoIdx_user.put(1, 0);
+        IdtoIdx_user.put(2, 1);
+        IdtoIdx_user.put(3, 2);
+        IdtoIdx_user.put(4, 3);
+        double d1[] = new double[3];
+        double d2[] = new double[3];
+        double d3[] = new double[3];
+        double d4[] = new double[3];
+        d1[0] = 4.0;
+        d1[1] = 1.0;
+        d1[2] = 2.0;
+        d2[0] = 2.0;
+        d2[1] = 0.0;
+        d2[2] = 1.0;
+        d3[0] = 0.0;
+        d3[1] = 0.0;
+        d3[2] = 1.0;
+        d4[0] = 2.0;
+        d4[1] = 1.0;
+        d4[2] = 1.0;
+        matriz.setRow(d1, 0);
+        matriz.setRow(d2, 1);
+        matriz.setRow(d3, 2);
+        matriz.setRow(d4, 3);
+
     }
 
     public ColaborativeFiltering(int k, String fileofContents, String fileOfUsers) {
@@ -118,45 +147,100 @@ DenseMatrix64F B=null;
 
     public void Knn(int usuarioArecomendar) throws Exception {
 
-        Heap heap = new Heap(k);
-
+        BinaryHeap heap = new BinaryHeap();
+        int filamiuser = IdtoIdx_user.get(usuarioArecomendar);
+        double[] valoresmios = matriz.getRow(filamiuser);
         for (Integer user : IdtoIdx_user.keySet()) {
-            
+
             int filauser = IdtoIdx_user.get(user);
-            int filamiuser = IdtoIdx_user.get(usuarioArecomendar);
             
-            if(filauser==filamiuser) continue;
+
+            if (filauser == filamiuser) {
+                continue;
+            }
             double[] valoresuser = matriz.getRow(filauser);
-            double[] valoresmios = matriz.getRow(filamiuser);
+            
             double simil = Similitudes.coseno(valoresuser, valoresmios);
+            simil=simil*-1;
             //añadimos La similitud de lo usuarios al heap
-
+            if (Double.isNaN(simil)) {
+                break;
+            }
             UserValue u = new UserValue(user, simil);
-            if (heap.min().compareTo(u) == 1) {
-                if (!heap.isFull()) {
-                    heap.insert(u);
-                } else {
-                    heap.removeMin();
-                    heap.insert(u);
-                }
+            if (!heap.isEmpty()) {
 
+                heap.insert(u);
+
+            } else {
+                heap.insert(u);
             }
         }
         List<UserValue> maxUsers = new ArrayList();
-        for (Object maxuser : heap.getS()) {
+        
+        for (int g=0;g<k;g++ ) {
+            UserValue maxuser = (UserValue) heap.deleteMin();
+            maxuser.setSimil(maxuser.getSimil()*-1) ;
             UserValue max = (UserValue) maxuser;
             maxUsers.add(max);
+            
         }
-        recommend(maxUsers,usuarioArecomendar);
+        
+        System.out.println("Los items puntuados por el usuario son los siguientes:" );
+        for(int x=0;x<valoresmios.length;x++){
+            if(valoresmios[x]!=0){
+            System.out.println("Item "+x+": Con una puntuacion de "+valoresmios[x]);
+            }
+        }
+        
+        recommend(maxUsers, usuarioArecomendar);
 
     }
 
-    public void recommend(List<UserValue> maxusers, int usuarioArecomendar) {
-        for (int i = 0; i <maxusers.size(); i++) {
-            int usuario=IdtoIdx_user.get(maxusers.get(i).getUser());
-            
-            //double[] valoresmios = matriz.getRow(0);
-            
+    public void recommend(List<UserValue> userscercanos, int usuarioArecomendar) {
+        int filamiuser = IdtoIdx_user.get(usuarioArecomendar);
+        //Solo voy a recomendar los items que el usuario no tenga un rating ya
+        List<Integer> positemsvacios = new ArrayList();
+        double[] valoresmios = matriz.getRow(filamiuser);
+        for (int j = 0; j < valoresmios.length; j++) {
+            if (valoresmios[j] == 0) {
+                positemsvacios.add(j);
+            }
+        }
+        double[] recomend = new double[valoresmios.length];
+        Arrays.fill(recomend, 0.0);
+
+        for (int i = 0; i < userscercanos.size(); i++) {
+
+            int filausuario = IdtoIdx_user.get(userscercanos.get(i).getUser());
+            double similitudUsuario = userscercanos.get(i).getSimil();
+                    
+            double[] valoresuser = matriz.getRow(filausuario);
+            for (int l = 0; l < positemsvacios.size(); l++) {
+                int pos = positemsvacios.get(l);
+                double rating = valoresuser[pos];
+                recomend[pos] = recomend[pos] + similitudUsuario * rating;
+
+            }
+
+        }
+        Set<ItemValue> itemRecomendacion;
+        itemRecomendacion = new TreeSet();
+        for (int j = 0; j < recomend.length; j++) {
+            ItemValue aux = new ItemValue(j, recomend[j]);
+            itemRecomendacion.add(aux);
+        }
+
+        System.out.println("Las recomendaciones para el usuario " + usuarioArecomendar + " Son las siguientes:");
+
+        //cuantos queremos
+        int max = 1;
+        int cuenta = 0;
+        for (ItemValue s : itemRecomendacion) {
+            if (max == cuenta) {
+                break;
+            }
+            cuenta++;
+            System.out.println("Item " + s.getItem() + ": Con un ranking(que no rating, sin normalizar) de: " + s.getValue());
         }
     }
 

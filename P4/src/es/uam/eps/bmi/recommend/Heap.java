@@ -31,7 +31,7 @@ public class Heap<E extends Comparable<E>> {
         return last;
     }
     public boolean isFull() {
-        return capacity==S.length;            
+        return capacity==last;            
     }
 
     //

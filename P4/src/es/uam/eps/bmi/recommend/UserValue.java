@@ -26,11 +26,15 @@ public class UserValue implements Comparable{
         return simil;
     }
 
+    public void setSimil(double simil) {
+        this.simil = simil;
+    }
+
     @Override
     //si this <= a comparar =>1
     public int compareTo(Object o) {
         UserValue otro= (UserValue) o;
-        if(this.simil<= otro.getSimil()){
+        if(this.simil>= otro.getSimil()){
             return 1;
         }
         else{ return -1;}
