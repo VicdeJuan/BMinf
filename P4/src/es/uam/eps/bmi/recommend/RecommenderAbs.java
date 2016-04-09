@@ -82,22 +82,41 @@ public abstract class RecommenderAbs implements Recommender {
 			 *	que hemos dado como argumento. Procesa la línea según lo especificado
 			 *	por argumento por flagFileType, llamando a un filterCallable o a otro.
 			 */
+                        int paso=0;
 			while ((line = br.readLine()) != null) {
 				
 				// Creación del vector a ser rellenado por FilterCallable*.java
 				tofill = new double[mat.getNumCols()];
 				// Id del elemento que procesamos en la línea.
 				int id;
-					
+				//metemos una flag para comernos la cabecera
+                                boolean flag=true;
+                                
+                                
 				// Añadir el resto de posibles filtros dependiendo del fichero
-				if (flagFileType == FilterCallableItem.CODE)
-					id = (new FilterCallableItem(tofill, line)).call();
-				else
+				if (flagFileType == FilterCallableMovies.CODE){
+                                        
+                                        if(paso>0){
+					id = (new FilterCallableMovies(tofill, line)).call();
+                                        }
+                                        else{ paso++;
+                                            continue;}
+                                }
+                                else if(flagFileType == FilterCallableUser.CODE)
 					id = (new FilterCallableUser(tofill, line)).call();
+                                else if(flagFileType == FilterCallableItem.CODE)
+					id = (new FilterCallableItem(tofill, line)).call();
+                                else{
+                                        if(paso>0){
+                                        id = (new FilterCallableUserMovies(tofill, line)).call();
+                                        }
+                                        else{ paso++;
+                                            continue;}
+                                }
 				
 				// Para llevar registro en caso de no tener todos los ids en el fichero.
 				RealIDtoIdx.putIfAbsent(id, counter);
-				
+				paso++;
 				// Si rellenamos la matriz por columnas o por filas.
 				if (fillCols)
 					mat.setCol(tofill,counter);

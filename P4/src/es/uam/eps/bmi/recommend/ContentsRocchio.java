@@ -6,6 +6,29 @@ import java.util.LinkedHashMap;
 
 
 public class ContentsRocchio extends RecommenderAbs {
+    
+    public static void main(String[] argv){
+        
+		System.out.println("rank"+"\n"+Integer.MAX_VALUE);
+		int user = 75;
+		int item = 3;
+		
+                
+                
+                
+		ContentsRocchio instance = new ContentsRocchio("data/movie_tags.dat", "data/user_ratedmovies.dat");
+		
+	
+		//double result =0.0;
+		double result = instance.rank(user, item);
+                System.out.println("Predicción del user "+user+" del item "+item+" prediccion: "+result);
+        
+        
+        
+		//assertEquals(expResult, result, 0.01);
+	}
+    
+    
 	
 	protected Matrix tagsItemsMatrix;
 	protected Matrix centroides;
@@ -70,7 +93,7 @@ public class ContentsRocchio extends RecommenderAbs {
 	 */
 	public final void loadContents(String fileOfContents){
 		tagsItemsMatrix = new Matrix(numTags, numItem);
- 		super.CargarMatriz(fileOfContents, tagsItemsMatrix, FilterCallableItem.CODE ,IdtoIdx_items,true);
+ 		super.CargarMatriz(fileOfContents, tagsItemsMatrix, FilterCallableMovies.CODE ,IdtoIdx_items,true);
 	}
 	
 	/**
@@ -78,8 +101,11 @@ public class ContentsRocchio extends RecommenderAbs {
 	 * @param fileOfUsers		fichero a leer.
 	 */
 	public final void loadUserMatrix(String fileOfUsers){
+            
+            System.out.println(numUser+"*"+numItem+"="+numUser*numItem);
 		matriz = new Matrix(numUser,numItem);
-		super.CargarMatriz(fileOfUsers, matriz, FilterCallableUser.CODE, IdtoIdx_user,false);
+                
+		super.CargarMatriz(fileOfUsers, matriz, FilterCallableUserMovies.CODE, IdtoIdx_user,false);
 	}
 	
 
