@@ -164,7 +164,7 @@ DenseMatrix64F B=null;
 
         matriz = new Matrix(numUser, numItem);
 
-        super.CargarMatriz(fileOfUsers, matriz, FilterCallableUserMovies.CODE, IdtoIdx_user, false);
+        //super.CargarMatriz(fileOfUsers, matriz, FilterCallableUserMovies.CODE, IdtoIdx_user, false);
     }
 
 }

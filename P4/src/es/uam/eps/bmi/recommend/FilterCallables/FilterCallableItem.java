@@ -1,4 +1,4 @@
-package es.uam.eps.bmi.recommend;
+package es.uam.eps.bmi.recommend.FilterCallables;
 
 import java.util.Arrays;
 import java.util.List;
@@ -48,7 +48,7 @@ public  class FilterCallableItem implements Callable<Integer> {
 	String line;
 	
 	// Constructor 
-	FilterCallableItem(double[] tofill, String line){
+	public FilterCallableItem(double[] tofill, String line){
 		this.tofill = tofill;
 		this.line = line;
 	}

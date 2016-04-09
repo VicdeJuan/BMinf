@@ -1,4 +1,4 @@
-package es.uam.eps.bmi.recommend;
+package es.uam.eps.bmi.recommend.FilterCallables;
 
 import java.util.Arrays;
 import java.util.List;

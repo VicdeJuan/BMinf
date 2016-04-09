@@ -5,19 +5,8 @@
  */
 package es.uam.eps.bmi.recommend;
 
-import es.uam.eps.bmi.recommend.*;
-import es.uam.eps.bmi.search.ranking.graph.PageRank;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.ejml.data.DenseMatrix64F;
 
-/**
- *
- * @author victo
- */
 public class ContentsRocchioTestReducido {
 	
     public static void main(String[] argv){
@@ -25,14 +14,17 @@ public class ContentsRocchioTestReducido {
 		System.out.println("rank");
 		int user = 75;
 		int item = 3;
+		double[] d ={1,2,3,4,1,2,3,4,1,2,3,4};
+		DenseMatrix64F m = new DenseMatrix64F(3,4);
+		m.setData(d);
+		System.out.println(m);
 		
-		ContentsRocchio instance = new ContentsRocchio("data/movie_tags_reducido.dat", "data/user_ratedmovies_reducido.dat");
+		DenseMatrix64F m2  = new DenseMatrix64F(4,5);
+			
+		m2.set(m);
+		System.out.println(m2);
 		
-		// La traspa dice 0.86 pero yo diría que está bien así.
-		double expResult = 0.887;
-		double result = instance.rank(user, item);
-                System.out.println("Predicción del user "+user+" del item "+item+" prediccion: "+result);
-        
+
         
         
 		//assertEquals(expResult, result, 0.01);
