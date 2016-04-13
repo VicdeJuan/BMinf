@@ -43,7 +43,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
     public static void main(String[] argv) throws FileNotFoundException, IOException, Exception {
 
-        String file = "data/user_ratedmovies.dat";
+        String file = "data/user_ratedmovies_prueba.dat";
         
         
         ColaborativeFiltering instance;
@@ -183,6 +183,12 @@ public class ColaborativeFiltering extends RecommenderAbs {
         HashMap<Integer, String> pelis = CargarNombresPeliculas();
 
         BinaryHeap heap = new BinaryHeap();
+        
+        if(!IdtoIdx_user.containsKey(usuarioArecomendar)){
+            System.out.println("No existe el usuario");
+            return;
+        }
+        
         int filamiuser = IdtoIdx_user.getOrDefault(usuarioArecomendar, 0);
         double[] valoresmios = matriz.getRow(filamiuser);
         double[] valormovieid = matriz.getRow(filamiuser);
