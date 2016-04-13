@@ -53,7 +53,7 @@ public class MatrixTest {
         
         Matrix instance = new Matrix(initial, 4, 5);
         double[] expected = {
-            3.6,    2.44,   3.5,    4.9167, 8.1,
+            3.6,    2.44,   3.5,    4.916667, 8.05,
             21.2,   32.6,   18.5,   9.0,    31.0,
             7.2,    5.6,    5.25,   4.33,   8.4,
             2.2,    2.8,    5.75,   3.1667, 3.8
@@ -66,10 +66,12 @@ public class MatrixTest {
             0,2,1,5,0,0,1,3,0,3,
             3,0,4,0,3,5,0,0,4,0
         };
+        
+        System.out.println(instance);
         instance.RocchiNormalize(new Matrix(users, 5, 10));
-
+        System.out.println(instance);
         for (int i = 0; i < expected.length; i++) {
-            assertEquals(expected[i], instance.getData()[i], 0.000001);
+            assertEquals(expected[i], instance.getData()[i], 0.01);
         }
     }
 

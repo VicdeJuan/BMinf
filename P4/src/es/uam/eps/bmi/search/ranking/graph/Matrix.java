@@ -159,16 +159,18 @@ public class Matrix {
 		Matrix m_norm = new Matrix(mat);
 		double[] rowValues;
 		double valueToNorm;
-		for (int row = 0; row < this.getNumRows(); row++) {
-			rowValues = users.getRow(row);
+		for (int col = 0; col < this.getNumCols(); col++) {
+			rowValues = users.getRow(col);
 			valueToNorm = 0;
 			for (int i = 0; i < rowValues.length; i++) {
 				valueToNorm += (rowValues[i] != 0 ? 1 : 0);
 			}
 			if (valueToNorm == 0)
 				continue;
-			for (int col = 0; col < this.getNumCols(); col++) {
-				m_norm.set(mat.get(row, col) / valueToNorm, row, col);
+			for (int rw = 0; rw < this.getNumRows(); rw++) {
+                            double val = mat.get( rw,col);
+                            val = val/valueToNorm;
+                            m_norm.set(val, rw,col);
 			}
 		}
 		return m_norm;

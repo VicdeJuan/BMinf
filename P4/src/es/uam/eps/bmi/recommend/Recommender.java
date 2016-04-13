@@ -1,5 +1,6 @@
 package es.uam.eps.bmi.recommend;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface Recommender {
@@ -21,5 +22,6 @@ public interface Recommender {
 	 */
 	List<UserValue> recommend(int user,int size);
 	
-	
+        
+	void writeRatedItems(int user,HashMap<Integer,String> pelis);
 }

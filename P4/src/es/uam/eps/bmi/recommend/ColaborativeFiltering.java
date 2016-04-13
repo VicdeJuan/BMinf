@@ -183,7 +183,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
     public void Knn(int usuarioArecomendar) throws Exception {
         
-        HashMap<Integer, String> pelis = CargarNombresPeliculas();
+        HashMap<Integer, String> pelis = CargarColumnasFichero("data/movies.dat",0,1);
 
         BinaryHeap heap = new BinaryHeap();
         
@@ -191,6 +191,10 @@ public class ColaborativeFiltering extends RecommenderAbs {
             System.out.println("No existe el usuario");
             return;
         }
+        
+        
+        writeRatedItems(usuarioArecomendar,pelis);
+        
         
         int filamiuser = IdtoIdx_user.getOrDefault(usuarioArecomendar, 0);
         double[] valoresmios = matriz.getRow(filamiuser);
@@ -214,6 +218,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
             if (!heap.isEmpty()) {
 
                 heap.insert(u);
+                
 
             } else {
                 heap.insert(u);
@@ -229,6 +234,19 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
         }
         int movieid = 0;
+        
+        
+        
+        recommend(maxUsers, usuarioArecomendar);
+
+    }
+    
+        @Override
+    public void writeRatedItems(int userId,HashMap<Integer,String> pelis) {
+        int movieid = 0;
+        String titulo = "";
+        int user = this.IdtoIdx_user.get(userId);
+        double [] valoresmios = this.matriz.getRow(user);
         System.out.println("Los items puntuados por el usuario son los siguientes:");
         for (int x = 0; x < valoresmios.length; x++) {
             if (valoresmios[x] != 0) {
@@ -239,13 +257,10 @@ public class ColaborativeFiltering extends RecommenderAbs {
                         break;
                     }
                 }
-                
-                System.out.println("Pelicula " + movieid + ": Con una puntuacion de " + valoresmios[x]);
+                titulo = pelis == null ? ""+movieid : pelis.get(movieid);
+                System.out.println("Pelicula \"" + titulo + "\": Con una puntuacion de " + valoresmios[x]);
             }
-        }
-
-        recommend(maxUsers, usuarioArecomendar);
-
+        }    
     }
 
     public void recommend(List<UserValue> userscercanos, int usuarioArecomendar) {
@@ -355,23 +370,5 @@ public class ColaborativeFiltering extends RecommenderAbs {
     public List<UserValue> recommend(int user, int size) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-public HashMap<Integer,String> CargarNombresPeliculas() throws FileNotFoundException, IOException{
-        
-    HashMap<Integer,String> pelis=new HashMap();
-    String cadena;
-    
-      FileReader f = new FileReader("data/movies.dat");
-      BufferedReader b = new BufferedReader(f);
-      //me quito la primera linea de nombres
-      cadena = b.readLine();
-      while((cadena = b.readLine())!=null) {
-        String[] split = cadena.split("\t");
-        int movieid=Integer.parseInt(split[0]);
-        String nombrePeli=split[1];
-          pelis.put(movieid, nombrePeli);
-      }
-      b.close();
-    
-    return pelis;
-        }
+
 }
