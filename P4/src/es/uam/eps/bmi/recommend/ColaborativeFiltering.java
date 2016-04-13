@@ -40,6 +40,8 @@ public class ColaborativeFiltering extends RecommenderAbs {
     //número de vecinos
     int k;
     LinkedHashMap<Integer, Integer> IdtoIdx_user;
+    LinkedHashMap<Integer, Integer> IdtoIdx_movies;
+    
 
     public static void main(String[] argv) throws FileNotFoundException, IOException, Exception {
 
@@ -127,7 +129,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
     }
 
     private void _loadUserMatrix(String fileOfUsers, int rowsIdx, int colsIdx, int rankIdx, int ignoreLines, int rowstep, int colstep) {
-        matriz = super.cargarMatriz(fileOfUsers, rowsIdx, colsIdx, rankIdx, IdtoIdx_user, null, rowstep, colstep, ignoreLines);
+        matriz = super.cargarMatriz(fileOfUsers, rowsIdx, colsIdx, rankIdx, IdtoIdx_user, IdtoIdx_movies, rowstep, colstep, ignoreLines);
         numUser = IdtoIdx_user.size();
     }
 
@@ -168,6 +170,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
 		// Obtenemos las variables previas necesarias.
 
         IdtoIdx_user = new LinkedHashMap<>();
+        IdtoIdx_movies = new LinkedHashMap<>();
 
         //numItem = Utils.getSizeOfFile(fileofContents);
         // TODO: este 4 está puesto a pelo para satisfacer el ejemplo. 
@@ -225,14 +228,19 @@ public class ColaborativeFiltering extends RecommenderAbs {
             maxUsers.add(max);
 
         }
-
+        int movieid = 0;
         System.out.println("Los items puntuados por el usuario son los siguientes:");
         for (int x = 0; x < valoresmios.length; x++) {
             if (valoresmios[x] != 0) {
                 
-                /*String nombrePeli=pelis.get(x);*/
+                for(Integer key : IdtoIdx_movies.keySet()){
+                    if (IdtoIdx_movies.get(key) == x){
+                        movieid = key;
+                        break;
+                    }
+                }
                 
-                System.out.println("Pelicula " + x + ": Con una puntuacion de " + valoresmios[x]);
+                System.out.println("Pelicula " + movieid + ": Con una puntuacion de " + valoresmios[x]);
             }
         }
 
