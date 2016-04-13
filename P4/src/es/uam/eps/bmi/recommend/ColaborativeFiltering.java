@@ -221,7 +221,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
         }
         List<UserValue> maxUsers = new ArrayList();
 
-        for (int g = 0; g < k; g++) {
+        for (int g = 0; g < this.k; g++) {
             UserValue maxuser = (UserValue) heap.deleteMin();
             maxuser.setSimil(maxuser.getSimil() * -1);
             UserValue max = (UserValue) maxuser;
@@ -301,7 +301,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
     public double rank(int user, int item) {
 
         BinaryHeap heap = new BinaryHeap();
-        int filamiuser = IdtoIdx_user.get(user);
+        int filamiuser = user;
         double[] valoresmios = matriz.getRow(filamiuser);
         for (Integer use : IdtoIdx_user.keySet()) {
 
@@ -316,7 +316,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
             simil = simil * -1;
             //añadimos La similitud de lo usuarios al heap
             if (Double.isNaN(simil)) {
-                break;
+                 break;
             }
             UserValue u = new UserValue(use, simil);
             if (!heap.isEmpty()) {
