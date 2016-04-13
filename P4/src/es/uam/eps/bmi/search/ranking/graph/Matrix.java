@@ -16,6 +16,10 @@ public class Matrix {
 
 	}
 
+   
+
+        
+        
 	public void addRowLast(int num) {
 		mat.reshape(mat.numRows + num, mat.numCols,true);
 	}
