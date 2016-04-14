@@ -56,6 +56,10 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
         instance.Knn(user);
         /*
+        System.out.println(instance.rank(1355,5952));
+        System.out.println(instance.rank(1355,107));
+        
+        
          String cadena;
          FileReader f = new FileReader("data/user_ratedmovies.dat");
          BufferedReader b = new BufferedReader(f);

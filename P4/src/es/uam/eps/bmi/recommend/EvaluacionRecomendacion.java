@@ -25,6 +25,9 @@ public class EvaluacionRecomendacion {
 
         double MAE = MAE(eva.getTest());
         System.out.println("El MAE es: " + MAE);
+        double RMSE = RMSE(eva.getTest());
+        System.out.println("El RMSE es: " + RMSE);
+        
 
     }
 
@@ -82,6 +85,7 @@ public class EvaluacionRecomendacion {
 
                             double prediccion = instance.rank(k, j);
                             dividendo++;
+                            System.out.println("prediccion: "+prediccion+" rating real: "+ratingreal);
                             resta += Math.abs(prediccion - ratingreal);
                         }
                         //double ratingreal = instance.matriz.getRow(k)[j];
