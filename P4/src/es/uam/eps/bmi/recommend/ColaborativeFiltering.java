@@ -41,13 +41,11 @@ public class ColaborativeFiltering extends RecommenderAbs {
     int k;
     LinkedHashMap<Integer, Integer> IdtoIdx_user;
     LinkedHashMap<Integer, Integer> IdtoIdx_movies;
-    
 
     public static void main(String[] argv) throws FileNotFoundException, IOException, Exception {
 
         String file = "data/user_ratedmovies_prueba.dat";
-        
-        
+
         ColaborativeFiltering instance;
 
         System.out.println("Introduzca un usuario para recomendar:");
@@ -104,7 +102,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
 		//System.out.println("No falla");
 
 		//int userid = 2;
-		//instance = new ColaborativeFiltering(B, 2);
+        //instance = new ColaborativeFiltering(B, 2);
         //ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/movie_tags_reducido.dat", "data/user_ratedmovies_reducido.dat");
 		/*instance.Knn(userid);
          System.out.println(instance.rank(1, 0));*/
@@ -167,7 +165,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
      */
     public ColaborativeFiltering(int k, String fileOfUsers) {
         this.k = k;
-		// Obtenemos las variables previas necesarias.
+        // Obtenemos las variables previas necesarias.
 
         IdtoIdx_user = new LinkedHashMap<>();
         IdtoIdx_movies = new LinkedHashMap<>();
@@ -175,27 +173,34 @@ public class ColaborativeFiltering extends RecommenderAbs {
         //numItem = Utils.getSizeOfFile(fileofContents);
         // TODO: este 4 está puesto a pelo para satisfacer el ejemplo. 
         //	Hay que definir un Utils.getColumnsOfFile() para que funcione en todos los casos.
-		// Inicialización de variables utilizadas en los métodos load.
+        // Inicialización de variables utilizadas en los métodos load.
         // Cargamos matriz de items.
         // Cargamos matriz de usuarios.
         loadUserMatrix(fileOfUsers);
     }
 
     public void Knn(int usuarioArecomendar) throws Exception {
-        
-        HashMap<Integer, String> pelis = CargarColumnasFichero("data/movies.dat",0,1);
 
+        HashMap<Integer, String> todaspelis = CargarColumnasFichero("data/movies.dat", 0, 1);
+        HashMap<Integer, String> pelis = new HashMap();
+        int count = 0;
+        for (Integer idpeli : this.IdtoIdx_movies.keySet()) {
+            String nombrePeli = todaspelis.get(idpeli);
+            Integer id = IdtoIdx_movies.get(idpeli);
+            pelis.put(idpeli, nombrePeli);
+            count++;
+        }
+
+        //meto el movieid de nuestra matriz y el nombre de la peli
         BinaryHeap heap = new BinaryHeap();
-        
-        if(!IdtoIdx_user.containsKey(usuarioArecomendar)){
+
+        if (!IdtoIdx_user.containsKey(usuarioArecomendar)) {
             System.out.println("No existe el usuario");
             return;
         }
-        
-        
-        writeRatedItems(usuarioArecomendar,pelis);
-        
-        
+
+        writeRatedItems(usuarioArecomendar, pelis);
+
         int filamiuser = IdtoIdx_user.getOrDefault(usuarioArecomendar, 0);
         double[] valoresmios = matriz.getRow(filamiuser);
         double[] valormovieid = matriz.getRow(filamiuser);
@@ -218,7 +223,6 @@ public class ColaborativeFiltering extends RecommenderAbs {
             if (!heap.isEmpty()) {
 
                 heap.insert(u);
-                
 
             } else {
                 heap.insert(u);
@@ -234,36 +238,34 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
         }
         int movieid = 0;
-        
-        
-        
-        recommend(maxUsers, usuarioArecomendar);
+
+        recommend(maxUsers, usuarioArecomendar, pelis);
 
     }
-    
-        @Override
-    public void writeRatedItems(int userId,HashMap<Integer,String> pelis) {
+
+    @Override
+    public void writeRatedItems(int userId, HashMap<Integer, String> pelis) {
         int movieid = 0;
         String titulo = "";
         int user = this.IdtoIdx_user.get(userId);
-        double [] valoresmios = this.matriz.getRow(user);
+        double[] valoresmios = this.matriz.getRow(user);
         System.out.println("Los items puntuados por el usuario son los siguientes:");
         for (int x = 0; x < valoresmios.length; x++) {
             if (valoresmios[x] != 0) {
-                
-                for(Integer key : IdtoIdx_movies.keySet()){
-                    if (IdtoIdx_movies.get(key) == x){
+
+                for (Integer key : IdtoIdx_movies.keySet()) {
+                    if (IdtoIdx_movies.get(key) == x) {
                         movieid = key;
                         break;
                     }
                 }
-                titulo = pelis == null ? ""+movieid : pelis.get(movieid);
+                titulo = pelis == null ? "" + movieid : pelis.get(movieid);
                 System.out.println("Pelicula \"" + titulo + "\": Con una puntuacion de " + valoresmios[x]);
             }
-        }    
+        }
     }
 
-    public void recommend(List<UserValue> userscercanos, int usuarioArecomendar) {
+    public void recommend(List<UserValue> userscercanos, int usuarioArecomendar, HashMap<Integer, String> pelis) {
         int filamiuser = IdtoIdx_user.getOrDefault(usuarioArecomendar, 0);
         //Solo voy a recomendar los items que el usuario no tenga un rating ya
         List<Integer> positemsvacios = new ArrayList();
@@ -308,7 +310,9 @@ public class ColaborativeFiltering extends RecommenderAbs {
                 break;
             }
             cuenta++;
-            System.out.println("Item " + s.getItem() + ": Con un ranking(que no rating, sin normalizar) de: " + s.getValue());
+            if (pelis.get(s.getItem()) != null) {
+                System.out.println("Pelicula " + pelis.get(s.getItem()) + " Con un ranking(que no rating, sin normalizar) de: " + s.getValue());
+            }
         }
     }
 
@@ -331,7 +335,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
             simil = simil * -1;
             //añadimos La similitud de lo usuarios al heap
             if (Double.isNaN(simil)) {
-                 break;
+                break;
             }
             UserValue u = new UserValue(use, simil);
             if (!heap.isEmpty()) {
