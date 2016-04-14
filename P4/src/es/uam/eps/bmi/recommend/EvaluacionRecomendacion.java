@@ -85,7 +85,7 @@ public class EvaluacionRecomendacion {
 
                             double prediccion = instance.rank(k, j);
                             dividendo++;
-                            System.out.println("prediccion: "+prediccion+" rating real: "+ratingreal);
+                            //System.out.println("prediccion: "+prediccion+" rating real: "+ratingreal);
                             resta += Math.abs(prediccion - ratingreal);
                         }
                         //double ratingreal = instance.matriz.getRow(k)[j];
