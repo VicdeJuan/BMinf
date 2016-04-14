@@ -52,6 +52,12 @@ public class BinaryHeap implements PriorityQueue {
             array[ i + 1 ] = items[ i ];
         buildHeap( );
     }
+
+    public Comparable getArray(int pos) {
+        if(pos>this.currentSize)
+            return null;
+        return array[pos];
+    }
      
     /**
      * Insert into the priority queue.

@@ -34,7 +34,7 @@ public class UserValue implements Comparable{
     //si this <= a comparar =>1
     public int compareTo(Object o) {
         UserValue otro= (UserValue) o;
-        if(this.simil>= otro.getSimil()){
+        if(this.simil<= otro.getSimil()){
             return 1;
         }
         else{ return -1;}

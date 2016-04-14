@@ -22,10 +22,10 @@ public class EvaluacionRecomendacion {
 
     public static void main(String[] argv) {
         EvaluacionRecomendacion eva = new EvaluacionRecomendacion(0.8, 0.2);
-
-        double MAE = MAE(eva.getTest());
+        int vecinos =100;
+        double MAE = MAE(eva.getTest(),vecinos);
         System.out.println("El MAE es: " + MAE);
-        double RMSE = RMSE(eva.getTest());
+        double RMSE = RMSE(eva.getTest(),vecinos);
         System.out.println("El RMSE es: " + RMSE);
         
 
@@ -44,11 +44,11 @@ public class EvaluacionRecomendacion {
         return test;
     }
 
-    public static double MAE(double test) {
+    public static double MAE(double test, int vecinos) {
 
         int dividendo = 0;
         double resta = 0.0;
-        ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/user_ratedmovies.dat");
+        ColaborativeFiltering instance = new ColaborativeFiltering(vecinos, "data/user_ratedmovies.dat");
         double random = 0.0;
         Random r = new Random();
         double[] sinCeros = instance.matriz.getData().clone();
@@ -68,7 +68,7 @@ public class EvaluacionRecomendacion {
             }
         }
 
-        instance.rank(1, 19);
+        //instance.rank(1, 19);
 
         for (int k = 0; k < instance.matriz.getNumRows(); k++) {
 
@@ -100,11 +100,11 @@ public class EvaluacionRecomendacion {
     }
 
     
-    public static double RMSE(double test) {
+    public static double RMSE(double test, int vecinos) {
 
         int dividendo = 0;
         double resta = 0.0;
-        ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/user_ratedmovies.dat");
+        ColaborativeFiltering instance = new ColaborativeFiltering(vecinos, "data/user_ratedmovies.dat");
         double random = 0.0;
         Random r = new Random();
         double[] sinCeros = instance.matriz.getData().clone();

@@ -14,6 +14,12 @@ public class Heap<E extends Comparable<E>> {
     public Object[] getS() {
         return S;
     }
+    public Object getS(int pos) {
+        if(pos>this.last)
+            return null;
+        
+        return S[pos];
+    }
 
     public Heap() {
         S = new Object[11];

@@ -56,8 +56,8 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
         instance.Knn(user);
         /*
-        System.out.println(instance.rank(1355,5952));
-        System.out.println(instance.rank(1355,107));
+         System.out.println(instance.rank(1355,5952));
+         System.out.println(instance.rank(1355,107));
         
         
          String cadena;
@@ -322,8 +322,9 @@ public class ColaborativeFiltering extends RecommenderAbs {
 
     @Override
     public double rank(int user, int item) {
-
-        BinaryHeap heap = new BinaryHeap();
+        PriorityQueue a;
+        double maxsimil = 0;
+        Heap heap = new Heap(this.k + 10);
         int filamiuser = user;
         double[] valoresmios = matriz.getRow(filamiuser);
         for (Integer use : IdtoIdx_user.keySet()) {
@@ -336,37 +337,67 @@ public class ColaborativeFiltering extends RecommenderAbs {
             double[] valoresuser = matriz.getRow(filauser);
 
             double simil = Similitudes.coseno(valoresuser, valoresmios);
-            simil = simil * -1;
+            if (simil > maxsimil) {
+                maxsimil = simil;
+            }
+            //simil = simil * -1;
             //añadimos La similitud de lo usuarios al heap
             if (Double.isNaN(simil)) {
                 break;
             }
             UserValue u = new UserValue(use, simil);
             if (!heap.isEmpty()) {
+                if (heap.getS(this.k) != null) {
+                    if (((UserValue) heap.getS(this.k)).simil < simil) {
+                        try {
+                            heap.insert(u);
+                        } catch (Exception ex) {
+                            //Logger.getLogger(ColaborativeFiltering.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                } else {
+                    try {
+                        heap.insert(u);
+                    } catch (Exception ex) {
+                        //Logger.getLogger(ColaborativeFiltering.class.getName()).log(Level.SEVERE, null, ex);
+                    }
 
-                heap.insert(u);
+                }
 
             } else {
-                heap.insert(u);
+                try {
+                    heap.insert(u);
+                } catch (Exception ex) {
+                    //Logger.getLogger(ColaborativeFiltering.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
         List<UserValue> maxUsers = new ArrayList();
 
         for (int g = 0; g < k; g++) {
-            UserValue maxuser = (UserValue) heap.deleteMin();
-            maxuser.setSimil(maxuser.getSimil() * -1);
-            UserValue max = (UserValue) maxuser;
-            maxUsers.add(max);
+            UserValue maxuser = null;
+            try {
+                maxuser = (UserValue) heap.getS(g);
+
+                UserValue max = (UserValue) maxuser;
+                maxUsers.add(max);
+            } catch (Exception ex) {
+                //Logger.getLogger(ColaborativeFiltering.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         }
         double[] ratingsItem = matriz.getCol(item);
         double prediccion = 0.0;
         double sumatorioSimilitudes = 0.0;
         //no va un 4 va matriz.getNumRows()
-        for (int h = 0; h < maxUsers.size(); h++) {
-            UserValue get = maxUsers.get(h);
-            sumatorioSimilitudes += get.getSimil();
-            prediccion += get.getSimil() * ratingsItem[h];
+        for (int h = 1; h < maxUsers.size(); h++) {
+            
+            UserValue gett = maxUsers.get(h);
+            
+            if (ratingsItem[this.IdtoIdx_user.get(gett.user)] != 0.0) {
+                sumatorioSimilitudes += gett.getSimil();
+                prediccion += gett.getSimil() * ratingsItem[this.IdtoIdx_user.get(gett.user)];
+            }
 
         }
         prediccion = prediccion * (1 / sumatorioSimilitudes);
