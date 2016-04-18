@@ -24,7 +24,7 @@ public class EvaluacionRecomendacion {
     double test;
 
     public static void main(String[] argv) throws IOException {
-        EvaluacionRecomendacion eva = new EvaluacionRecomendacion(0.8, 0.2);
+        EvaluacionRecomendacion eva = new EvaluacionRecomendacion( 0.2,0.8);
 
         String ruta = "EvaluacionKNNColaborativo.csv";
         File archivo = new File(ruta);
@@ -37,55 +37,57 @@ public class EvaluacionRecomendacion {
             bw = new BufferedWriter(new FileWriter(archivo));
         }
 
-        bw.write("Vecinos , MAE, MRSE ");
+        bw.write("Vecinos , MAE, MRSE\n");
 
         int vecinos = 25;
         double MAE = MAE(eva.getTest(), vecinos);
         System.out.println("El MAE es: " + MAE + " para " + vecinos + " vecinos");
         double RMSE = RMSE(eva.getTest(), vecinos);
         System.out.println("El RMSE es: " + RMSE + " para " + vecinos + " vecinos");
-        bw.write(vecinos + "," + MAE + "," + RMSE);
+        bw.write(vecinos + "," + MAE + "," + RMSE+"\n");
 
         vecinos = 50;
         double MAE1 = MAE(eva.getTest(), vecinos);
         System.out.println("El MAE es: " + MAE1 + " para " + vecinos + " vecinos");
         double RMSE1 = RMSE(eva.getTest(), vecinos);
         System.out.println("El RMSE es: " + RMSE1 + " para " + vecinos + " vecinos");
-        bw.write(vecinos + "," + MAE1 + "," + RMSE1);
+        bw.write(vecinos + "," + MAE1 + "," + RMSE1+"\n");
 
         vecinos = 75;
         double MAE2 = MAE(eva.getTest(), vecinos);
         System.out.println("El MAE es: " + MAE2 + " para " + vecinos + " vecinos");
         double RMSE2 = RMSE(eva.getTest(), vecinos);
         System.out.println("El RMSE es: " + RMSE2 + " para " + vecinos + " vecinos");
-        bw.write(vecinos + "," + MAE2 + "," + RMSE2);
+        bw.write(vecinos + "," + MAE2 + "," + RMSE2+"\n");
 
         vecinos = 100;
         double MAE3 = MAE(eva.getTest(), vecinos);
         System.out.println("El MAE es: " + MAE3 + " para " + vecinos + " vecinos");
         double RMSE3 = RMSE(eva.getTest(), vecinos);
         System.out.println("El RMSE es: " + RMSE3 + " para " + vecinos + " vecinos");
-        bw.write(vecinos + "," + MAE3 + "," + RMSE3);
+        bw.write(vecinos + "," + MAE3 + "," + RMSE3+"\n");
 
         vecinos = 250;
         double MAE4 = MAE(eva.getTest(), vecinos);
         System.out.println("El MAE es: " + MAE4 + " para " + vecinos + " vecinos");
         double RMSE4 = RMSE(eva.getTest(), vecinos);
         System.out.println("El RMSE es: " + RMSE4 + " para " + vecinos + " vecinos");
-        bw.write(vecinos + "," + MAE4 + "," + RMSE4);
+        bw.write(vecinos + "," + MAE4 + "," + RMSE4+"\n");
 
         vecinos = 500;
         double MAE5 = MAE(eva.getTest(), vecinos);
         System.out.println("El MAE es: " + MAE5 + " para " + vecinos + " vecinos");
         double RMSE5 = RMSE(eva.getTest(), vecinos);
         System.out.println("El RMSE es: " + RMSE5 + " para " + vecinos + " vecinos");
-        bw.write(vecinos + "," + MAE5 + "," + RMSE5);
-
+        bw.write(vecinos + "," + MAE5 + "," + RMSE5+"\n");
+        
+        bw.close();
+        
     }
 
     public EvaluacionRecomendacion(double train, double test) {
         this.train = 0.8;
-        this.test = 0.2;
+        this.test = 0.5;
     }
 
     public double getTrain() {
@@ -98,9 +100,11 @@ public class EvaluacionRecomendacion {
 
     public static double MAE(double test, int vecinos) {
 
-        int dividendo = 0;
+        double dividendo = 0.0;
         double resta = 0.0;
+        //ColaborativeFiltering instance = new ColaborativeFiltering(vecinos, "data/user_ratedmovies.dat");
         ColaborativeFiltering instance = new ColaborativeFiltering(vecinos, "data/user_ratedmovies.dat");
+        
         double random = 0.0;
         Random r = new Random();
         double[] sinCeros = instance.matriz.getData().clone();
@@ -135,9 +139,9 @@ public class EvaluacionRecomendacion {
                         if (random <= test) {
 
                             double prediccion = instance.rank(k, j);
-                            dividendo++;
+                            dividendo=dividendo+1.0;
                             //System.out.println("prediccion: "+prediccion+" rating real: "+ratingreal);
-                            resta += Math.abs(prediccion - ratingreal);
+                            resta =resta+ Math.abs(prediccion - ratingreal);
                         }
                         //double ratingreal = instance.matriz.getRow(k)[j];
 
@@ -145,6 +149,7 @@ public class EvaluacionRecomendacion {
                 }
             }
         }
+        //System.out.println("divisor: "+dividendo+" operacion: "+resta);
         double MAE = (1 / dividendo) * resta;
 
         return MAE;
@@ -152,7 +157,7 @@ public class EvaluacionRecomendacion {
 
     public static double RMSE(double test, int vecinos) {
 
-        int dividendo = 0;
+        double dividendo = 0.0;
         double resta = 0.0;
         ColaborativeFiltering instance = new ColaborativeFiltering(vecinos, "data/user_ratedmovies.dat");
         double random = 0.0;
@@ -190,8 +195,9 @@ public class EvaluacionRecomendacion {
                         if (random <= test) {
 
                             double prediccion = instance.rank(k, j);
-                            dividendo++;
+                             dividendo=dividendo+1.0;
                             resta += Math.pow(prediccion - ratingreal, 2);
+                             //System.out.println("prediccion: "+prediccion+" rating real: "+ratingreal);
                         }
                         //double ratingreal = instance.matriz.getRow(k)[j];
 

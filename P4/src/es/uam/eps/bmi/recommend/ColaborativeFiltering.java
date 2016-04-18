@@ -373,8 +373,9 @@ public class ColaborativeFiltering extends RecommenderAbs {
             }
         }
         List<UserValue> maxUsers = new ArrayList();
-
-        for (int g = 0; g < k; g++) {
+        int min=k;
+        if (heap.size()<min) min=heap.size();
+        for (int g = 0; g <= min; g++) {
             UserValue maxuser = null;
             try {
                 maxuser = (UserValue) heap.getS(g);
@@ -400,7 +401,11 @@ public class ColaborativeFiltering extends RecommenderAbs {
             }
 
         }
+        if(sumatorioSimilitudes==0.0){
+            prediccion=1.01;
+        }else{
         prediccion = prediccion * (1 / sumatorioSimilitudes);
+        }
 
         return prediccion;
     }
