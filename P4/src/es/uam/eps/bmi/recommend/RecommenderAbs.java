@@ -248,7 +248,7 @@ public abstract class RecommenderAbs implements Recommender {
                     counterRow++;
 
                     if (counterRow % rowStep == 0 || counterRow > matToRet.getNumRows()) {
-                        //System.out.println(String.format("Aumentando filas por %d...", counterRow / rowStep));
+                        System.out.println(String.format("Aumentando filas por %d...", counterRow / rowStep));
                         matToRet.addRowLast(rowStep);
                     }
                 }
@@ -257,7 +257,7 @@ public abstract class RecommenderAbs implements Recommender {
                     counterCol++;
 
                     if (counterCol % colStep == 0 || counterCol > matToRet.getNumCols()) {
-                        //System.out.println(String.format("Aumentando columnas por %d...", counterCol / colStep));
+                        System.out.println(String.format("Aumentando columnas por %d...", counterCol / colStep));
                         matToRet.addColLast(colStep);
                     }
 
