@@ -1,7 +1,5 @@
 package es.uam.eps.bmi.recommend;
 
-import es.uam.eps.bmi.recommend.FilterCallables.FilterCallableMovies;
-import es.uam.eps.bmi.recommend.FilterCallables.FilterCallableUserMovies;
 import es.uam.eps.bmi.search.Utils;
 import es.uam.eps.bmi.search.ranking.graph.Matrix;
 import java.io.BufferedReader;
@@ -13,8 +11,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.MatrixIO;
 
 public class ContentsRocchio extends RecommenderAbs {
 
@@ -24,7 +20,7 @@ public class ContentsRocchio extends RecommenderAbs {
         String us = "data/CRTUser_2.dat";
 
         ContentsRocchio instance = new ContentsRocchio(
-                it, us, 1, 0, 2, 1, 0, 2, 1, 1, 150
+                it, us, 0, 1, 2, 0, 0, 1, 2, 0, 5
         );
         interactWithUser(instance);
     }
@@ -55,7 +51,7 @@ public class ContentsRocchio extends RecommenderAbs {
         br = new BufferedReader(new InputStreamReader(System.in));
         int size = 5;
         try {
-            user = Integer.parseInt(br.readLine());
+            size = Integer.parseInt(br.readLine());
         } catch (IOException ex) {
             Logger.getLogger(ContentsRocchio.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("No he reconocido ese valor, asique tomaré " + size);
@@ -300,7 +296,7 @@ public class ContentsRocchio extends RecommenderAbs {
     public void writeRatedItems(int user, HashMap<Integer, String> pelis) {
         int movieid = 0;
         String titulo = "";
-        double[] valoresmios = this.matriz.getCol(user);
+        double[] valoresmios = this.matriz.getRow(user);
         System.out.println("Los items puntuados por el usuario son los siguientes:");
         for (int x = 0; x < valoresmios.length; x++) {
             if (valoresmios[x] != 0) {
