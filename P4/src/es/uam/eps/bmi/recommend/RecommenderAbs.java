@@ -273,7 +273,7 @@ public abstract class RecommenderAbs implements Recommender {
         } catch (IOException ex) {
             System.err.println("IOException  " + fileofContents);
         } catch (NumberFormatException ex) {
-            System.err.println("No se puede acceder al índice requerido" + fileofContents);
+            System.err.println("Fichero mal formado" + fileofContents);
 
         }
 
