@@ -1,9 +1,7 @@
 package es.uam.eps.bmi.recommend;
 
 import es.uam.eps.bmi.recommend.FilterCallables.FilterCallableUser;
-import es.uam.eps.bmi.recommend.FilterCallables.FilterCallableMovies;
 import es.uam.eps.bmi.recommend.FilterCallables.FilterCallableItem;
-import es.uam.eps.bmi.recommend.FilterCallables.FilterCallableUserMovies;
 import es.uam.eps.bmi.search.ranking.graph.Matrix;
 import es.uam.eps.bmi.search.ranking.graph.PageRank;
 import java.io.BufferedReader;
@@ -128,10 +126,10 @@ public abstract class RecommenderAbs implements Recommender {
             System.err.println("No se ha encontrado el archivo " + fichero);
         } catch (IOException ex) {
             Logger.getLogger(PageRank.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("IOException al cargar "+fichero);
+            System.err.println("IOException al cargar " + fichero);
         } catch (Exception ex) {
             Logger.getLogger(RecommenderAbs.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("Error al parsear "+fichero + "(lin,col) = ("+row+","+col+")");
+            System.err.println("Error al parsear " + fichero + "(lin,col) = (" + row + "," + col + ")");
         }
     }
 
@@ -282,7 +280,7 @@ public abstract class RecommenderAbs implements Recommender {
         return matToRet;
     }
 
-    public HashMap<Integer, String> CargarColumnasFichero(String fichero,int id, int columna) throws FileNotFoundException, IOException {
+    public HashMap<Integer, String> CargarColumnasFichero(String fichero, int id, int columna) throws FileNotFoundException, IOException {
 
         HashMap<Integer, String> pelis = new HashMap();
         String cadena;
@@ -301,6 +299,5 @@ public abstract class RecommenderAbs implements Recommender {
 
         return pelis;
     }
-    
-    
+
 }

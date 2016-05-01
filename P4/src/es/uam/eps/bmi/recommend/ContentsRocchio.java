@@ -15,21 +15,15 @@ import java.util.logging.Logger;
 public class ContentsRocchio extends RecommenderAbs {
 
     public static void main(String[] argv) throws IOException {
-/*
-        String it = "data/CRTItem_2.dat";
-        String us = "data/CRTUser_2.dat";
-        // Row, Col, Value, Ignore (bis)
-        ContentsRocchio instance = new ContentsRocchio(
-                it, us, 0, 1, 2, 0, 0, 1, 2, 0, 5
-        );*/
+
         String it = "data/movie_tags.dat";
         String us = "data/user_ratedmovies.dat";
-        
+
         // Row, COl, Colue, Ignore lines
         ContentsRocchio instance = new ContentsRocchio(
-                it,us, 0,1,2,1,0,1,2,1,1000
+                it, us, 0, 1, 2, 1, 0, 1, 2, 1, 1000
         );
-        
+
         HashMap<Integer, String> pelis = null;
         try {
             pelis = instance.CargarColumnasFichero("data/movies.dat", 0, 1);
@@ -38,14 +32,11 @@ public class ContentsRocchio extends RecommenderAbs {
             System.err.println("El fichero movies.dat no existe para leer los nombres de las películas.");
         }
 
-        
-        
-        while( interactWithUser(instance,pelis) != 0);
-            
-        
+        while (interactWithUser(instance, pelis) != 0);
+
     }
 
-    private static int interactWithUser(ContentsRocchio instance,HashMap<Integer,String> pelis) {
+    private static int interactWithUser(ContentsRocchio instance, HashMap<Integer, String> pelis) {
 
         System.out.println("Introduzca un usuario al que recomendar (0 para salir):");
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -56,12 +47,14 @@ public class ContentsRocchio extends RecommenderAbs {
             Logger.getLogger(ContentsRocchio.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("No he reconocido ese valor, asique tomaré " + user);
         }
-        if (user == 0)
+        if (user == 0) {
             return 0;
+        }
         // Cogemos el correspondiente índice de la matriz para utilizar como usuario.
-        if (instance.IdtoIdx_user.containsKey(user))
+        if (instance.IdtoIdx_user.containsKey(user)) {
             user = instance.IdtoIdx_user.get(user);
-        
+        }
+
         System.out.println("Índice en la matriz: " + user);
         //double result =0.0;
 
@@ -79,11 +72,10 @@ public class ContentsRocchio extends RecommenderAbs {
 
         List<UserValue> l = instance.recommend(user, size);
         System.out.println("\nEste es el raking de Rocchio:\n");
-        for (UserValue UV : l){
-            System.out.println(pelis.get(instance.IdtoIdx_items.get(UV.user)) + "\t -- \t" + String.format("%.2f",UV.simil));
+        for (UserValue UV : l) {
+            System.out.println(pelis.get(instance.IdtoIdx_items.get(UV.user)) + "\t -- \t" + String.format("%.2f", UV.simil));
         }
-            
-        
+
         l.clear();
         return 1;
         //assertEquals(expResult, result, 0.01);
@@ -161,65 +153,59 @@ public class ContentsRocchio extends RecommenderAbs {
     public ContentsRocchio(String fileofContents, String fileOfUsers,
             int userRowsIdx, int userColsIdx, int userRankIdx, int userIgnoreLines, int itemRowsIdx, int itemColsIdx, int itemRankIdx, int itemIgnoreLines,
             int step) {
-        
+
             // Obtenemos las variables previas necesarias.
-            
             // TODO: este 4 está puesto a pelo para satisfacer el ejemplo.
-            //	Hay que definir un Utils.getColumnsOfFile() para que funcione en todos los casos.
-            numTags = 4;
-            
-            // Inicialización de variables utilizadas en los métodos load.
-            IdtoIdx_items = new LinkedHashMap<>();
-            IdtoIdx_user = new LinkedHashMap<>();
-            System.out.println("Cargando Items...");
-            // Cargamos matriz de items.
-            loadContents(fileofContents, itemRowsIdx, itemColsIdx, itemRankIdx, itemIgnoreLines, step, step);
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            
-            System.out.println("Cargando Usuarios...");
-            // Cargamos matriz de usuarios.
-            loadUserMatrix(fileOfUsers, userRowsIdx, userColsIdx, userRankIdx, userIgnoreLines, step, IdtoIdx_items.size());
-            
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            
-            // Reajustamos dimensiones para poder multiplcar. Hay películas votadas que no tienen tags¿?
-            int cols = matriz.getNumCols() - tagsItemsMatrix.getNumCols();
-            int rows = matriz.getNumRows() - tagsItemsMatrix.getNumRows();
-            /*System.out.println("cols:\n\tus: "+matriz.getNumCols()+"\t it: "+ tagsItemsMatrix.getNumCols()+ " = "+ cols);
-            System.out.println("rows:\n\tus: " + matriz.getNumRows() + "\t it " + tagsItemsMatrix.getNumRows() + " = " + rows);
-            System.out.println(matriz.getNumCols()*tagsItemsMatrix.getNumRows() < (Integer.MAX_VALUE/2));*/
-            if (matriz.getNumCols() - tagsItemsMatrix.getNumCols() > 0) {
-                tagsItemsMatrix.addColLast(matriz.getNumCols() - tagsItemsMatrix.getNumCols());
-            }
-            if (matriz.getNumCols() - tagsItemsMatrix.getNumCols() < 0) {
-                matriz.addColLast(tagsItemsMatrix.getNumCols() - matriz.getNumCols());
-            }
-            
-            if (matriz.getNumRows() - tagsItemsMatrix.getNumRows() > 0) {
-                tagsItemsMatrix.addRowLast(matriz.getNumRows() - tagsItemsMatrix.getNumRows());
-            }
-            if (matriz.getNumRows() - tagsItemsMatrix.getNumRows() < 0) {
-                matriz.addColLast(matriz.getNumCols() - tagsItemsMatrix.getNumCols());
-            }
-            
-            System.out.println("Calculando centroides");
-            
-            _calculateCentroides();
-            
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-            
-            
-            
-            
-            
-       
+        //	Hay que definir un Utils.getColumnsOfFile() para que funcione en todos los casos.
+        numTags = 4;
+
+        // Inicialización de variables utilizadas en los métodos load.
+        IdtoIdx_items = new LinkedHashMap<>();
+        IdtoIdx_user = new LinkedHashMap<>();
+        System.out.println("Cargando Items...");
+        // Cargamos matriz de items.
+        loadContents(fileofContents, itemRowsIdx, itemColsIdx, itemRankIdx, itemIgnoreLines, step, step);
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+
+        System.out.println("Cargando Usuarios...");
+        // Cargamos matriz de usuarios.
+        loadUserMatrix(fileOfUsers, userRowsIdx, userColsIdx, userRankIdx, userIgnoreLines, step, IdtoIdx_items.size());
+
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+
+        // Reajustamos dimensiones para poder multiplcar. Hay películas votadas que no tienen tags¿?
+        int cols = matriz.getNumCols() - tagsItemsMatrix.getNumCols();
+        int rows = matriz.getNumRows() - tagsItemsMatrix.getNumRows();
+        /*System.out.println("cols:\n\tus: "+matriz.getNumCols()+"\t it: "+ tagsItemsMatrix.getNumCols()+ " = "+ cols);
+         System.out.println("rows:\n\tus: " + matriz.getNumRows() + "\t it " + tagsItemsMatrix.getNumRows() + " = " + rows);
+         System.out.println(matriz.getNumCols()*tagsItemsMatrix.getNumRows() < (Integer.MAX_VALUE/2));*/
+        if (matriz.getNumCols() - tagsItemsMatrix.getNumCols() > 0) {
+            tagsItemsMatrix.addColLast(matriz.getNumCols() - tagsItemsMatrix.getNumCols());
+        }
+        if (matriz.getNumCols() - tagsItemsMatrix.getNumCols() < 0) {
+            matriz.addColLast(tagsItemsMatrix.getNumCols() - matriz.getNumCols());
+        }
+
+        if (matriz.getNumRows() - tagsItemsMatrix.getNumRows() > 0) {
+            tagsItemsMatrix.addRowLast(matriz.getNumRows() - tagsItemsMatrix.getNumRows());
+        }
+        if (matriz.getNumRows() - tagsItemsMatrix.getNumRows() < 0) {
+            matriz.addColLast(matriz.getNumCols() - tagsItemsMatrix.getNumCols());
+        }
+
+        System.out.println("Calculando centroides");
+
+        _calculateCentroides();
+
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+
     }
 
     private void _calculateCentroides() {
@@ -279,11 +265,12 @@ public class ContentsRocchio extends RecommenderAbs {
     public double rank(int user, int item) {
         int idxuser = user;
         int idxitem = IdtoIdx_items.get(item);
-        if (0 != matriz.getVal(idxuser,idxitem))
+        if (0 != matriz.getVal(idxuser, idxitem)) {
             return -2;
+        }
         double[] v1 = centroides.getCol(idxuser);
         double[] v2 = tagsItemsMatrix.getCol(idxitem);
-        
+
         return Similitudes.coseno(v1, v2);
     }
 
@@ -294,7 +281,7 @@ public class ContentsRocchio extends RecommenderAbs {
     private void loadUserMatrix(String fileOfUsers, int rowsIdx, int colsIdx, int rankIdx, int ignoreLines, int rowstep, int colstep) {
         matriz = super.cargarMatriz(fileOfUsers, rowsIdx, colsIdx, rankIdx, IdtoIdx_user, IdtoIdx_items, rowstep, colstep, ignoreLines);
     }
-    
+
     @Override
     public List<UserValue> recommend(int user, int size) {
         ArrayList<UserValue> toret = new ArrayList<>();
@@ -302,17 +289,17 @@ public class ContentsRocchio extends RecommenderAbs {
 
         double r = Double.MIN_VALUE;
 
-        
         for (Integer it : this.IdtoIdx_items.keySet()) {
             r = this.rank(user, it);
             // Ignoramos los que han sido puntuados.
-            if (r == -2)
+            if (r == -2) {
                 continue;
+            }
             if (heap.size() < size) {
                 heap.insert(new UserValue(it, r));
             } else if (((UserValue) heap.findMin()).simil < r) {
                 heap.deleteMin();
-                heap.insert(new UserValue(it,r));
+                heap.insert(new UserValue(it, r));
             }
         }
         while (!heap.isEmpty()) {

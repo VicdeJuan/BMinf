@@ -1,48 +1,25 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.recommend;
 
-import es.uam.eps.bmi.search.Utils;
-import es.uam.eps.bmi.search.ranking.graph.Matrix;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import static java.lang.reflect.Array.set;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.ejml.data.DenseMatrix64F;
-import org.ejml.ops.MatrixIO;
 
-/**
- *
- * @author dani
- */
 public class ColaborativeFiltering extends RecommenderAbs {
 
     //número de vecinos
     int k;
     LinkedHashMap<Integer, Integer> IdtoIdx_user;
     LinkedHashMap<Integer, Integer> IdtoIdx_movies;
-    HashMap<Integer,String> pelis;
-    
+    HashMap<Integer, String> pelis;
+
     public static void main(String[] argv) throws FileNotFoundException, IOException, Exception {
 
         String file = "data/user_ratedmovies_prueba.dat";
@@ -56,63 +33,7 @@ public class ColaborativeFiltering extends RecommenderAbs {
         instance = new ColaborativeFiltering(10, file);
 
         instance.Knn(user);
-        /*
-         System.out.println(instance.rank(1355,5952));
-         System.out.println(instance.rank(1355,107));
-        
-        
-         String cadena;
-         FileReader f = new FileReader("data/user_ratedmovies.dat");
-         BufferedReader b = new BufferedReader(f);
-         b.readLine();
-         FileWriter fichero = null;
-         PrintWriter pw = null;
-         try
-         {
-         fichero = new FileWriter("data/user_ratedmovies.csv");
-         pw = new PrintWriter(fichero);
-         }
-         catch (Exception e) {
-         e.printStackTrace();
-         }
-         while((cadena = b.readLine())!=null) {
-         String[] split = cadena.split("\t");
-         pw.println(split[0]+" "+split[1]+" "+split[2]);        
-           
-         }
-      
-         b.close();
-         fichero.close();
-        
-       
-        
-         DenseMatrix64F A = new DenseMatrix64F(2,3,true,new double[]{1,2,3,4,5,6});
- 
-         try {
-         MatrixIO.saveCSV(A, "data/matrix_file.csv");
-         DenseMatrix64F B = MatrixIO.loadCSV("matrix_file.csv");
-         B.print();
-         } catch (IOException e) {
-         throw new RuntimeException(e);
-         }
-         */
-        /*DenseMatrix64F B = null;
-         try {
 
-         B = MatrixIO.loadCSV("data/user_ratedmovies.csv");
-
-         } catch (IOException e) {
-         throw new RuntimeException(e);
-         }*/
-		//System.out.println("No falla");
-
-		//int userid = 2;
-        //instance = new ColaborativeFiltering(B, 2);
-        //ColaborativeFiltering instance = new ColaborativeFiltering(2, "data/movie_tags_reducido.dat", "data/user_ratedmovies_reducido.dat");
-		/*instance.Knn(userid);
-         System.out.println(instance.rank(1, 0));*/
-        //System.out.println(instance.rank(4, 1));
-        //System.out.println(instance.rank(2, 2));
     }
 
     /**
@@ -136,38 +57,6 @@ public class ColaborativeFiltering extends RecommenderAbs {
         numUser = IdtoIdx_user.size();
     }
 
-    /*
-     public ColaborativeFiltering(DenseMatrix64F matris, int k) {
-     this.k = k;
-     matriz = new Matrix(matris);
-     IdtoIdx_user = new LinkedHashMap<>();
-     IdtoIdx_user.put(1, 0);
-     IdtoIdx_user.put(2, 1);
-     IdtoIdx_user.put(3, 2);
-     IdtoIdx_user.put(4, 3);
-     double d1[] = new double[3];
-     double d2[] = new double[3];
-     double d3[] = new double[3];
-     double d4[] = new double[3];
-     d1[0] = 4.0;
-     d1[1] = 1.0;
-     d1[2] = 2.0;
-     d2[0] = 2.0;
-     d2[1] = 0.0;
-     d2[2] = 1.0;
-     d3[0] = 0.0;
-     d3[1] = 0.0;
-     d3[2] = 1.0;
-     d4[0] = 2.0;
-     d4[1] = 1.0;
-     d4[2] = 1.0;
-     matriz.setRow(d1, 0);
-     matriz.setRow(d2, 1);
-     matriz.setRow(d3, 2);
-     matriz.setRow(d4, 3);
-
-     }
-     */
     public ColaborativeFiltering(int k, String fileOfUsers) {
         this.k = k;
         // Obtenemos las variables previas necesarias.
@@ -374,8 +263,10 @@ public class ColaborativeFiltering extends RecommenderAbs {
             }
         }
         List<UserValue> maxUsers = new ArrayList();
-        int min=k;
-        if (heap.size()<min) min=heap.size();
+        int min = k;
+        if (heap.size() < min) {
+            min = heap.size();
+        }
         for (int g = 0; g <= min; g++) {
             UserValue maxuser = null;
             try {
@@ -393,19 +284,19 @@ public class ColaborativeFiltering extends RecommenderAbs {
         double sumatorioSimilitudes = 0.0;
         //no va un 4 va matriz.getNumRows()
         for (int h = 1; h < maxUsers.size(); h++) {
-            
+
             UserValue gett = maxUsers.get(h);
-            
+
             if (ratingsItem[this.IdtoIdx_user.get(gett.user)] != 0.0) {
                 sumatorioSimilitudes += gett.getSimil();
                 prediccion += gett.getSimil() * ratingsItem[this.IdtoIdx_user.get(gett.user)];
             }
 
         }
-        if(sumatorioSimilitudes==0.0){
-            prediccion=1.01;
-        }else{
-        prediccion = prediccion * (1 / sumatorioSimilitudes);
+        if (sumatorioSimilitudes == 0.0) {
+            prediccion = 1.01;
+        } else {
+            prediccion = prediccion * (1 / sumatorioSimilitudes);
         }
 
         return prediccion;
