@@ -41,7 +41,8 @@ public class ColaborativeFiltering extends RecommenderAbs {
     int k;
     LinkedHashMap<Integer, Integer> IdtoIdx_user;
     LinkedHashMap<Integer, Integer> IdtoIdx_movies;
-
+    HashMap<Integer,String> pelis;
+    
     public static void main(String[] argv) throws FileNotFoundException, IOException, Exception {
 
         String file = "data/user_ratedmovies_prueba.dat";

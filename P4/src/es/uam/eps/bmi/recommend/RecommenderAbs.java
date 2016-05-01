@@ -128,8 +128,10 @@ public abstract class RecommenderAbs implements Recommender {
             System.err.println("No se ha encontrado el archivo " + fichero);
         } catch (IOException ex) {
             Logger.getLogger(PageRank.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("IOException al cargar "+fichero);
         } catch (Exception ex) {
             Logger.getLogger(RecommenderAbs.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("Error al parsear "+fichero + "(lin,col) = ("+row+","+col+")");
         }
     }
 

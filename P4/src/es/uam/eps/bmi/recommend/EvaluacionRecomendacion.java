@@ -8,14 +8,11 @@ package es.uam.eps.bmi.recommend;
 import es.uam.eps.bmi.search.ranking.graph.Matrix;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.DoubleStream;
-import javafx.util.Pair;
 
 /**
  *

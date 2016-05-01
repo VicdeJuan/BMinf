@@ -184,4 +184,8 @@ public class Matrix {
 		this.set(rating, row, col);
 	}
 
+    public double getVal(int row, int col) {
+        return this.get(row, col);
+    }
+
 }
