@@ -1,22 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package es.uam.eps.bmi.socialNetwork;
 
-import static cern.clhep.Units.g;
-import edu.uci.ics.jung.algorithms.importance.BetweennessCentrality;
 import edu.uci.ics.jung.algorithms.generators.random.BarabasiAlbertGenerator;
 import edu.uci.ics.jung.algorithms.generators.random.ErdosRenyiGenerator;
-import edu.uci.ics.jung.algorithms.metrics.Metrics;
-import static edu.uci.ics.jung.algorithms.metrics.Metrics.clusteringCoefficients;
-import edu.uci.ics.jung.algorithms.scoring.PageRank;
 import edu.uci.ics.jung.algorithms.transformation.DirectionTransformer;
 import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.Hypergraph;
 import edu.uci.ics.jung.graph.SparseGraph;
-import edu.uci.ics.jung.graph.SparseMultigraph;
 import edu.uci.ics.jung.graph.UndirectedGraph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import java.io.BufferedReader;
@@ -31,16 +19,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeSet;
 import org.apache.commons.collections15.Factory;
-import org.apache.commons.collections15.functors.InstantiateFactory;
 
-/**
- *
- * @author parra
- */
+
 public class AnalisisGrafos {
 
     final static String RESULTS_PATH = "resultados/";
