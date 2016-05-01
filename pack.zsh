@@ -1,14 +1,9 @@
 
-practica="P3"
-mem="Memoria"
-name="bmi-p3-12"
+practica="P4"
+mem="P4/Memoria"
+name="bmi-p4-12"
 mkdir $name
 
-## Generación de los pdfs
-cd $mem
-zsh *.zsh
-cp *.pdf ../$name
-cd ..
 
 ## Generación de javadoc
 cd  $practica
@@ -21,6 +16,6 @@ src=$practica"/src"
 cp -r $src $name
 
 zip -rv $name".zip" $name/*.pdf "$name/"javadoc
-zip -ur $name".zip" $name"/src/es/uam/eps/bmi/search"
+zip -ur $name".zip" $name"/src/es/uam/eps/bmi"
 
 rm -r  $name
